@@ -185,6 +185,13 @@ spring:
           uri: grayLb://ai-server
           predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
             - Path=/sse, /mcp/message
+        ## search-server 服务
+        - id: search-admin-api # 路由的编号
+          uri: grayLb://search-server
+          predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
+            - Path=/admin-api/search/**
+          filters:
+            - RewritePath=/admin-api/search/v3/api-docs, /v3/api-docs # 配置，保证转发到 /v3/api-docs
         ## iot-server 服务
         - id: iot-admin-api # 路由的编号
           uri: grayLb://iot-server
@@ -219,7 +226,7 @@ spring:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
 
 server:
-  port: 48080
+  port: 18081
 
 logging:
   file:
@@ -269,6 +276,9 @@ knife4j:
       - name: ai-server
         service-name: ai-server
         url: /admin-api/ai/v3/api-docs
+      - name: search-server
+        service-name: search-server
+        url: /admin-api/search/v3/api-docs
       - name: iot-server
         service-name: iot-server
         url: /admin-api/iot/v3/api-docs

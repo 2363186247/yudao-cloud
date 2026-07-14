@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+      config:
+        file-extension: yaml
+        group: DEFAULT_GROUP
+        namespace: dev
+      discovery:
+        group: DEFAULT_GROUP
+        namespace: dev
+
+  data:
+    mongodb:
+      uri: mongodb://root:admin@127.0.0.1:27017/yudao?authSource=admin
