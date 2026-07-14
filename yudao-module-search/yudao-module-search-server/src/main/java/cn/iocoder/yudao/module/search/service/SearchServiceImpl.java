@@ -9,6 +9,7 @@ import cn.iocoder.yudao.module.search.controller.admin.vo.SearchDocumentSaveReqV
 import cn.iocoder.yudao.module.search.controller.admin.vo.SearchDocumentRespVO;
 import cn.iocoder.yudao.module.search.dal.mongodb.SearchDocument;
 import cn.iocoder.yudao.module.search.dal.mongodb.SearchDocumentRepository;
+import cn.iocoder.yudao.module.search.framework.utils.SegmentationUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,6 +24,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.search.enums.ErrorCodeConstants.DOCUMENT_NOT_EXISTS;
@@ -40,6 +42,8 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public String indexDocument(SearchDocumentSaveReqVO createReqVO) {
         SearchDocument document = BeanUtils.toBean(createReqVO, SearchDocument.class);
+        document.setSegmentedTitle(SegmentationUtils.segment(createReqVO.getTitle()));
+        document.setSegmentedContent(SegmentationUtils.segment(createReqVO.getContent()));
         document.setCreateTime(LocalDateTime.now());
         searchDocumentRepository.save(document);
         return document.getId();
@@ -51,6 +55,8 @@ public class SearchServiceImpl implements SearchService {
         validateSearchDocumentExists(updateReqVO.getId());
         
         SearchDocument document = BeanUtils.toBean(updateReqVO, SearchDocument.class);
+        document.setSegmentedTitle(SegmentationUtils.segment(updateReqVO.getTitle()));
+        document.setSegmentedContent(SegmentationUtils.segment(updateReqVO.getContent()));
         SearchDocument oldDocument = searchDocumentRepository.findById(updateReqVO.getId()).orElse(null);
         if (oldDocument != null) {
             document.setCreateTime(oldDocument.getCreateTime());
@@ -86,7 +92,8 @@ public class SearchServiceImpl implements SearchService {
                 query.addCriteria(Criteria.where("content").regex(searchKey, "i"));
             } else {
                 // 全文检索 (all) - 使用 MongoDB 文本索引与打分
-                TextCriteria criteria = TextCriteria.forDefaultLanguage().matching(searchKey);
+                String segmentedKey = SegmentationUtils.segment(searchKey);
+                TextCriteria criteria = TextCriteria.forDefaultLanguage().matching(segmentedKey);
                 query = TextQuery.queryText(criteria);
                 isFullText = true;
             }
@@ -115,19 +122,21 @@ public class SearchServiceImpl implements SearchService {
         // 转换成 RespVO 并设置高亮与摘要
         List<SearchDocumentRespVO> voList = BeanUtils.toBean(list, SearchDocumentRespVO.class);
         if (CollUtil.isNotEmpty(voList)) {
+            // 提取用于高亮的关键词列表
+            List<String> searchWords = SegmentationUtils.segmentToList(searchKey);
             for (int i = 0; i < voList.size(); i++) {
                 SearchDocument doc = list.get(i);
                 SearchDocumentRespVO vo = voList.get(i);
                 vo.setScore(doc.getScore());
                 // 仅当检索类型是 all 或者是 title 时，高亮标题
                 if (StrUtil.isBlank(searchType) || "all".equals(searchType) || "title".equals(searchType)) {
-                    vo.setTitleHighlight(highlightText(doc.getTitle(), searchKey));
+                    vo.setTitleHighlight(highlightText(doc.getTitle(), searchWords));
                 } else {
                     vo.setTitleHighlight(doc.getTitle());
                 }
                 // 仅当检索类型是 all 或者是 content 时，截取并高亮正文片段
                 if (StrUtil.isBlank(searchType) || "all".equals(searchType) || "content".equals(searchType)) {
-                    vo.setContentSnippetHighlight(getSnippet(doc.getContent(), searchKey));
+                    vo.setContentSnippetHighlight(getSnippet(doc.getContent(), searchWords));
                 } else {
                     // 非正文搜索时，默认截取前80字符作为摘要
                     String content = doc.getContent();
@@ -139,31 +148,52 @@ public class SearchServiceImpl implements SearchService {
         return new PageResult<>(voList, total);
     }
 
-    private String highlightText(String text, String searchKey) {
-        if (StrUtil.isBlank(text) || StrUtil.isBlank(searchKey)) {
+    private String highlightText(String text, List<String> searchWords) {
+        if (StrUtil.isBlank(text) || CollUtil.isEmpty(searchWords)) {
             return text;
         }
-        // 使用 Pattern.quote 安全地转义所有正则特殊字符
-        String escapedKey = java.util.regex.Pattern.quote(searchKey);
-        return text.replaceAll("(?i)(" + escapedKey + ")", "<mark style=\"background-color: #ffeb3b; color: #000000; padding: 1px 3px; border-radius: 2px; font-weight: bold;\">$1</mark>");
+        String highlighted = text;
+        // 按长度降序排列关键词，防止短词破坏长词的高亮 HTML 标签
+        List<String> sortedWords = searchWords.stream()
+                .filter(StrUtil::isNotBlank)
+                .sorted((w1, w2) -> Integer.compare(w2.length(), w1.length()))
+                .collect(Collectors.toList());
+
+        for (String word : sortedWords) {
+            String escapedKey = java.util.regex.Pattern.quote(word);
+            highlighted = highlighted.replaceAll("(?i)(" + escapedKey + ")", "<mark style=\"background-color: #ffeb3b; color: #000000; padding: 1px 3px; border-radius: 2px; font-weight: bold;\">$1</mark>");
+        }
+        return highlighted;
     }
 
-    private String getSnippet(String content, String searchKey) {
+    private String getSnippet(String content, List<String> searchWords) {
         if (StrUtil.isBlank(content)) {
             return "";
         }
-        if (StrUtil.isBlank(searchKey)) {
+        if (CollUtil.isEmpty(searchWords)) {
             return content.length() > 80 ? content.substring(0, 80) + "..." : content;
         }
         
-        // 查找关键字首次出现的位置 (忽略大小写)
-        int idx = content.toLowerCase().indexOf(searchKey.toLowerCase());
-        if (idx == -1) {
+        // 寻找任何一个关键词首次出现的最靠前的位置作为上下文原点
+        int firstIdx = -1;
+        int wordLen = 0;
+        for (String word : searchWords) {
+            if (StrUtil.isBlank(word)) {
+                continue;
+            }
+            int idx = content.toLowerCase().indexOf(word.toLowerCase());
+            if (idx != -1 && (firstIdx == -1 || idx < firstIdx)) {
+                firstIdx = idx;
+                wordLen = word.length();
+            }
+        }
+        
+        if (firstIdx == -1) {
             return content.length() > 80 ? content.substring(0, 80) + "..." : content;
         }
         
-        int start = Math.max(0, idx - 40);
-        int end = Math.min(content.length(), idx + searchKey.length() + 40);
+        int start = Math.max(0, firstIdx - 40);
+        int end = Math.min(content.length(), firstIdx + wordLen + 40);
         
         String snippet = content.substring(start, end);
         if (start > 0) {
@@ -172,7 +202,7 @@ public class SearchServiceImpl implements SearchService {
         if (end < content.length()) {
             snippet = snippet + "...";
         }
-        return highlightText(snippet, searchKey);
+        return highlightText(snippet, searchWords);
     }
 
     @Override
@@ -182,6 +212,8 @@ public class SearchServiceImpl implements SearchService {
         }
         for (SearchDocumentSaveReqVO reqVO : importList) {
             SearchDocument document = BeanUtils.toBean(reqVO, SearchDocument.class);
+            document.setSegmentedTitle(SegmentationUtils.segment(reqVO.getTitle()));
+            document.setSegmentedContent(SegmentationUtils.segment(reqVO.getContent()));
             document.setCreateTime(LocalDateTime.now());
             searchDocumentRepository.save(document);
         }

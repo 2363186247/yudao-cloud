@@ -42,6 +42,13 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
 
+        <!-- Jieba 中文分词 -->
+        <dependency>
+            <groupId>com.huaban</groupId>
+            <artifactId>jieba-analysis</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
         <!-- RPC 远程调用相关 -->
         <dependency>
             <groupId>cn.iocoder.cloud</groupId>

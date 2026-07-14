@@ -22,30 +22,45 @@ public class MongoIndexInitializer implements CommandLineRunner {
     public void run(String... args) {
         log.info("[MongoIndexInitializer] 正在检查并初始化 MongoDB 全文检索索引...");
         try {
-            boolean hasTextIndex = false;
+            boolean hasOldTextIndex = false;
+            boolean hasNewTextIndex = false;
             // 获取已有索引
             List<IndexInfo> indexInfos = mongoTemplate.indexOps(SearchDocument.class).getIndexInfo();
             for (IndexInfo info : indexInfos) {
-                // 如果是复合文本索引，包含 "text" 类型的索引字段或者以 text_index 结尾的名称
                 if (info.getName().contains("text") || info.getIndexFields().stream().anyMatch(f -> f.isText())) {
-                    hasTextIndex = true;
-                    break;
+                    // 检查是否包含旧的索引字段 "title" 或 "content"
+                    boolean usesOldFields = info.getIndexFields().stream().anyMatch(f -> "title".equals(f.getKey()) || "content".equals(f.getKey()));
+                    if (usesOldFields) {
+                        hasOldTextIndex = true;
+                    } else {
+                        hasNewTextIndex = true;
+                    }
                 }
             }
 
-            if (!hasTextIndex) {
-                log.info("[MongoIndexInitializer] 未检测到全文索引，开始创建复合全文索引...");
+            if (hasOldTextIndex) {
+                log.info("[MongoIndexInitializer] 检测到旧的全文索引 (使用未分词字段)，正在删除以重新构建新的分词索引...");
+                try {
+                    mongoTemplate.indexOps(SearchDocument.class).dropIndex("search_text_index");
+                } catch (Exception ex) {
+                    log.warn("[MongoIndexInitializer] 删除旧索引失败，尝试使用集合重建", ex);
+                }
+                hasNewTextIndex = false;
+            }
+
+            if (!hasNewTextIndex) {
+                log.info("[MongoIndexInitializer] 未检测到新版全文索引，开始创建复合全文索引...");
                 TextIndexDefinition textIndex = new TextIndexDefinition.TextIndexDefinitionBuilder()
-                        .onField("title", 10F)
+                        .onField("segmentedTitle", 10F)
                         .onField("keywords", 5F)
-                        .onField("content", 1F)
+                        .onField("segmentedContent", 1F)
                         .named("search_text_index")
                         .withDefaultLanguage("none") // 指定中文分词忽略的默认语言设置（即不按特定的非中文字典解析）
                         .build();
                 mongoTemplate.indexOps(SearchDocument.class).ensureIndex(textIndex);
                 log.info("[MongoIndexInitializer] 复合全文索引创建成功！");
             } else {
-                log.info("[MongoIndexInitializer] 全文索引已存在，无需初始化。");
+                log.info("[MongoIndexInitializer] 新版分词全文索引已存在，无需初始化。");
             }
         } catch (Exception e) {
             log.error("[MongoIndexInitializer] 初始化 MongoDB 全文索引失败！", e);

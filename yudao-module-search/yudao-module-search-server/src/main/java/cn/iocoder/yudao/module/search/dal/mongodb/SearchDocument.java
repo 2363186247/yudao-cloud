@@ -19,8 +19,13 @@ public class SearchDocument {
     /**
      * 文档标题
      */
-    @TextIndexed(weight = 10)
     private String title;
+
+    /**
+     * 分词后标题 (仅用于全文索引构建与检索匹配)
+     */
+    @TextIndexed(weight = 10)
+    private String segmentedTitle;
     
     /**
      * 文档关键字/标签
@@ -31,8 +36,13 @@ public class SearchDocument {
     /**
      * 文档正文内容
      */
-    @TextIndexed(weight = 1)
     private String content;
+
+    /**
+     * 分词后正文内容 (仅用于全文索引构建与检索匹配)
+     */
+    @TextIndexed(weight = 1)
+    private String segmentedContent;
     
     /**
      * 相关度排序得分
