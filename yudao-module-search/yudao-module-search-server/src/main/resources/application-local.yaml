@@ -13,3 +13,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://root:admin@127.0.0.1:27017/yudao?authSource=admin
+
+yudao:
+  access-log:
+    enable: false

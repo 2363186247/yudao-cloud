@@ -3,6 +3,16 @@ server:
 
 --- #################### 数据库相关配置 ####################
 spring:
+  application:
+    name: system-server
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        server-addr: 127.0.0.1:8848
+        namespace: dev
+        username: nacos
+        password: nacos-admin
   autoconfigure:
     # noinspection SpringBootApplicationYaml
     exclude:

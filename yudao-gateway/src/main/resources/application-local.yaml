@@ -11,7 +11,37 @@ spring:
         group: DEFAULT_GROUP # 使用的 Nacos 配置分组，默认为 DEFAULT_GROUP
       config: # 【注册中心】配置项
         namespace: dev # 命名空间。这里使用 dev 开发环境
-        group: DEFAULT_GROUP # 使用的 Nacos 配置分组，默认为 DEFAULT_GROUPn
+        group: DEFAULT_GROUP # 使用的 Nacos 配置分组，默认为 DEFAULT_GROUP
+    gateway:
+      routes:
+        # 1. 优先匹配 search-server 微服务
+        - id: search-admin-api
+          uri: grayLb://search-server
+          predicates:
+            - Path=/admin-api/search/**
+          filters:
+            - RewritePath=/admin-api/search/v3/api-docs, /v3/api-docs
+        # 2. 兜底转发至本地单体应用 yudao-server (18080 端口)
+        - id: monolithic-backend-admin-api
+          uri: http://127.0.0.1:18080
+          predicates:
+            - Path=/admin-api/**
+        - id: monolithic-backend-app-api
+          uri: http://127.0.0.1:18080
+          predicates:
+            - Path=/app-api/**
+        - id: monolithic-backend-websocket
+          uri: ws://127.0.0.1:18080
+          predicates:
+            - Path=/infra/ws/**
+        - id: monolithic-backend-admin
+          uri: http://127.0.0.1:18080
+          predicates:
+            - Path=/admin/**
+        - id: monolithic-backend-jmreport
+          uri: http://127.0.0.1:18080
+          predicates:
+            - Path=/jmreport/**, /drag/**, /jimubi/**
 
 --- #################### 监控相关配置 ####################
 
