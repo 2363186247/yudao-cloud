@@ -823,6 +823,25 @@ const remainingRouter: AppRouteRecordRaw[] = [
         ]
       }
     ]
+  },
+  {
+    path: '/search',
+    component: Layout,
+    name: 'SearchCenter',
+    meta: { hidden: true },
+    children: [
+      {
+        path: 'document/detail',
+        name: 'SearchDocumentDetail',
+        meta: {
+          title: '情报详情',
+          noCache: true,
+          hidden: true,
+          activeMenu: '/search/document'
+        },
+        component: () => import('@/views/search/document/detail.vue')
+      }
+    ]
   }
 ]
 

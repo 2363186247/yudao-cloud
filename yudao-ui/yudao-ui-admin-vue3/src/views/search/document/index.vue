@@ -103,81 +103,19 @@
       @pagination="getList"
     />
   </ContentWrap>
-
-  <!-- Word 样式文档阅读视窗 (纯净只读模式，全字段动态展示) -->
-  <el-dialog
-    v-model="readerVisible"
-    title="文档视窗 (Word 阅读模式)"
-    width="850px"
-    destroy-on-close
-    append-to-body
-    :close-on-click-modal="true"
-  >
-    <template #header>
-      <div style="display: flex; justify-content: space-between; align-items: center; width: 95%;">
-        <span style="font-size: 16px; font-weight: bold; color: #303133;">
-          <Icon icon="ep:document" class="mr-5px" /> 文档视窗 (Word 阅读模式)
-        </span>
-      </div>
-    </template>
-
-    <div v-loading="readerLoading" style="background-color: #f0f2f5; padding: 25px 40px; border-radius: 8px;">
-      <!-- Word 纸张效果卡片 -->
-      <div style="background-color: #ffffff; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-radius: 4px; padding: 50px 60px; min-height: 500px; position: relative;">
-        <!-- 标题 -->
-        <h1 style="font-size: 26px; font-weight: bold; text-align: center; color: #2c3e50; margin: 0 0 20px 0; line-height: 1.4;">
-          <span v-html="highlightText(readerData.title, highlightSearchKey)"></span>
-        </h1>
-
-        <!-- 元数据面板 -->
-        <div style="display: flex; flex-direction: column; align-items: center; padding-bottom: 20px; margin-bottom: 25px; border-bottom: 1px solid #e8e8e8; font-size: 13px; color: #909399;">
-          <div style="margin-bottom: 10px;">
-            <span>创建时间：{{ readerData.createTime ? dateFormatter(null, null, readerData.createTime) : '未知' }}</span>
-          </div>
-          <div style="display: flex; align-items: center; flex-wrap: wrap; justify-content: center; gap: 8px;">
-            <span>关键字：</span>
-            <el-tag v-for="tag in readerData.keywords" :key="tag" size="small" type="success" effect="plain">
-              <span v-html="highlightText(tag, highlightSearchKey)"></span>
-            </el-tag>
-            <span v-if="!readerData.keywords || readerData.keywords.length === 0">无</span>
-          </div>
-        </div>
-
-        <!-- 文档正文内容 -->
-        <div 
-          style="font-size: 16px; line-height: 1.8; color: #333333; text-align: justify; white-space: pre-wrap; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;"
-          v-html="highlightText(readerData.content, highlightSearchKey)"
-        >
-        </div>
-
-        <!-- 附加属性展示：比正文小，居中，一行一个字段，比如 作者：张三 -->
-        <div 
-          v-if="Object.keys(readerData.extra || {}).length > 0" 
-          style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 30px; padding-top: 20px; border-top: 1px dashed #e8e8e8; font-size: 13px; color: #606266; line-height: 1.6;"
-        >
-          <div 
-            v-for="(val, key) in readerData.extra" 
-            :key="key"
-            style="text-align: center;"
-          >
-            <span style="font-weight: bold;">
-              <span v-html="highlightText(key, highlightSearchKey)"></span>：
-            </span>
-            <span v-html="highlightText(typeof val === 'object' ? JSON.stringify(val) : String(val), highlightSearchKey)"></span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { dateFormatter } from '@/utils/formatTime'
 import * as SearchDocumentApi from '@/api/search/document'
 
 defineOptions({ name: 'SearchDocument' })
+
+const router = useRouter()
+const route = useRoute()
 
 const loading = ref(true)
 const total = ref(0)
@@ -194,18 +132,6 @@ const queryParams = reactive({
 
 // 专门用来存储高亮显示所使用的关键字（只在点击搜索或重置后更新，避免打字时即时高亮）
 const highlightSearchKey = ref('')
-
-// === Word 式阅读窗口状态 (只读，无需编辑状态) ===
-const readerVisible = ref(false)
-const readerLoading = ref(false)
-const readerData = ref<any>({
-  id: undefined,
-  title: '',
-  keywords: [] as string[],
-  content: '',
-  extra: {},
-  createTime: undefined
-})
 
 /** 查询列表 */
 const getList = async () => {
@@ -296,19 +222,15 @@ const handleJsonBatchImport = (rawFile: any) => {
 }
 
 
-/** 打开 Word 式阅读窗 */
-const openReader = async (id: string) => {
-  readerVisible.value = true
-  readerLoading.value = true
-  try {
-    const data = await SearchDocumentApi.getSearchDocument(id)
-    readerData.value = data
-  } catch (error) {
-    console.error(error)
-    readerVisible.value = false
-  } finally {
-    readerLoading.value = false
-  }
+/** 打开详情页 */
+const openReader = (id: string) => {
+  router.push({
+    path: '/search/document/detail',
+    query: {
+      id: id,
+      searchKey: highlightSearchKey.value
+    }
+  })
 }
 
 /** 删除按钮操作 */
@@ -330,6 +252,10 @@ const handleDelete = async (id: string) => {
 }
 
 onMounted(() => {
+  if (route.query.searchKey) {
+    queryParams.searchKey = route.query.searchKey as string
+    highlightSearchKey.value = route.query.searchKey as string
+  }
   getList()
 })
 </script>
