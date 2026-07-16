@@ -1,0 +1,1332 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>境外舆情分析系统 - 境外人员登记</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/person-shell-standard.css" />
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --panel: rgba(255, 255, 255, 0.96);
+        --panel-solid: #ffffff;
+        --primary: #1f5fbf;
+        --primary-dark: #164a96;
+        --primary-light: #eaf2ff;
+        --text: #1f2a3d;
+        --text-secondary: #627089;
+        --line: #e5ecf5;
+        --success: #20a464;
+        --warning: #f0a63a;
+        --danger: #e25555;
+        --shadow: 0 10px 30px rgba(20, 56, 114, 0.08);
+        --radius-xl: 24px;
+        --radius-lg: 18px;
+        --radius-md: 14px;
+        --radius-sm: 8px;
+        --sidebar-width: 288px;
+        --topbar-height: 72px;
+        --nav-bg: linear-gradient(
+          180deg,
+          #102742 0%,
+          #173a61 56%,
+          #1b446f 100%
+        );
+        --nav-border: rgba(148, 176, 218, 0.2);
+        --nav-border-strong: rgba(148, 176, 218, 0.36);
+        --nav-surface: rgba(255, 255, 255, 0.06);
+        --nav-surface-hover: rgba(255, 255, 255, 0.1);
+        --nav-text: #d4e0f2;
+        --nav-text-muted: #95a9c6;
+        --nav-text-strong: #f7fbff;
+        --nav-accent: #82b2ff;
+        --topbar-bg: linear-gradient(
+          180deg,
+          rgba(252, 254, 255, 0.96) 0%,
+          rgba(243, 247, 252, 0.92) 100%
+        );
+        --topbar-line: #d8e2ee;
+        --topbar-surface: linear-gradient(180deg, #ffffff 0%, #f4f8fc 100%);
+        --topbar-shadow: 0 12px 24px rgba(16, 34, 63, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .system-layout {
+        display: grid;
+        grid-template-columns: var(--sidebar-width) 1fr;
+        grid-template-rows: 100vh;
+        width: 100%;
+        height: 100%;
+      }
+
+      .sidebar {
+        background: var(--nav-bg);
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow:
+          inset -1px 0 0 rgba(255, 255, 255, 0.04),
+          10px 0 32px rgba(10, 28, 53, 0.18);
+        display: flex;
+        flex-direction: column;
+        padding: 18px 16px 20px;
+        overflow-y: auto;
+      }
+
+      .brand-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 14px 18px;
+        margin-bottom: 14px;
+        border: 1px solid var(--nav-border);
+        border-radius: 20px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.08) 0%,
+          rgba(255, 255, 255, 0.03) 100%
+        );
+      }
+
+      .brand-logo {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #4c86df 0%, #2d63b3 100%);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 18px;
+        box-shadow: 0 10px 18px rgba(8, 22, 43, 0.24);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        flex-shrink: 0;
+      }
+
+      .brand-text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .brand-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--nav-text-strong);
+        line-height: 1.2;
+      }
+
+      .brand-subtitle {
+        font-size: 12px;
+        color: rgba(212, 224, 242, 0.74);
+        line-height: 1.3;
+      }
+
+      .menu-group {
+        margin-top: 8px;
+      }
+
+      .menu-section {
+        margin-bottom: 8px;
+      }
+
+      .menu-trigger,
+      .menu-link {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid transparent;
+        color: var(--nav-text);
+        transition: all 0.2s ease;
+        cursor: pointer;
+        user-select: none;
+        font-weight: 600;
+      }
+
+      .menu-link:hover,
+      .menu-trigger:hover {
+        background: var(--nav-surface-hover);
+        color: var(--nav-text-strong);
+        border-color: var(--nav-border);
+      }
+
+      .menu-link.active,
+      .submenu-link.active {
+        background: linear-gradient(
+          90deg,
+          rgba(62, 109, 197, 0.42) 0%,
+          rgba(116, 162, 241, 0.16) 100%
+        );
+        color: var(--nav-text-strong);
+        font-weight: 700;
+        border-color: var(--nav-border-strong);
+        box-shadow: 0 10px 18px rgba(8, 22, 43, 0.18);
+      }
+
+      .menu-main {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      .menu-icon {
+        width: 18px;
+        height: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: inherit;
+        flex-shrink: 0;
+      }
+
+      .menu-text {
+        font-size: 14px;
+        white-space: nowrap;
+      }
+
+      .menu-arrow {
+        font-size: 12px;
+        color: var(--nav-text-muted);
+        transition: transform 0.2s ease;
+        flex-shrink: 0;
+      }
+
+      .menu-section.open > .menu-trigger {
+        background: var(--nav-surface);
+        color: var(--nav-text-strong);
+        border-color: var(--nav-border);
+      }
+
+      .menu-section.open .menu-arrow {
+        transform: rotate(90deg);
+      }
+
+      .submenu {
+        list-style: none;
+        margin-top: 6px;
+        margin-left: 14px;
+        padding-left: 18px;
+        border-left: 1px solid rgba(148, 176, 218, 0.2);
+        display: none;
+      }
+
+      .menu-section.open .submenu {
+        display: block;
+      }
+
+      .submenu li {
+        margin: 4px 0;
+      }
+
+      .submenu-link {
+        display: flex;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 12px;
+        font-size: 13px;
+        color: var(--nav-text);
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+      }
+
+      .submenu-link:hover {
+        background: var(--nav-surface-hover);
+        color: var(--nav-text-strong);
+        border-color: var(--nav-border);
+      }
+
+      .main-wrapper {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .topbar {
+        height: var(--topbar-height);
+        padding: 0 28px;
+        border-bottom: 1px solid var(--topbar-line);
+        background: var(--topbar-bg);
+        backdrop-filter: blur(18px);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-shrink: 0;
+        box-shadow: 0 8px 24px rgba(16, 34, 63, 0.05);
+      }
+
+      .topbar-left {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .topbar-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #18304d;
+      }
+
+      .topbar-breadcrumb {
+        font-size: 12px;
+        color: #6a7a8c;
+      }
+
+      .topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .topbar-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        border: 1px solid var(--topbar-line);
+        background: var(--topbar-surface);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-dark);
+        box-shadow: var(--topbar-shadow);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .topbar-btn:hover {
+        background: #eef4fb;
+        border-color: #bfd0e6;
+        transform: translateY(-1px);
+      }
+
+      .user-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border-radius: 14px;
+        background: var(--topbar-surface);
+        border: 1px solid var(--topbar-line);
+        box-shadow: var(--topbar-shadow);
+      }
+
+      .user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #edf4ff 0%, #d7e4f7 100%);
+        color: var(--primary-dark);
+        box-shadow: inset 0 0 0 1px #cfdcf0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 14px;
+      }
+
+      .user-info {
+        line-height: 1.25;
+      }
+
+      .user-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .user-role {
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+
+      .content-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px 32px 32px;
+        background: #f5f8fc;
+      }
+
+      .register-page {
+        display: grid;
+        gap: 18px;
+        width: 100%;
+      }
+
+      .register-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .register-title-wrap {
+        display: flex;
+        min-width: 0;
+        align-items: flex-start;
+        gap: 14px;
+      }
+
+      .register-title-icon {
+        display: grid;
+        width: 48px;
+        height: 48px;
+        place-items: center;
+        flex: 0 0 auto;
+        border-radius: 10px;
+        color: #fff;
+        background: #2563eb;
+        box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+        font-size: 26px;
+      }
+
+      .register-title h1 {
+        margin: 0;
+        color: #0f2748;
+        font-size: 28px;
+        line-height: 1.15;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
+      .register-title p {
+        margin: 10px 0 0;
+        color: #6b7c93;
+        font-size: 15px;
+        line-height: 1.5;
+      }
+
+      .header-actions,
+      .form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .section-card {
+        padding: 22px 24px;
+        border: 1px solid #dbe6f3;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 6px 18px rgba(22, 79, 154, 0.06);
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        color: #0f2748;
+        font-size: 18px;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+
+      .section-title i {
+        display: grid;
+        width: 28px;
+        height: 28px;
+        place-items: center;
+        border-radius: 8px;
+        color: #2563eb;
+        background: #eaf2ff;
+        font-size: 18px;
+      }
+
+      .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .photo-panel {
+        min-width: 0;
+        padding: 14px;
+        border: 1px solid #dbe6f3;
+        border-radius: 10px;
+        background: #fff;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px 24px;
+      }
+
+      .form-grid.two-wide {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .span-2 {
+        grid-column: span 2;
+      }
+
+      .form-field {
+        display: grid;
+        min-width: 0;
+        gap: 8px;
+      }
+
+      .form-label {
+        color: #173458;
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .form-label .required {
+        color: #e25555;
+        margin-left: 3px;
+      }
+
+      .input-wrap,
+      .phone-group {
+        position: relative;
+        min-width: 0;
+      }
+
+      .input-wrap.searchable::after {
+        content: "\f0d1";
+        position: absolute;
+        right: 13px;
+        top: 50%;
+        color: #6b7c93;
+        font-family: remixicon;
+        font-size: 16px;
+        transform: translateY(-50%);
+        pointer-events: none;
+      }
+
+      .form-input,
+      .form-select,
+      .form-textarea {
+        width: 100%;
+        height: 44px;
+        padding: 0 14px;
+        border: 1px solid #cfdced;
+        border-radius: 8px;
+        color: #203a60;
+        background: #fff;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+      }
+
+      .searchable .form-input {
+        padding-right: 40px;
+      }
+
+      .form-input:hover,
+      .form-select:hover,
+      .form-textarea:hover {
+        border-color: #b8c9e1;
+      }
+
+      .form-input:focus,
+      .form-select:focus,
+      .form-textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      .form-input::placeholder,
+      .form-textarea::placeholder {
+        color: #8a9bb2;
+      }
+
+      .form-select {
+        cursor: pointer;
+        appearance: none;
+        background-image:
+          linear-gradient(45deg, transparent 50%, #657998 50%),
+          linear-gradient(135deg, #657998 50%, transparent 50%);
+        background-position:
+          calc(100% - 18px) 19px,
+          calc(100% - 13px) 19px;
+        background-size: 5px 5px, 5px 5px;
+        background-repeat: no-repeat;
+        padding-right: 38px;
+      }
+
+      .form-textarea {
+        height: auto;
+        min-height: 96px;
+        padding-top: 12px;
+        resize: vertical;
+      }
+
+      .photo-upload-area {
+        display: flex;
+        min-height: 108px;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #cfdced;
+        border-radius: 10px;
+        background: #fbfdff;
+        cursor: pointer;
+        transition: border-color 0.16s ease, background 0.16s ease;
+      }
+
+      .photo-upload-area:hover {
+        border-color: #2563eb;
+        background: #f3f7ff;
+      }
+
+      .photo-upload-area.has-photo {
+        padding: 8px;
+        border-style: solid;
+        border-color: #2563eb;
+        background: #fff;
+      }
+
+      .photo-placeholder {
+        display: grid;
+        justify-items: center;
+        gap: 8px;
+        color: #6b7c93;
+        text-align: center;
+      }
+
+      .photo-placeholder i {
+        color: #2563eb;
+        font-size: 30px;
+      }
+
+      .photo-placeholder-text {
+        color: #2563eb;
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .photo-placeholder-hint {
+        color: #6b7c93;
+        font-size: 13px;
+      }
+
+      .photo-preview {
+        width: 100%;
+        height: 100%;
+        max-height: 160px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+
+      .photo-actions {
+        margin-top: 10px;
+      }
+
+      .phone-group {
+        display: grid;
+        grid-template-columns: 92px 1fr;
+      }
+
+      .phone-group .form-select {
+        border-radius: 8px 0 0 8px;
+      }
+
+      .phone-group .form-input {
+        margin-left: -1px;
+        border-radius: 0 8px 8px 0;
+      }
+
+      .form-actions-card {
+        padding: 14px 10px 0;
+      }
+
+      .btn {
+        display: inline-flex;
+        min-width: 118px;
+        height: 44px;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 0 22px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 800;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: border-color 0.16s ease, color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+        outline: none;
+      }
+
+      .btn-primary {
+        border: 1px solid #2563eb;
+        color: #fff;
+        background: #2563eb;
+        box-shadow: 0 8px 16px rgba(37, 99, 235, 0.18);
+      }
+
+      .btn-primary:hover {
+        background: #1d56cf;
+      }
+
+      .btn-secondary,
+      .btn-outline {
+        border: 1px solid #cfdced;
+        color: #1f3556;
+        background: #fff;
+      }
+
+      .btn-secondary:hover,
+      .btn-outline:hover {
+        border-color: #2563eb;
+        color: #2563eb;
+      }
+
+      .legacy-fields {
+        display: none;
+      }
+
+      @media (max-width: 1080px) {
+        .system-layout {
+          grid-template-columns: 240px 1fr;
+        }
+      }
+
+      @media (max-width: 1280px) {
+        .form-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .span-2 {
+          grid-column: span 2;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .register-header {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .header-actions,
+        .form-actions {
+          justify-content: flex-start;
+        }
+
+        .form-grid,
+        .photo-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .span-2 {
+          grid-column: span 1;
+        }
+
+        .content-area {
+          padding: 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="system-layout">
+      <aside class="sidebar">
+        <div class="brand-box">
+          <div class="brand-logo">境</div>
+          <div class="brand-text">
+            <div class="brand-title">境外舆情分析系统</div>
+            <div class="brand-subtitle">
+              Overseas Public Opinion Intelligence Platform
+            </div>
+          </div>
+        </div>
+
+        <nav class="menu-group">
+          <div class="menu-section">
+            <a class="menu-link" href="index.html">
+              <span class="menu-main">
+                <span class="menu-icon">⌂</span>
+                <span class="menu-text">首页</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="menu-section">
+            <a class="menu-link" href="home.html">
+              <span class="menu-main">
+                <span class="menu-icon">W</span>
+                <span class="menu-text">工作台</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">◎</span>
+                <span class="menu-text">情报中心</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link" href="huiz.html">情报汇总</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="query.html">情报查询</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="search-national-network.html">全国联网查询</a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">◫</span>
+                <span class="menu-text">专题监测</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="topic_pool.html">专题池</a></li>
+              <li>
+                <a class="submenu-link" href="topic_create.html">创建专题</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="topic_report.html">专题报告</a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="menu-section open">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">☷</span>
+                <span class="menu-text">境外人员管理</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link active" href="person_register.html"
+                  >境外人员登记</a
+                >
+              </li>
+              <li>
+                <a class="submenu-link" href="warning_rules.html"
+                  >预警规则管理</a
+                >
+              </li>
+              <li>
+                <a class="submenu-link" href="comparison_findings.html">比对发现</a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">◉</span>
+                <span class="menu-text">目标画像</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link" href="target_pool.html">目标池</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="target_report.html"
+                  >目标分析报告</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">⌘</span>
+                <span class="menu-text">综合研判</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link" href="analysis_judgment.html"
+                  >研判分析</a
+                >
+              </li>
+              <li>
+                <a class="submenu-link" href="correlation_analysis.html"
+                  >关联分析</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">⚑</span>
+                <span class="menu-text">事件预警</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link" href="warning-rank.html">事件榜单</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="warning-my-events.html">我的事件</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="warning-subscriptions.html"
+                  >我的订阅</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="menu-section">
+            <a class="menu-link" href="business_push.html">
+              <span class="menu-main">
+                <span class="menu-icon">⇢</span>
+                <span class="menu-text">业务推送</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="menu-section">
+            <a class="menu-link" href="counter_data_analysis.html">
+              <span class="menu-main">
+                <span class="menu-icon">◌</span>
+                <span class="menu-text">反制数据分析</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">▣</span>
+                <span class="menu-text">智慧大屏</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link" href="hotspot_dashboard.html"
+                  >热点分析大屏</a
+                >
+              </li>
+              <li>
+                <a class="submenu-link" href="data_dashboard.html"
+                  >数据分析大屏</a
+                >
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </aside>
+
+      <div class="main-wrapper">
+        <header class="topbar">
+          <div class="topbar-left">
+            <div class="topbar-title">境外人员登记</div>
+            <div class="topbar-breadcrumb">首页 / 境外人员管理 / 境外人员登记</div>
+          </div>
+          <div class="topbar-right">
+            <div class="topbar-btn" title="通知中心">🔔</div>
+            <div class="topbar-btn" title="系统设置">⚙</div>
+            <div class="shell-duty-chip">
+              <span>在线 12 人</span>
+            </div>
+            <div class="user-card">
+              <div class="user-avatar">管</div>
+              <div class="user-info">
+                <div class="user-name">管理员</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="content-area">
+          <div class="register-page">
+            <section class="register-header">
+              <div class="register-title-wrap">
+                <div class="register-title-icon"><i class="ri-user-add-fill"></i></div>
+                <div class="register-title">
+                  <h1>境外人员登记</h1>
+                  <p>统一录入境外人员基础信息、出境信息与责任关联信息，支持照片上传与登记提交。</p>
+                </div>
+              </div>
+              <div class="header-actions">
+                <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+                  <i class="ri-save-3-line"></i>
+                  保存草稿
+                </button>
+                <button type="button" class="btn btn-outline" onclick="goBack()">取消</button>
+                <button type="button" class="btn btn-primary" onclick="saveRegistration()">
+                  <i class="ri-send-plane-fill"></i>
+                  提交审核
+                </button>
+              </div>
+            </section>
+
+            <section class="section-card">
+              <div class="section-title">
+                <i class="ri-user-smile-line"></i>
+                人员照片
+              </div>
+              <div class="photo-grid">
+                <div class="photo-panel">
+                  <div class="form-field">
+                    <label class="form-label">身份证照片<span class="required">*</span></label>
+                    <div class="photo-upload-area" id="idPhotoUploadArea">
+                      <div class="photo-placeholder" id="idPhotoPlaceholder">
+                        <i class="ri-upload-cloud-2-line"></i>
+                        <div class="photo-placeholder-text">点击上传</div>
+                        <div class="photo-placeholder-hint">支持 JPG、PNG 格式，大小不超过 5MB</div>
+                      </div>
+                      <img class="photo-preview" id="idPhotoPreview" style="display: none" alt="身份证照片预览" />
+                    </div>
+                    <div class="photo-actions" id="idPhotoActions" style="display: none">
+                      <button type="button" class="btn btn-outline" id="removeIdPhotoBtn">移除照片</button>
+                    </div>
+                    <input type="file" id="idPhoto" name="idPhoto" accept="image/jpeg,image/png" style="display: none" />
+                  </div>
+                </div>
+
+                <div class="photo-panel">
+                  <div class="form-field">
+                    <label class="form-label">生活照<span class="required">*</span></label>
+                    <div class="photo-upload-area" id="lifePhotoUploadArea">
+                      <div class="photo-placeholder" id="lifePhotoPlaceholder">
+                        <i class="ri-upload-cloud-2-line"></i>
+                        <div class="photo-placeholder-text">点击上传</div>
+                        <div class="photo-placeholder-hint">支持 JPG、PNG 格式，大小不超过 5MB</div>
+                      </div>
+                      <img class="photo-preview" id="lifePhotoPreview" style="display: none" alt="生活照预览" />
+                    </div>
+                    <div class="photo-actions" id="lifePhotoActions" style="display: none">
+                      <button type="button" class="btn btn-outline" id="removeLifePhotoBtn">移除照片</button>
+                    </div>
+                    <input type="file" id="lifePhoto" name="lifePhoto" accept="image/jpeg,image/png" style="display: none" />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="section-card">
+              <div class="section-title">
+                <i class="ri-contacts-book-2-line"></i>
+                基础身份信息
+              </div>
+              <div class="form-grid">
+                <div class="form-field">
+                  <label class="form-label">人员编号<span class="required">*</span></label>
+                  <input type="text" class="form-input" id="personNo" name="personNo" placeholder="请输入人员编号" />
+                </div>
+                <div class="form-field">
+                  <label class="form-label">身份证号<span class="required">*</span></label>
+                  <input type="text" class="form-input" id="idCardNo" name="idCardNo" placeholder="请输入身份证号" />
+                </div>
+                <div class="form-field">
+                  <label class="form-label">中文姓名<span class="required">*</span></label>
+                  <input type="text" class="form-input" id="chineseName" name="chineseName" placeholder="请输入中文姓名" />
+                </div>
+                <div class="form-field">
+                  <label class="form-label">别名</label>
+                  <input type="text" class="form-input" id="aliasName" name="aliasName" placeholder="请输入别名" />
+                </div>
+                <div class="form-field">
+                  <label class="form-label">性别<span class="required">*</span></label>
+                  <select class="form-select" id="gender" name="gender">
+                    <option value="">请选择性别</option>
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                    <option value="未知">未知</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label class="form-label">民族<span class="required">*</span></label>
+                  <select class="form-select" id="nation" name="nation">
+                    <option value="">请选择民族</option>
+                    <option value="汉族">汉族</option>
+                    <option value="维吾尔族">维吾尔族</option>
+                    <option value="回族">回族</option>
+                    <option value="哈萨克族">哈萨克族</option>
+                    <option value="其他">其他</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label class="form-label">出生日期<span class="required">*</span></label>
+                  <input type="date" class="form-input" id="birthDate" name="birthDate" />
+                </div>
+                <div class="form-field">
+                  <label class="form-label">年龄(岁)<span class="required">*</span></label>
+                  <input type="number" class="form-input" id="age" name="age" placeholder="请输入年龄（岁）" min="0" />
+                </div>
+              </div>
+            </section>
+
+            <section class="section-card">
+              <div class="section-title">
+                <i class="ri-file-list-3-line"></i>
+                出境与现状信息
+              </div>
+              <div class="form-grid">
+                <div class="form-field">
+                  <label class="form-label">目前所在国家<span class="required">*</span></label>
+                  <div class="input-wrap searchable">
+                    <input type="text" class="form-input" id="currentCountry" name="currentCountry" placeholder="请选择或输入国家名称" />
+                  </div>
+                </div>
+                <div class="form-field">
+                  <label class="form-label">目前所在城市<span class="required">*</span></label>
+                  <div class="input-wrap searchable">
+                    <input type="text" class="form-input" id="currentCity" name="currentCity" placeholder="请选择或输入城市名称" />
+                  </div>
+                </div>
+                <div class="form-field">
+                  <label class="form-label">出境时户籍所在地<span class="required">*</span></label>
+                  <div class="input-wrap searchable">
+                    <input type="text" class="form-input" id="householdLocation" name="householdLocation" placeholder="请选择或输入户籍所在地" />
+                  </div>
+                </div>
+                <div class="form-field">
+                  <label class="form-label">出境日期<span class="required">*</span></label>
+                  <input type="date" class="form-input" id="exitDate" name="exitDate" />
+                </div>
+                <div class="form-field">
+                  <label class="form-label">目前国籍<span class="required">*</span></label>
+                  <div class="input-wrap searchable">
+                    <input type="text" class="form-input" id="currentNationality" name="currentNationality" placeholder="请选择或输入国籍" />
+                  </div>
+                </div>
+                <div class="form-field">
+                  <label class="form-label">出境时所在单位<span class="required">*</span></label>
+                  <input type="text" class="form-input" id="exitUnit" name="exitUnit" placeholder="请输入出境时所在单位名称" />
+                </div>
+              </div>
+            </section>
+
+            <section class="section-card">
+              <div class="section-title">
+                <i class="ri-group-line"></i>
+                组织与责任信息
+              </div>
+              <div class="form-grid">
+                <div class="form-field span-2">
+                  <label class="form-label">组织类别<span class="required">*</span></label>
+                  <select class="form-select" id="orgLb" name="orgLb">
+                    <option value="">请选择组织类别</option>
+                    <option value="涉恐组织">涉恐组织</option>
+                    <option value="涉黑组织">涉黑组织</option>
+                    <option value="非法团体">非法团体</option>
+                    <option value="其他">其他</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label class="form-label">人员分类<span class="required">*</span></label>
+                  <select class="form-select" id="ryCategory" name="ryCategory">
+                    <option value="">请选择人员分类</option>
+                    <option value="重点人员">重点人员</option>
+                    <option value="关注人员">关注人员</option>
+                    <option value="一般人员">一般人员</option>
+                    <option value="其他">其他</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label class="form-label">人员状态<span class="required">*</span></label>
+                  <select class="form-select" id="ryStatus" name="ryStatus">
+                    <option value="">请选择人员状态</option>
+                    <option value="在位中">在位中</option>
+                    <option value="临控中">临控中</option>
+                    <option value="离位中">离位中</option>
+                  </select>
+                </div>
+                <div class="form-field span-2">
+                  <label class="form-label">关联责任人<span class="required">*</span></label>
+                  <input type="text" class="form-input" id="controlResponsiblePerson" name="controlResponsiblePerson" placeholder="请输入关联责任人姓名" />
+                </div>
+                <div class="form-field span-2">
+                  <label class="form-label">责任人电话<span class="required">*</span></label>
+                  <div class="phone-group">
+                    <select class="form-select" id="phoneCountryCode" name="phoneCountryCode">
+                      <option value="+86">+86</option>
+                      <option value="+852">+852</option>
+                      <option value="+853">+853</option>
+                      <option value="+1">+1</option>
+                    </select>
+                    <input type="tel" class="form-input" id="responsiblePhone" name="responsiblePhone" placeholder="请输入责任人手机号" />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div class="legacy-fields" aria-hidden="true">
+              <input type="hidden" id="foreignName" name="foreignName" />
+              <input type="hidden" id="passportNo" name="passportNo" />
+              <input type="hidden" id="contactPhone" name="contactPhone" />
+              <input type="hidden" id="policeStation" name="policeStation" />
+              <input type="hidden" id="policeStationPhone" name="policeStationPhone" />
+              <input type="hidden" id="householdAddress" name="householdAddress" />
+              <input type="hidden" id="zzPosition" name="zzPosition" />
+              <input type="hidden" id="thoughtZk" name="thoughtZk" />
+              <input type="hidden" id="lkLevel" name="lkLevel" />
+              <input type="hidden" id="controlUnit" name="controlUnit" />
+              <input type="hidden" id="controlPoliceStation" name="controlPoliceStation" />
+            </div>
+
+            <div class="form-actions-card">
+              <div class="form-actions">
+                <button type="button" class="btn btn-outline" onclick="goBack()">取消</button>
+                <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+                  <i class="ri-save-3-line"></i>
+                  保存草稿
+                </button>
+                <button type="button" class="btn btn-primary" onclick="saveRegistration()">
+                  <i class="ri-send-plane-fill"></i>
+                  提交审核
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      const photoUploaders = [
+        {
+          area: document.getElementById("idPhotoUploadArea"),
+          input: document.getElementById("idPhoto"),
+          placeholder: document.getElementById("idPhotoPlaceholder"),
+          preview: document.getElementById("idPhotoPreview"),
+          actions: document.getElementById("idPhotoActions"),
+          removeBtn: document.getElementById("removeIdPhotoBtn"),
+        },
+        {
+          area: document.getElementById("lifePhotoUploadArea"),
+          input: document.getElementById("lifePhoto"),
+          placeholder: document.getElementById("lifePhotoPlaceholder"),
+          preview: document.getElementById("lifePhotoPreview"),
+          actions: document.getElementById("lifePhotoActions"),
+          removeBtn: document.getElementById("removeLifePhotoBtn"),
+        },
+      ];
+
+      function clearPhoto(uploader) {
+        uploader.preview.src = "";
+        uploader.preview.style.display = "none";
+        uploader.placeholder.style.display = "block";
+        uploader.actions.style.display = "none";
+        uploader.area.classList.remove("has-photo");
+        uploader.input.value = "";
+      }
+
+      photoUploaders.forEach((uploader) => {
+        uploader.area.addEventListener("click", () => {
+          uploader.input.click();
+        });
+
+        uploader.input.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const isValidType = ["image/jpeg", "image/png"].includes(file.type);
+            const isValidSize = file.size <= 5 * 1024 * 1024;
+            if (!isValidType || !isValidSize) {
+              alert("请上传 JPG、PNG 格式且大小不超过 5MB 的图片。");
+              uploader.input.value = "";
+              return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              uploader.preview.src = event.target.result;
+              uploader.preview.style.display = "block";
+              uploader.placeholder.style.display = "none";
+              uploader.actions.style.display = "flex";
+              uploader.area.classList.add("has-photo");
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+
+        uploader.removeBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          clearPhoto(uploader);
+        });
+      });
+
+      function resetForm() {
+        if (confirm("确定要重置所有输入内容吗？")) {
+          const form = document.querySelector(".register-page");
+          const inputs = form.querySelectorAll(
+            'input[type="text"], input[type="tel"], input[type="date"], input[type="number"], input[type="file"], input[type="hidden"]',
+          );
+          const selects = form.querySelectorAll("select");
+          const textareas = form.querySelectorAll("textarea");
+
+          inputs.forEach((input) => (input.value = ""));
+          selects.forEach((select) => (select.value = ""));
+          textareas.forEach((textarea) => (textarea.value = ""));
+          document.getElementById("phoneCountryCode").value = "+86";
+          photoUploaders.forEach(clearPhoto);
+        }
+      }
+
+      function saveDraft() {
+        alert("草稿已保存。");
+      }
+
+      function goBack() {
+        if (confirm("确定要返回列表吗？未保存的内容将丢失。")) {
+          window.location.href = "overseas_person_list.html";
+        }
+      }
+
+      function saveRegistration() {
+        alert("人员登记信息已提交审核！");
+      }
+
+      document.querySelectorAll(".menu-section").forEach((section) => {
+        const trigger = section.querySelector(".menu-trigger");
+        if (trigger) {
+          trigger.addEventListener("click", () => {
+            section.classList.toggle("open");
+          });
+        }
+      });
+    </script>
+    <script src="../assets/js/person-shell-standard.js"></script>
+  </body>
+</html>
+
+
+

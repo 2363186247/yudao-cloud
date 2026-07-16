@@ -1,0 +1,1720 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>境外舆情分析系统 - 预警规则管理</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/person-shell-standard.css" />
+    <style>
+      :root {
+        --bg: #f5f7fb;
+        --panel: rgba(255, 255, 255, 0.96);
+        --panel-solid: #ffffff;
+        --primary: #1677ff;
+        --primary-dark: #0958d9;
+        --primary-light: #e8f3ff;
+        --text: #1f2d3d;
+        --text-secondary: #7b8794;
+        --line: #dfe7f1;
+        --success: #20a464;
+        --warning: #f0a63a;
+        --danger: #e25555;
+        --shadow: 0 4px 14px rgba(23, 63, 111, 0.06);
+        --radius-xl: 24px;
+        --radius-lg: 12px;
+        --radius-md: 14px;
+        --radius-sm: 8px;
+        --sidebar-width: 288px;
+        --topbar-height: 72px;
+        --nav-bg: linear-gradient(
+          180deg,
+          #102742 0%,
+          #173a61 56%,
+          #1b446f 100%
+        );
+        --nav-border: rgba(148, 176, 218, 0.2);
+        --nav-border-strong: rgba(148, 176, 218, 0.36);
+        --nav-surface: rgba(255, 255, 255, 0.06);
+        --nav-surface-hover: rgba(255, 255, 255, 0.1);
+        --nav-text: #d4e0f2;
+        --nav-text-muted: #95a9c6;
+        --nav-text-strong: #f7fbff;
+        --nav-accent: #82b2ff;
+        --topbar-bg: linear-gradient(
+          180deg,
+          rgba(252, 254, 255, 0.96) 0%,
+          rgba(243, 247, 252, 0.92) 100%
+        );
+        --topbar-line: #d8e2ee;
+        --topbar-surface: linear-gradient(180deg, #ffffff 0%, #f4f8fc 100%);
+        --topbar-shadow: 0 12px 24px rgba(16, 34, 63, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .system-layout {
+        display: grid;
+        grid-template-columns: var(--sidebar-width) 1fr;
+        grid-template-rows: 100vh;
+        width: 100%;
+        height: 100%;
+      }
+
+      .sidebar {
+        background: var(--nav-bg);
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow:
+          inset -1px 0 0 rgba(255, 255, 255, 0.04),
+          10px 0 32px rgba(10, 28, 53, 0.18);
+        display: flex;
+        flex-direction: column;
+        padding: 18px 16px 20px;
+        overflow-y: auto;
+      }
+
+      .brand-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 14px 18px;
+        margin-bottom: 14px;
+        border: 1px solid var(--nav-border);
+        border-radius: 20px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.08) 0%,
+          rgba(255, 255, 255, 0.03) 100%
+        );
+      }
+
+      .brand-logo {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #4c86df 0%, #2d63b3 100%);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 18px;
+        box-shadow: 0 10px 18px rgba(8, 22, 43, 0.24);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        flex-shrink: 0;
+      }
+
+      .brand-text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .brand-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--nav-text-strong);
+        line-height: 1.2;
+      }
+
+      .brand-subtitle {
+        font-size: 12px;
+        color: rgba(212, 224, 242, 0.74);
+        line-height: 1.3;
+      }
+
+      .menu-group {
+        margin-top: 8px;
+      }
+
+      .menu-section {
+        margin-bottom: 8px;
+      }
+
+      .menu-trigger,
+      .menu-link {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid transparent;
+        color: var(--nav-text);
+        transition: all 0.2s ease;
+        cursor: pointer;
+        user-select: none;
+        font-weight: 600;
+      }
+
+      .menu-link:hover,
+      .menu-trigger:hover {
+        background: var(--nav-surface-hover);
+        color: var(--nav-text-strong);
+        border-color: var(--nav-border);
+      }
+
+      .menu-link.active,
+      .submenu-link.active {
+        background: linear-gradient(
+          90deg,
+          rgba(62, 109, 197, 0.42) 0%,
+          rgba(116, 162, 241, 0.16) 100%
+        );
+        color: var(--nav-text-strong);
+        font-weight: 700;
+        border-color: var(--nav-border-strong);
+        box-shadow: 0 10px 18px rgba(8, 22, 43, 0.18);
+      }
+
+      .menu-main {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      .menu-icon {
+        width: 18px;
+        height: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: inherit;
+        flex-shrink: 0;
+      }
+
+      .menu-text {
+        font-size: 14px;
+        white-space: nowrap;
+      }
+
+      .menu-arrow {
+        font-size: 12px;
+        color: var(--nav-text-muted);
+        transition: transform 0.2s ease;
+        flex-shrink: 0;
+      }
+
+      .menu-section.open > .menu-trigger {
+        background: var(--nav-surface);
+        color: var(--nav-text-strong);
+        border-color: var(--nav-border);
+      }
+
+      .menu-section.open .menu-arrow {
+        transform: rotate(90deg);
+      }
+
+      .submenu {
+        list-style: none;
+        margin-top: 6px;
+        margin-left: 14px;
+        padding-left: 18px;
+        border-left: 1px solid rgba(148, 176, 218, 0.2);
+        display: none;
+      }
+
+      .menu-section.open .submenu {
+        display: block;
+      }
+
+      .submenu li {
+        margin: 4px 0;
+      }
+
+      .submenu-link {
+        display: flex;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 12px;
+        font-size: 13px;
+        color: var(--nav-text);
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+      }
+
+      .submenu-link:hover {
+        background: var(--nav-surface-hover);
+        color: var(--nav-text-strong);
+        border-color: var(--nav-border);
+      }
+
+      .main-wrapper {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .topbar {
+        height: var(--topbar-height);
+        padding: 0 28px;
+        border-bottom: 1px solid var(--topbar-line);
+        background: var(--topbar-bg);
+        backdrop-filter: blur(18px);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-shrink: 0;
+        box-shadow: 0 8px 24px rgba(16, 34, 63, 0.05);
+      }
+
+      .topbar-left {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .topbar-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #18304d;
+      }
+
+      .topbar-breadcrumb {
+        font-size: 12px;
+        color: #6a7a8c;
+      }
+
+      .topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .topbar-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        border: 1px solid var(--topbar-line);
+        background: var(--topbar-surface);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-dark);
+        box-shadow: var(--topbar-shadow);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .topbar-btn:hover {
+        background: #eef4fb;
+        border-color: #bfd0e6;
+        transform: translateY(-1px);
+      }
+
+      .user-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border-radius: 14px;
+        background: var(--topbar-surface);
+        border: 1px solid var(--topbar-line);
+        box-shadow: var(--topbar-shadow);
+      }
+
+      .user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #edf4ff 0%, #d7e4f7 100%);
+        color: var(--primary-dark);
+        box-shadow: inset 0 0 0 1px #cfdcf0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 14px;
+      }
+
+      .user-info {
+        line-height: 1.25;
+      }
+
+      .user-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .user-role {
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+
+      .content-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px 24px 28px;
+        background: var(--bg);
+      }
+
+      .query-panel {
+        padding: 22px 28px;
+        margin-bottom: 16px;
+        border: 1px solid #e5eaf3;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+      }
+
+      .query-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        align-items: center;
+        column-gap: 28px;
+        row-gap: 18px;
+      }
+
+      .query-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 16px;
+        margin-top: 20px;
+      }
+
+      .query-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .query-item label {
+        width: 82px;
+        flex-shrink: 0;
+        color: #0f1f3d;
+        font-size: 15px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .query-item input,
+      .query-item select {
+        width: 100%;
+        height: 40px;
+        padding: 0 14px;
+        border: 1px solid #d8dee9;
+        border-radius: 4px;
+        color: #1f2d3d;
+        background: #fff;
+        font-size: 14px;
+        outline: none;
+      }
+
+      .query-item input:focus,
+      .query-item select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+      }
+
+      .query-item input::placeholder {
+        color: #9aa5b5;
+      }
+
+      .query-item select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23627089' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 32px;
+      }
+
+      .query-panel .btn-primary {
+        height: 40px;
+        min-width: 92px;
+        padding: 0 24px;
+        border: none;
+        border-radius: 4px;
+        color: #fff;
+        background: #1f6fff;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .query-panel .btn-default {
+        height: 40px;
+        min-width: 92px;
+        padding: 0 24px;
+        border: 1px solid #d8dee9;
+        border-radius: 4px;
+        color: #333;
+        background: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .btn {
+        display: inline-flex;
+        min-width: 104px;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: 48px;
+        padding: 0 22px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        outline: none;
+        white-space: nowrap;
+      }
+
+      .btn i {
+        font-size: 16px;
+      }
+
+      .btn-primary {
+        border: 1px solid var(--primary);
+        background: var(--primary);
+        color: #fff;
+        box-shadow: 0 4px 10px rgba(22, 119, 255, 0.18);
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-dark);
+        box-shadow: 0 6px 14px rgba(22, 119, 255, 0.22);
+      }
+
+      .btn-secondary {
+        background: var(--panel-solid);
+        color: var(--text);
+        border: 1px solid var(--line);
+      }
+
+      .btn-secondary:hover {
+        background: #f5f7fb;
+        border-color: #c5d0e0;
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: var(--text-secondary);
+        border: 1px solid var(--line);
+      }
+
+      .btn-outline:hover {
+        background: #f5f7fb;
+        color: var(--text);
+      }
+
+      .btn-text {
+        background: transparent;
+        color: var(--primary);
+        padding: 6px 10px;
+        border: 0;
+        box-shadow: none;
+      }
+
+      .btn-text:hover {
+        background: var(--primary-light);
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, #dc3545 0%, #e55b63 100%);
+        color: #fff;
+      }
+
+      .btn-danger:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(220, 53, 69, 0.3);
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, #17a2b8 0%, #20a464 100%);
+        color: #fff;
+      }
+
+      .table-card {
+        background: var(--panel-solid);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .table-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--line);
+        background: #fafbff;
+      }
+
+      .table-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .table-info {
+        font-size: 13px;
+        color: var(--text-secondary);
+      }
+
+      .table-tools {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .table-tools .btn {
+        height: 36px;
+        min-width: 112px;
+        padding: 0 14px;
+        font-size: 13px;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .data-table thead {
+        background: #f8faff;
+      }
+
+      .data-table th {
+        padding: 14px 16px;
+        text-align: left;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-secondary);
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+      }
+
+      .data-table td {
+        padding: 16px;
+        font-size: 14px;
+        color: var(--text);
+        border-bottom: 1px solid #f0f4fa;
+        vertical-align: middle;
+      }
+
+      .data-table tbody tr {
+        transition: all 0.15s ease;
+      }
+
+      .data-table tbody tr:hover {
+        background: #f8fbff;
+      }
+
+      .data-table tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      .rule-id {
+        font-family: "Consolas", "Monaco", monospace;
+        font-size: 13px;
+        color: var(--text-secondary);
+      }
+
+      .rule-name {
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .tag-primary {
+        background: var(--primary-light);
+        color: var(--primary);
+      }
+
+      .tag-success {
+        background: #e9f8f1;
+        color: var(--success);
+      }
+
+      .tag-warning {
+        background: #fff4e4;
+        color: var(--warning);
+      }
+
+      .tag-danger {
+        background: #feecec;
+        color: var(--danger);
+      }
+
+      .tag-info {
+        background: #eaf2ff;
+        color: #3b82f6;
+      }
+
+      .status-enabled {
+        background: #e9f8f1;
+        color: var(--success);
+      }
+
+      .status-disabled {
+        background: #f0f0f2;
+        color: #8c8c8c;
+      }
+
+      .action-btns {
+        display: flex;
+        gap: 6px;
+      }
+
+      .action-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        background: var(--panel-solid);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        color: var(--text-secondary);
+      }
+
+      .action-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--primary-light);
+      }
+
+      .action-btn.danger:hover {
+        border-color: var(--danger);
+        color: var(--danger);
+        background: #feecec;
+      }
+
+      .action-btn i {
+        font-size: 16px;
+      }
+
+      .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 24px;
+        border-top: 1px solid var(--line);
+        background: #fafbff;
+      }
+
+      .pagination-info {
+        font-size: 13px;
+        color: var(--text-secondary);
+      }
+
+      .pagination-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .page-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        background: var(--panel-solid);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        font-size: 14px;
+        color: var(--text);
+      }
+
+      .page-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--primary-light);
+      }
+
+      .page-btn.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+      }
+
+      .page-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 28, 53, 0.5);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s ease;
+      }
+
+      .modal-overlay.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal {
+        width: min(680px, 90vw);
+        max-height: 85vh;
+        background: var(--panel-solid);
+        border-radius: var(--radius-xl);
+        box-shadow: 0 25px 60px rgba(10, 28, 53, 0.25);
+        display: flex;
+        flex-direction: column;
+        transform: scale(0.95) translateY(10px);
+        transition: all 0.2s ease;
+      }
+
+      .modal-overlay.show .modal {
+        transform: scale(1) translateY(0);
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .modal-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .modal-close {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        border: none;
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--text-secondary);
+        transition: all 0.15s ease;
+      }
+
+      .modal-close:hover {
+        background: #f0f0f2;
+        color: var(--text);
+      }
+
+      .modal-close i {
+        font-size: 20px;
+      }
+
+      .modal-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px;
+      }
+
+      .modal-footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 20px 24px;
+        border-top: 1px solid var(--line);
+        background: #fafbff;
+        border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+
+      .form-grid-full {
+        grid-column: span 2;
+      }
+
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .form-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .form-label .required {
+        color: var(--danger);
+        margin-left: 2px;
+      }
+
+      .form-input,
+      .form-select,
+      .form-textarea {
+        width: 100%;
+        padding: 11px 14px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        color: var(--text);
+        background: var(--panel-solid);
+        transition: all 0.2s ease;
+        outline: none;
+      }
+
+      .form-input:focus,
+      .form-select:focus,
+      .form-textarea:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(31, 95, 191, 0.1);
+      }
+
+      .form-select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23627089' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 32px;
+      }
+
+      .form-textarea {
+        min-height: 80px;
+        resize: vertical;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-secondary);
+      }
+
+      .empty-state i {
+        font-size: 48px;
+        color: #c0cce0;
+        margin-bottom: 16px;
+      }
+
+      .empty-state-text {
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+
+      @media (max-width: 1080px) {
+        .system-layout {
+          grid-template-columns: 240px 1fr;
+        }
+      }
+
+      @media (max-width: 1400px) {
+        .query-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 900px) {
+        .query-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .query-item {
+          width: 100%;
+        }
+
+        .query-item input,
+        .query-item select {
+          width: 100%;
+        }
+
+        .query-actions {
+          justify-content: flex-start;
+          margin-left: 0;
+          padding-left: 0;
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .form-grid-full {
+          grid-column: span 1;
+        }
+
+        .data-table {
+          font-size: 13px;
+        }
+
+        .data-table th,
+        .data-table td {
+          padding: 12px 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="system-layout">
+      <aside class="sidebar">
+        <div class="brand-box">
+          <div class="brand-logo">境</div>
+          <div class="brand-text">
+            <div class="brand-title">境外舆情分析系统</div>
+            <div class="brand-subtitle">
+              Overseas Public Opinion Intelligence Platform
+            </div>
+          </div>
+        </div>
+
+        <nav class="menu-group">
+          <div class="menu-section">
+            <a class="menu-link" href="index.html">
+              <span class="menu-main">
+                <span class="menu-icon">⌂</span>
+                <span class="menu-text">首页</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="menu-section">
+            <a class="menu-link" href="home.html">
+              <span class="menu-main">
+                <span class="menu-icon">W</span>
+                <span class="menu-text">工作台</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">◎</span>
+                <span class="menu-text">情报中心</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="huiz.html">情报汇总</a></li>
+              <li><a class="submenu-link" href="query.html">情报查询</a></li>
+              <li><a class="submenu-link" href="search-national-network.html">全国联网查询</a></li>
+            </ul>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">◫</span>
+                <span class="menu-text">专题监测</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="topic_pool.html">专题池</a></li>
+              <li>
+                <a class="submenu-link" href="topic_create.html">创建专题</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="topic_report.html">专题报告</a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="menu-section open">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">☷</span>
+                <span class="menu-text">境外人员管理</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link" href="person_register.html">境外人员登记</a>
+              </li>
+              <li>
+                <a class="submenu-link active" href="warning_rules.html"
+                  >预警规则管理</a
+                >
+              </li>
+              <li>
+                <a class="submenu-link" href="comparison_findings.html"
+                  >比对发现</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">◉</span>
+                <span class="menu-text">目标画像</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link" href="target_pool.html">目标池</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="target_report.html"
+                  >目标分析报告</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">⌘</span>
+                <span class="menu-text">综合研判</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link" href="analysis_judgment.html"
+                  >研判分析</a
+                >
+              </li>
+              <li>
+                <a class="submenu-link" href="correlation_analysis.html"
+                  >关联分析</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">⚑</span>
+                <span class="menu-text">事件预警</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link" href="warning-rank.html">事件榜单</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="warning-my-events.html">我的事件</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="warning-subscriptions.html"
+                  >我的订阅</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="menu-section">
+            <a class="menu-link" href="business_push.html">
+              <span class="menu-main">
+                <span class="menu-icon">⇢</span>
+                <span class="menu-text">业务推送</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="menu-section">
+            <a class="menu-link" href="counter_data_analysis.html">
+              <span class="menu-main">
+                <span class="menu-icon">◌</span>
+                <span class="menu-text">反制数据分析</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">▣</span>
+                <span class="menu-text">智慧大屏</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link" href="hotspot_dashboard.html"
+                  >热点分析大屏</a
+                >
+              </li>
+              <li>
+                <a class="submenu-link" href="data_dashboard.html"
+                  >数据分析大屏</a
+                >
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </aside>
+
+      <div class="main-wrapper">
+        <header class="topbar">
+          <div class="topbar-left">
+            <div class="topbar-title">预警规则管理</div>
+            <div class="topbar-breadcrumb">首页 / 境外人员管理 / 预警规则管理</div>
+          </div>
+          <div class="topbar-right">
+            <div class="topbar-btn" title="通知中心">🔔</div>
+            <div class="topbar-btn" title="系统设置">⚙</div>
+            <div class="shell-duty-chip">
+              <span>在线 12 人</span>
+            </div>
+            <div class="user-card">
+              <div class="user-avatar">管</div>
+              <div class="user-info">
+                <div class="user-name">管理员</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="content-area">
+          <div class="query-panel">
+            <div class="query-grid">
+              <div class="query-item">
+                <label>规则编号：</label>
+                <input
+                  type="text"
+                  id="ruleNameInput"
+                  placeholder="请输入"
+                />
+              </div>
+              <div class="query-item">
+                <label>状态：</label>
+                <select id="statusFilter">
+                  <option value="">请选择</option>
+                  <option value="enabled">已启用</option>
+                  <option value="disabled">已停用</option>
+                </select>
+              </div>
+            </div>
+            <div class="query-actions">
+              <button class="btn-primary" onclick="searchRules()">查询</button>
+              <button class="btn-default" onclick="resetFilters()">重置</button>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <div class="table-header">
+              <span class="table-title">规则列表</span>
+              <div class="table-tools">
+                <span class="table-info" id="tableInfo">共 5 条记录</span>
+                <button class="btn btn-primary" onclick="openModal('add')">
+                  <i class="ri-add-line"></i>新增规则
+                </button>
+              </div>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>规则编号</th>
+                  <th>规则名称</th>
+                  <th>预警类型</th>
+                  <th>触发条件</th>
+                  <th>预警等级</th>
+                  <th>适用对象</th>
+                  <th>状态</th>
+                  <th>创建时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="ruleTableBody"></tbody>
+            </table>
+            <div class="pagination">
+              <span class="pagination-info" id="paginationInfo"
+                >显示 1-5 条，共 5 条</span
+              >
+              <div class="pagination-controls">
+                <button class="page-btn" disabled>
+                  <i class="ri-arrow-left-s-line"></i>
+                </button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn" disabled>
+                  <i class="ri-arrow-right-s-line"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="ruleModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title" id="modalTitle">新增规则</h3>
+          <button class="modal-close" onclick="closeModal()">
+            <i class="ri-close-line"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="ruleForm">
+            <div class="form-grid">
+              <div class="form-field form-grid-full">
+                <label class="form-label"
+                  >规则名称<span class="required">*</span></label
+                >
+                <input
+                  type="text"
+                  class="form-input"
+                  id="ruleName"
+                  placeholder="请输入规则名称"
+                  required
+                />
+              </div>
+              <div class="form-field">
+                <label class="form-label"
+                  >预警类型<span class="required">*</span></label
+                >
+                <select class="form-select" id="alertType" required>
+                  <option value="">请选择预警类型</option>
+                  <option value="behavior">行为预警</option>
+                  <option value="track">轨迹预警</option>
+                  <option value="area">区域预警</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label class="form-label"
+                  >预警等级<span class="required">*</span></label
+                >
+                <select class="form-select" id="alertLevel" required>
+                  <option value="">请选择预警等级</option>
+                  <option value="high">高危</option>
+                  <option value="medium">中危</option>
+                  <option value="low">低危</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label class="form-label"
+                  >适用对象<span class="required">*</span></label
+                >
+                <select class="form-select" id="targetObject" required>
+                  <option value="">请选择适用对象</option>
+                  <option value="focus">重点关注人员</option>
+                  <option value="foreign">外籍人员</option>
+                  <option value="blacklist">黑名单人员</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label class="form-label"
+                  >触发阈值<span class="required">*</span></label
+                >
+                <input
+                  type="text"
+                  class="form-input"
+                  id="threshold"
+                  placeholder="如：次数、时长、频次"
+                  required
+                />
+              </div>
+              <div class="form-field form-grid-full">
+                <label class="form-label"
+                  >触发条件描述<span class="required">*</span></label
+                >
+                <textarea
+                  class="form-textarea"
+                  id="triggerCondition"
+                  placeholder="请描述触发预警的具体条件"
+                  required
+                ></textarea>
+              </div>
+              <div class="form-field">
+                <label class="form-label"
+                  >处置方式<span class="required">*</span></label
+                >
+                <select class="form-select" id="disposalMethod" required>
+                  <option value="">请选择处置方式</option>
+                  <option value="remind">自动提醒</option>
+                  <option value="push">推送值班人员</option>
+                  <option value="ticket">生成预警工单</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label class="form-label">规则状态</label>
+                <select class="form-select" id="ruleStatus">
+                  <option value="enabled">启用</option>
+                  <option value="disabled">停用</option>
+                </select>
+              </div>
+              <div class="form-field form-grid-full">
+                <label class="form-label">备注说明</label>
+                <textarea
+                  class="form-textarea"
+                  id="remark"
+                  placeholder="请输入备注信息"
+                ></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+          <button class="btn btn-primary" onclick="saveRule()">
+            <i class="ri-save-line"></i>保存
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const ruleData = [
+        {
+          id: "WR001",
+          name: "重点人员夜间异常活动预警",
+          type: "behavior",
+          typeName: "行为预警",
+          condition: "连续出现在多个敏感区域",
+          level: "high",
+          levelName: "高危",
+          target: "focus",
+          targetName: "重点关注人员",
+          status: "enabled",
+          createTime: "2026-04-10 09:30",
+        },
+        {
+          id: "WR002",
+          name: "外籍人员高频活动预警",
+          type: "track",
+          typeName: "轨迹预警",
+          condition: "24小时内活动频次超过阈值",
+          level: "medium",
+          levelName: "中危",
+          target: "foreign",
+          targetName: "外籍人员",
+          status: "enabled",
+          createTime: "2026-04-08 14:20",
+        },
+        {
+          id: "WR003",
+          name: "黑名单人员区域闯入预警",
+          type: "area",
+          typeName: "区域预警",
+          condition: "进入禁止区域范围",
+          level: "high",
+          levelName: "高危",
+          target: "blacklist",
+          targetName: "黑名单人员",
+          status: "enabled",
+          createTime: "2026-04-05 11:15",
+        },
+        {
+          id: "WR004",
+          name: "敏感时段活动异常预警",
+          type: "behavior",
+          typeName: "行为预警",
+          condition: "夜间22:00-06:00高频活动",
+          level: "low",
+          levelName: "低危",
+          target: "focus",
+          targetName: "重点关注人员",
+          status: "disabled",
+          createTime: "2026-04-03 16:45",
+        },
+        {
+          id: "WR005",
+          name: "短时多次入境预警",
+          type: "track",
+          typeName: "轨迹预警",
+          condition: "7天内入境超过5次",
+          level: "medium",
+          levelName: "中危",
+          target: "foreign",
+          targetName: "外籍人员",
+          status: "enabled",
+          createTime: "2026-04-01 10:00",
+        },
+      ];
+
+      let currentEditId = null;
+
+      function renderTable(data) {
+        const tbody = document.getElementById("ruleTableBody");
+        if (data.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="9">
+                <div class="empty-state">
+                  <i class="ri-file-list-3-line"></i>
+                  <p class="empty-state-text">暂无预警规则</p>
+                </div>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = data
+          .map(
+            (rule) => `
+          <tr>
+            <td><span class="rule-id">${rule.id}</span></td>
+            <td><span class="rule-name">${rule.name}</span></td>
+            <td><span class="tag tag-primary">${rule.typeName}</span></td>
+            <td>${rule.condition}</td>
+            <td>
+              <span class="tag ${
+                rule.level === "high"
+                  ? "tag-danger"
+                  : rule.level === "medium"
+                    ? "tag-warning"
+                    : "tag-info"
+              }">${rule.levelName}</span>
+            </td>
+            <td>${rule.targetName}</td>
+            <td>
+              <span class="tag ${rule.status === "enabled" ? "status-enabled" : "status-disabled"}">
+                ${rule.status === "enabled" ? "启用" : "停用"}
+              </span>
+            </td>
+            <td>${rule.createTime}</td>
+            <td>
+              <div class="action-btns">
+                <button class="action-btn" title="查看" onclick="viewRule('${rule.id}')">
+                  <i class="ri-eye-line"></i>
+                </button>
+                <button class="action-btn" title="编辑" onclick="editRule('${rule.id}')">
+                  <i class="ri-edit-line"></i>
+                </button>
+                <button class="action-btn" title="${rule.status === "enabled" ? "停用" : "启用"}" onclick="toggleStatus('${rule.id}')">
+                  <i class="ri-${rule.status === "enabled" ? "close" : "check"}-line"></i>
+                </button>
+                <button class="action-btn danger" title="删除" onclick="deleteRule('${rule.id}')">
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `,
+          )
+          .join("");
+
+        document.getElementById("tableInfo").textContent =
+          `共 ${data.length} 条记录`;
+        document.getElementById("paginationInfo").textContent =
+          `显示 1-${data.length} 条，共 ${data.length} 条`;
+      }
+
+      function searchRules() {
+        const ruleKeyword = document
+          .getElementById("ruleNameInput")
+          .value.toLowerCase();
+        const statusFilter = document.getElementById("statusFilter").value;
+
+        const filtered = ruleData.filter((rule) => {
+          const matchRuleId =
+            !ruleKeyword || rule.id.toLowerCase().includes(ruleKeyword);
+          const matchStatus = !statusFilter || rule.status === statusFilter;
+          return matchRuleId && matchStatus;
+        });
+
+        renderTable(filtered);
+      }
+
+      function resetFilters() {
+        document.getElementById("ruleNameInput").value = "";
+        document.getElementById("statusFilter").value = "";
+        renderTable(ruleData);
+      }
+
+      function openModal(mode, rule = null) {
+        const modal = document.getElementById("ruleModal");
+        const modalTitle = document.getElementById("modalTitle");
+
+        if (mode === "add") {
+          modalTitle.textContent = "新增规则";
+          currentEditId = null;
+          document.getElementById("ruleForm").reset();
+        } else {
+          modalTitle.textContent = "编辑规则";
+          currentEditId = rule.id;
+          document.getElementById("ruleName").value = rule.name;
+          document.getElementById("alertType").value = rule.type;
+          document.getElementById("alertLevel").value = rule.level;
+          document.getElementById("targetObject").value = rule.target;
+          document.getElementById("threshold").value = "";
+          document.getElementById("triggerCondition").value = rule.condition;
+          document.getElementById("disposalMethod").value = "remind";
+          document.getElementById("ruleStatus").value = rule.status;
+          document.getElementById("remark").value = "";
+        }
+
+        modal.classList.add("show");
+      }
+
+      function closeModal() {
+        const modal = document.getElementById("ruleModal");
+        modal.classList.remove("show");
+        document.getElementById("ruleForm").reset();
+        currentEditId = null;
+      }
+
+      function saveRule() {
+        const name = document.getElementById("ruleName").value;
+        const alertType = document.getElementById("alertType").value;
+
+        if (!name || !alertType) {
+          alert("请填写必填项！");
+          return;
+        }
+
+        const typeMap = {
+          behavior: "行为预警",
+          track: "轨迹预警",
+          area: "区域预警",
+        };
+        const levelMap = { high: "高危", medium: "中危", low: "低危" };
+        const targetMap = {
+          focus: "重点关注人员",
+          foreign: "外籍人员",
+          blacklist: "黑名单人员",
+        };
+
+        if (currentEditId) {
+          const index = ruleData.findIndex((r) => r.id === currentEditId);
+          if (index !== -1) {
+            ruleData[index] = {
+              ...ruleData[index],
+              name,
+              type: alertType,
+              typeName: typeMap[alertType],
+              level: document.getElementById("alertLevel").value,
+              levelName: levelMap[document.getElementById("alertLevel").value],
+              target: document.getElementById("targetObject").value,
+              targetName:
+                targetMap[document.getElementById("targetObject").value],
+              condition: document.getElementById("triggerCondition").value,
+              status: document.getElementById("ruleStatus").value,
+            };
+          }
+        } else {
+          const newId = "WR" + String(ruleData.length + 1).padStart(3, "0");
+          ruleData.push({
+            id: newId,
+            name,
+            type: alertType,
+            typeName: typeMap[alertType],
+            condition: document.getElementById("triggerCondition").value,
+            level: document.getElementById("alertLevel").value,
+            levelName: levelMap[document.getElementById("alertLevel").value],
+            target: document.getElementById("targetObject").value,
+            targetName:
+              targetMap[document.getElementById("targetObject").value],
+            status: document.getElementById("ruleStatus").value,
+            createTime: new Date().toISOString().slice(0, 16).replace("T", " "),
+          });
+        }
+
+        renderTable(ruleData);
+        closeModal();
+        alert(currentEditId ? "规则更新成功！" : "规则新增成功！");
+      }
+
+      function viewRule(id) {
+        const rule = ruleData.find((r) => r.id === id);
+        if (rule) {
+          alert(
+            `规则详情：\n\n规则编号：${rule.id}\n规则名称：${rule.name}\n预警类型：${rule.typeName}\n预警等级：${rule.levelName}\n适用对象：${rule.targetName}\n触发条件：${rule.condition}\n状态：${rule.status === "enabled" ? "启用" : "停用"}\n创建时间：${rule.createTime}`,
+          );
+        }
+      }
+
+      function editRule(id) {
+        const rule = ruleData.find((r) => r.id === id);
+        if (rule) {
+          openModal("edit", rule);
+        }
+      }
+
+      function toggleStatus(id) {
+        const rule = ruleData.find((r) => r.id === id);
+        if (rule) {
+          rule.status = rule.status === "enabled" ? "disabled" : "enabled";
+          renderTable(ruleData);
+          alert(`规则已${rule.status === "enabled" ? "启用" : "停用"}！`);
+        }
+      }
+
+      function deleteRule(id) {
+        if (confirm("确定要删除该规则吗？")) {
+          const index = ruleData.findIndex((r) => r.id === id);
+          if (index !== -1) {
+            ruleData.splice(index, 1);
+            renderTable(ruleData);
+            alert("规则删除成功！");
+          }
+        }
+      }
+
+      document.querySelectorAll(".menu-section").forEach((section) => {
+        const trigger = section.querySelector(".menu-trigger");
+        if (trigger) {
+          trigger.addEventListener("click", () => {
+            section.classList.toggle("open");
+          });
+        }
+      });
+
+      document.getElementById("ruleModal").addEventListener("click", (e) => {
+        if (e.target.classList.contains("modal-overlay")) {
+          closeModal();
+        }
+      });
+
+      renderTable(ruleData);
+    </script>
+    <script src="../assets/js/person-shell-standard.js"></script>
+  </body>
+</html>
+
+
+

@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>智慧大屏页面设置示意图</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      color: #eaf7ff;
+      background: #061935;
+    }
+
+    button,
+    select,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .settings-screen {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      padding: 18px;
+      background:
+        linear-gradient(rgba(39, 169, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(39, 169, 255, 0.05) 1px, transparent 1px),
+        radial-gradient(circle at 50% 0, rgba(41, 157, 255, 0.2), transparent 34%),
+        linear-gradient(180deg, #08204a 0%, #061935 52%, #06152d 100%);
+      background-size: 42px 42px, 42px 42px, auto, auto;
+    }
+
+    .screen-frame {
+      position: relative;
+      display: grid;
+      min-height: calc(100vh - 36px);
+      grid-template-rows: 74px minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px;
+      border: 2px solid rgba(48, 179, 255, 0.82);
+      border-radius: 18px;
+      background: rgba(4, 20, 48, 0.62);
+      box-shadow: inset 0 0 36px rgba(44, 172, 255, 0.14), 0 0 28px rgba(44, 172, 255, 0.18);
+    }
+
+    .screen-frame::before {
+      position: absolute;
+      inset: 10px;
+      pointer-events: none;
+      border: 1px solid rgba(87, 199, 255, 0.2);
+      border-radius: 12px;
+      content: "";
+    }
+
+    .settings-header {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 260px 1fr 260px;
+      align-items: center;
+    }
+
+    .time-box {
+      color: #bde9ff;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .time-box strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #ffffff;
+      font-size: 26px;
+      letter-spacing: 1px;
+    }
+
+    .page-title {
+      justify-self: center;
+      color: #ffffff;
+      font-size: clamp(26px, 2.25vw, 42px);
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-align: center;
+      text-shadow: 0 0 16px rgba(75, 190, 255, 0.8);
+      white-space: nowrap;
+    }
+
+    .settings-toggle {
+      justify-self: end;
+      display: inline-flex;
+      height: 42px;
+      align-items: center;
+      gap: 8px;
+      padding: 0 18px;
+      border: 1px solid rgba(111, 207, 255, 0.74);
+      border-radius: 8px;
+      color: #eaf8ff;
+      background: rgba(17, 75, 142, 0.48);
+      box-shadow: inset 0 0 16px rgba(70, 188, 255, 0.12);
+      font-weight: 800;
+    }
+
+    .settings-toggle:hover {
+      background: rgba(28, 109, 193, 0.62);
+    }
+
+    .settings-toggle i {
+      display: grid;
+      width: 22px;
+      height: 22px;
+      place-items: center;
+      border: 1px solid rgba(180, 231, 255, 0.55);
+      border-radius: 6px;
+      color: #9fe2ff;
+      font-style: normal;
+    }
+
+    .settings-body {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      min-height: 0;
+      grid-template-columns: minmax(260px, 28%) minmax(420px, 1fr) minmax(320px, 25%);
+      gap: 18px;
+      transition: grid-template-columns 0.22s ease;
+    }
+
+    .settings-body.panel-hidden {
+      grid-template-columns: minmax(260px, 30%) minmax(520px, 1fr) 0;
+    }
+
+    .preview-column {
+      display: grid;
+      min-height: 0;
+      grid-template-rows: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .preview-card,
+    .map-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(83, 192, 255, 0.76);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(9, 43, 88, 0.82), rgba(5, 30, 66, 0.74));
+      box-shadow: inset 0 0 26px rgba(51, 172, 255, 0.14), 0 0 18px rgba(36, 154, 255, 0.12);
+    }
+
+    .preview-card {
+      display: grid;
+      grid-template-rows: 52px minmax(0, 1fr);
+      padding: 16px;
+    }
+
+    .map-card {
+      display: grid;
+      grid-template-rows: 58px minmax(0, 1fr);
+      padding: 18px;
+    }
+
+    .preview-card::before,
+    .map-card::before {
+      position: absolute;
+      inset: 12px;
+      pointer-events: none;
+      border: 1px solid rgba(90, 200, 255, 0.12);
+      border-radius: 10px;
+      content: "";
+    }
+
+    .card-title {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .card-title span {
+      color: #8cdcff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .line-chart {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      min-height: 0;
+      align-items: end;
+      padding: 14px 10px 4px;
+    }
+
+    .line-chart svg {
+      width: 100%;
+      height: 100%;
+      min-height: 150px;
+    }
+
+    .map-stage {
+      position: relative;
+      min-height: 0;
+      border-radius: 12px;
+      background:
+        radial-gradient(circle at 52% 45%, rgba(54, 184, 255, 0.22), transparent 32%),
+        linear-gradient(rgba(82, 190, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(82, 190, 255, 0.06) 1px, transparent 1px);
+      background-size: auto, 36px 36px, 36px 36px;
+    }
+
+    .map-stage svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .map-stage .land {
+      fill: rgba(50, 126, 210, 0.28);
+      stroke: rgba(91, 207, 255, 0.44);
+      stroke-width: 1;
+    }
+
+    .map-dot {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #4fd4ff;
+      box-shadow: 0 0 0 8px rgba(79, 212, 255, 0.14), 0 0 24px rgba(79, 212, 255, 0.9);
+    }
+
+    .settings-panel {
+      display: flex;
+      min-width: 0;
+      min-height: 0;
+      flex-direction: column;
+      overflow: hidden;
+      border-radius: 18px;
+      color: #1b3554;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 18px 42px rgba(0, 9, 31, 0.34);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .settings-body.panel-hidden .settings-panel {
+      pointer-events: none;
+      opacity: 0;
+      transform: translateX(18px);
+    }
+
+    .panel-head {
+      padding: 24px 24px 12px;
+      border-bottom: 1px solid #e5eff8;
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      color: #0a2b55;
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    .panel-head p {
+      margin: 10px 0 0;
+      color: #627a96;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .setting-list {
+      display: grid;
+      flex: 1;
+      gap: 12px;
+      overflow: auto;
+      padding: 16px 18px;
+    }
+
+    .setting-item {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid #dbe9f7;
+      border-radius: 12px;
+      background: #f7fbff;
+    }
+
+    .setting-item h3 {
+      margin: 0;
+      color: #102b4c;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .setting-item p {
+      margin: 0;
+      color: #667c96;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .setting-control {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .setting-control select,
+    .setting-control input {
+      min-width: 140px;
+      height: 34px;
+      border: 1px solid #bfd5eb;
+      border-radius: 8px;
+      color: #17385c;
+      background: #ffffff;
+      outline: 0;
+    }
+
+    .switch {
+      position: relative;
+      width: 48px;
+      height: 26px;
+      border-radius: 999px;
+      background: #2d8cff;
+      box-shadow: inset 0 0 0 1px rgba(0, 84, 173, 0.2);
+    }
+
+    .switch::after {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ffffff;
+      content: "";
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+    }
+
+    .switch.off {
+      background: #c9d8e8;
+    }
+
+    .switch.off::after {
+      right: 26px;
+    }
+
+    .panel-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 16px 18px 20px;
+      border-top: 1px solid #e5eff8;
+      background: #ffffff;
+    }
+
+    .action-btn {
+      height: 38px;
+      min-width: 92px;
+      border: 1px solid #c6d7e8;
+      border-radius: 8px;
+      color: #35516d;
+      background: #eef3f8;
+      font-weight: 800;
+    }
+
+    .action-btn.preview {
+      color: #146dce;
+      border-color: #2f8dff;
+      background: #ffffff;
+    }
+
+    .action-btn.primary {
+      color: #ffffff;
+      border-color: #1f7ee8;
+      background: #1f7ee8;
+      box-shadow: 0 8px 18px rgba(31, 126, 232, 0.24);
+    }
+
+    .toast {
+      position: fixed;
+      right: 34px;
+      bottom: 34px;
+      z-index: 20;
+      padding: 12px 18px;
+      border: 1px solid rgba(110, 210, 255, 0.6);
+      border-radius: 10px;
+      color: #ffffff;
+      background: rgba(8, 42, 86, 0.92);
+      box-shadow: 0 12px 28px rgba(0, 12, 35, 0.34);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1200px) {
+      .settings-screen {
+        overflow: auto;
+      }
+
+      .screen-frame {
+        min-height: calc(100vh - 28px);
+        padding: 14px;
+      }
+
+      .settings-header {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        text-align: center;
+      }
+
+      .time-box,
+      .settings-toggle {
+        justify-self: center;
+      }
+
+      .settings-body,
+      .settings-body.panel-hidden {
+        grid-template-columns: 1fr;
+      }
+
+      .settings-panel {
+        min-height: 560px;
+      }
+
+      .settings-body.panel-hidden .settings-panel {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="settings-screen">
+    <div class="screen-frame">
+      <header class="settings-header">
+        <div class="time-box">
+          <strong id="clockTime">10:35:28</strong>
+          <span id="clockDate">2026-06-15 星期一</span>
+        </div>
+        <h1 class="page-title" id="screenTitle">智慧大屏页面设置示意图</h1>
+        <button class="settings-toggle" id="togglePanel" type="button"><i>⚙</i>页面设置</button>
+      </header>
+
+      <main class="settings-body" id="settingsBody">
+        <section class="preview-column">
+          <article class="preview-card">
+            <div class="card-title">左侧榜单区 <span>排名 / 热度 / 趋势</span></div>
+            <div class="line-chart">
+              <svg viewBox="0 0 420 210" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="lineFillA" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#4fd4ff" stop-opacity="0.34" />
+                    <stop offset="1" stop-color="#4fd4ff" stop-opacity="0" />
+                  </linearGradient>
+                </defs>
+                <path d="M10 160 L62 132 L116 144 L168 86 L220 112 L276 66 L332 78 L410 34 L410 210 L10 210 Z" fill="url(#lineFillA)" />
+                <polyline points="10,160 62,132 116,144 168,86 220,112 276,66 332,78 410,34" fill="none" stroke="#4fd4ff" stroke-width="4" />
+                <polyline points="10,180 62,170 116,152 168,158 220,126 276,136 332,108 410,92" fill="none" stroke="#2d8cff" stroke-width="3" />
+              </svg>
+            </div>
+          </article>
+
+          <article class="preview-card">
+            <div class="card-title">来源/情感区 <span>来源占比 / 情绪变化</span></div>
+            <div class="line-chart">
+              <svg viewBox="0 0 420 210" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="lineFillB" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#2d8cff" stop-opacity="0.32" />
+                    <stop offset="1" stop-color="#2d8cff" stop-opacity="0" />
+                  </linearGradient>
+                </defs>
+                <path d="M10 146 L62 118 L116 126 L168 102 L220 58 L276 74 L332 44 L410 62 L410 210 L10 210 Z" fill="url(#lineFillB)" />
+                <polyline points="10,146 62,118 116,126 168,102 220,58 276,74 332,44 410,62" fill="none" stroke="#2d8cff" stroke-width="4" />
+                <polyline points="10,174 62,160 116,166 168,140 220,152 276,112 332,126 410,98" fill="none" stroke="#75e4ff" stroke-width="3" />
+              </svg>
+            </div>
+          </article>
+        </section>
+
+        <section class="map-card">
+          <div class="card-title">中心地图/趋势区 <span>主视觉展示 / 趋势占位</span></div>
+          <div class="map-stage">
+            <svg viewBox="0 0 760 520" preserveAspectRatio="none" aria-hidden="true">
+              <path class="land" d="M68 210 L128 132 L242 156 L294 246 L236 322 L120 302 Z" />
+              <path class="land" d="M250 348 L304 312 L350 366 L312 466 L250 430 Z" />
+              <path class="land" d="M382 128 L506 122 L584 208 L548 306 L420 292 Z" />
+              <path class="land" d="M460 310 L554 326 L590 430 L500 466 Z" />
+              <path class="land" d="M590 156 L704 206 L660 316 L566 288 Z" />
+              <path d="M122 262 C255 132 438 132 622 242" fill="none" stroke="#4fd4ff" stroke-width="2" opacity=".72" />
+              <path d="M198 310 C328 374 486 372 650 294" fill="none" stroke="#2d8cff" stroke-width="2" opacity=".58" />
+            </svg>
+            <span class="map-dot" style="left:16%;top:49%"></span>
+            <span class="map-dot" style="left:44%;top:38%"></span>
+            <span class="map-dot" style="left:68%;top:46%"></span>
+            <span class="map-dot" style="left:78%;top:60%"></span>
+          </div>
+        </section>
+
+        <aside class="settings-panel" id="settingsPanel">
+          <div class="panel-head">
+            <h2>页面设置</h2>
+            <p>用于控制当前大屏显示时间、滚动切换和标题参数</p>
+          </div>
+
+          <div class="setting-list">
+            <section class="setting-item">
+              <div class="setting-control">
+                <div>
+                  <h3>显示大屏</h3>
+                  <p>数据分析智慧大屏 / 热点分析智慧大屏</p>
+                </div>
+                <select id="screenType">
+                  <option>数据分析智慧大屏</option>
+                  <option>热点分析智慧大屏</option>
+                </select>
+              </div>
+            </section>
+
+            <section class="setting-item">
+              <div class="setting-control">
+                <div>
+                  <h3>时间范围</h3>
+                  <p>近24小时、近7日、近30日、自定义起止时间</p>
+                </div>
+                <select id="timeRange">
+                  <option>近24小时</option>
+                  <option selected>近7日</option>
+                  <option>近30日</option>
+                  <option>自定义起止时间</option>
+                </select>
+              </div>
+            </section>
+
+            <section class="setting-item">
+              <div class="setting-control">
+                <div>
+                  <h3>滚动切换</h3>
+                  <p>控制榜单、事件列表和情报内容自动轮播</p>
+                </div>
+                <button class="switch" id="scrollSwitch" type="button" aria-label="滚动切换"></button>
+              </div>
+            </section>
+
+            <section class="setting-item">
+              <div class="setting-control">
+                <div>
+                  <h3>标题设置</h3>
+                  <p>配置大屏主标题、说明文案和展示名称</p>
+                </div>
+                <input id="titleInput" value="智慧大屏页面设置示意图" />
+              </div>
+            </section>
+
+            <section class="setting-item">
+              <div class="setting-control">
+                <div>
+                  <h3>刷新设置</h3>
+                  <p>配置数据刷新频率和更新时间提示</p>
+                </div>
+                <select id="refreshRate">
+                  <option>30秒</option>
+                  <option selected>1分钟</option>
+                  <option>5分钟</option>
+                </select>
+              </div>
+            </section>
+          </div>
+
+          <div class="panel-actions">
+            <button class="action-btn" id="resetBtn" type="button">恢复默认</button>
+            <button class="action-btn preview" id="previewBtn" type="button">预览</button>
+            <button class="action-btn primary" id="applyBtn" type="button">应用</button>
+          </div>
+        </aside>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">操作成功</div>
+
+  <script>
+    const defaults = {
+      screenType: "数据分析智慧大屏",
+      timeRange: "近7日",
+      refreshRate: "1分钟",
+      title: "智慧大屏页面设置示意图",
+      scrollEnabled: true,
+    };
+
+    const settingsBody = document.getElementById("settingsBody");
+    const togglePanel = document.getElementById("togglePanel");
+    const toast = document.getElementById("toast");
+    const titleInput = document.getElementById("titleInput");
+    const screenTitle = document.getElementById("screenTitle");
+    const scrollSwitch = document.getElementById("scrollSwitch");
+
+    function pad(value) {
+      return String(value).padStart(2, "0");
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const weekdays = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+      document.getElementById("clockTime").textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      document.getElementById("clockDate").textContent = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${weekdays[now.getDay()]}`;
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    function collectSettings() {
+      return {
+        screenType: document.getElementById("screenType").value,
+        timeRange: document.getElementById("timeRange").value,
+        refreshRate: document.getElementById("refreshRate").value,
+        title: titleInput.value.trim() || defaults.title,
+        scrollEnabled: !scrollSwitch.classList.contains("off"),
+      };
+    }
+
+    function applySettingsToPreview(settings) {
+      screenTitle.textContent = settings.title;
+      // Reserved for API integration:
+      // return fetch("/api/screen-settings", { method: "POST", body: JSON.stringify(settings) });
+    }
+
+    function restoreDefaults() {
+      document.getElementById("screenType").value = defaults.screenType;
+      document.getElementById("timeRange").value = defaults.timeRange;
+      document.getElementById("refreshRate").value = defaults.refreshRate;
+      titleInput.value = defaults.title;
+      scrollSwitch.classList.toggle("off", !defaults.scrollEnabled);
+      applySettingsToPreview(defaults);
+      showToast("已恢复默认设置");
+    }
+
+    togglePanel.addEventListener("click", () => {
+      settingsBody.classList.toggle("panel-hidden");
+    });
+
+    scrollSwitch.addEventListener("click", () => {
+      scrollSwitch.classList.toggle("off");
+    });
+
+    document.getElementById("previewBtn").addEventListener("click", () => {
+      applySettingsToPreview(collectSettings());
+      showToast("预览成功");
+    });
+
+    document.getElementById("applyBtn").addEventListener("click", () => {
+      const settings = collectSettings();
+      applySettingsToPreview(settings);
+      showToast("应用成功");
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", restoreDefaults);
+
+    updateClock();
+    window.setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>

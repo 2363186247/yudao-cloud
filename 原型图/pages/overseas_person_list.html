@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>境外舆情分析系统 - 境外人员列表</title>
+  <link rel="stylesheet" href="../assets/css/reset.css" />
+  <link rel="stylesheet" href="../assets/css/theme.css" />
+  <link rel="stylesheet" href="../assets/css/layout.css" />
+  <link rel="stylesheet" href="../assets/css/page.css" />
+  <style>
+    :root {
+      --foreign-primary: #1f6fe5;
+      --foreign-primary-strong: #2563eb;
+      --foreign-text: #0f2748;
+      --foreign-muted: #6b7c93;
+      --foreign-border: #dbe6f3;
+      --foreign-bg: #f5f8fc;
+      --foreign-shadow: 0 6px 18px rgba(22, 79, 154, 0.06);
+    }
+
+    body {
+      background: var(--foreign-bg);
+    }
+
+    .content-area {
+      padding: 20px;
+      background: var(--foreign-bg);
+    }
+
+    .foreign-list-page {
+      display: grid;
+      gap: 18px;
+      width: 100%;
+      color: var(--foreign-text);
+    }
+
+    .foreign-card {
+      border: 1px solid var(--foreign-border);
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: var(--foreign-shadow);
+    }
+
+    .foreign-page-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .foreign-title-wrap {
+      display: flex;
+      min-width: 0;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .foreign-title-icon {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 12px;
+      color: var(--foreign-primary-strong);
+      background: #eaf2ff;
+      box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.08);
+    }
+
+    .foreign-page-title h1 {
+      margin: 0;
+      color: var(--foreign-text);
+      font-size: 28px;
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .foreign-page-title p {
+      margin: 10px 0 0;
+      color: var(--foreign-muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .foreign-head-actions,
+    .table-head-actions,
+    .query-actions,
+    .page-controls,
+    .row-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .foreign-btn {
+      display: inline-flex;
+      height: 42px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 18px;
+      border: 1px solid #cfdced;
+      border-radius: 6px;
+      color: #1f3556;
+      background: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: border-color 0.16s ease, color 0.16s ease, background 0.16s ease;
+    }
+
+    .foreign-btn:hover {
+      border-color: var(--foreign-primary);
+      color: var(--foreign-primary);
+    }
+
+    .foreign-btn.primary {
+      border-color: var(--foreign-primary-strong);
+      color: #fff;
+      background: var(--foreign-primary-strong);
+      box-shadow: 0 5px 10px rgba(37, 99, 235, 0.16);
+    }
+
+    .foreign-btn.primary:hover {
+      color: #fff;
+      background: #1d56cf;
+    }
+
+    .foreign-btn.small {
+      height: 30px;
+      gap: 4px;
+      padding: 0 11px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .foreign-btn.icon-text {
+      padding: 0 17px;
+    }
+
+    .foreign-icon {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+    }
+
+    .foreign-title-icon .foreign-icon {
+      width: 30px;
+      height: 30px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .stat-card {
+      display: flex;
+      min-height: 120px;
+      align-items: center;
+      gap: 18px;
+      padding: 20px 24px;
+      border: 1px solid var(--foreign-border);
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: var(--foreign-shadow);
+    }
+
+    .stat-icon {
+      display: grid;
+      width: 72px;
+      height: 72px;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 50%;
+    }
+
+    .stat-icon .foreign-icon {
+      width: 38px;
+      height: 38px;
+    }
+
+    .stat-icon.blue {
+      color: #2563eb;
+      background: #eaf2ff;
+    }
+
+    .stat-icon.green {
+      color: #0f9f6e;
+      background: #e6f8f0;
+    }
+
+    .stat-icon.orange {
+      color: #f28c28;
+      background: #fff0df;
+    }
+
+    .stat-icon.purple {
+      color: #7c5ce6;
+      background: #f0ecff;
+    }
+
+    .stat-icon.red {
+      color: #e04f56;
+      background: #feecec;
+    }
+
+    .stat-text {
+      min-width: 0;
+    }
+
+    .stat-label {
+      color: #425a7b;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      color: #14315e;
+      font-size: 32px;
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .stat-note {
+      margin-top: 9px;
+      color: var(--foreign-muted);
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .query-card,
+    .table-card {
+      padding: 20px 22px 16px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0;
+      color: var(--foreign-text);
+      font-size: 20px;
+      line-height: 1.2;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 4px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--foreign-primary-strong);
+    }
+
+    .query-card {
+      padding: 18px 22px;
+    }
+
+    .query-grid {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+    }
+
+    .query-field {
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .query-field label {
+      flex: 0 0 auto;
+      color: #203a60;
+      font-size: 15px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .control-wrap {
+      position: relative;
+      width: 260px;
+      min-width: 0;
+    }
+
+    .field-icon {
+      position: absolute;
+      top: 50%;
+      left: 13px;
+      width: 16px;
+      height: 16px;
+      color: #7890ae;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .foreign-control {
+      width: 100%;
+      height: 44px;
+      padding: 0 14px 0 16px;
+      border: 1px solid #cfdced;
+      border-radius: 5px;
+      color: #203a60;
+      background: #fff;
+      font-size: 15px;
+      line-height: 44px;
+      outline: none;
+      box-shadow: inset 0 1px 2px rgba(15, 39, 72, 0.04);
+    }
+
+    select.foreign-control {
+      padding-right: 38px;
+      appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #657998 50%),
+        linear-gradient(135deg, #657998 50%, transparent 50%);
+      background-position:
+        calc(100% - 18px) 18px,
+        calc(100% - 13px) 18px;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+    }
+
+    .foreign-control::placeholder {
+      color: #8a9bb2;
+    }
+
+    .foreign-control:focus {
+      border-color: var(--foreign-primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+    }
+
+    .query-actions {
+      flex: 0 0 auto;
+      justify-content: flex-start;
+      margin-left: auto;
+    }
+
+    .table-head-actions {
+      color: #344c70;
+      font-size: 15px;
+    }
+
+    .result-count {
+      white-space: nowrap;
+    }
+
+    .refresh-btn {
+      display: inline-flex;
+      height: 30px;
+      align-items: center;
+      gap: 6px;
+      padding: 0;
+      border: 0;
+      color: var(--foreign-primary-strong);
+      background: transparent;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--foreign-border);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .foreign-table {
+      width: 100%;
+      min-width: 1410px;
+      table-layout: fixed;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .foreign-table th,
+    .foreign-table td {
+      height: 48px;
+      padding: 0 14px;
+      border-right: 1px solid #e4edf8;
+      border-bottom: 1px solid #e8f0f9;
+      color: #233a5c;
+      text-align: left;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .foreign-table th:last-child,
+    .foreign-table td:last-child {
+      border-right: 0;
+    }
+
+    .foreign-table thead th {
+      height: 44px;
+      color: #173458;
+      background: #f6f9fe;
+      font-weight: 800;
+    }
+
+    .foreign-table tbody tr:hover td {
+      background: #f9fbff;
+    }
+
+    .ellipsis {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .sort-mark {
+      margin-left: 4px;
+      color: #8fa2bd;
+      font-size: 12px;
+    }
+
+    .status-tag {
+      display: inline-flex;
+      height: 26px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .status-green {
+      color: #07945f;
+      background: #dcf7e9;
+    }
+
+    .status-blue {
+      color: #2563eb;
+      background: #e5efff;
+    }
+
+    .status-gray {
+      color: #536173;
+      background: #eef2f6;
+    }
+
+    .status-orange {
+      color: #f97316;
+      background: #fff1e5;
+    }
+
+    .empty-row td {
+      height: 120px;
+      color: var(--foreign-muted);
+      text-align: center;
+      background: #fff;
+    }
+
+    .foreign-pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding-top: 16px;
+      color: #425a7b;
+      font-size: 14px;
+    }
+
+    .page-controls {
+      flex-wrap: nowrap;
+    }
+
+    .page-btn {
+      min-width: 34px;
+      height: 32px;
+      padding: 0 10px;
+      border: 1px solid #cfdced;
+      border-radius: 6px;
+      color: #30496c;
+      background: #fff;
+      font-size: 14px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .page-btn.active {
+      border-color: var(--foreign-primary-strong);
+      color: #fff;
+      background: var(--foreign-primary-strong);
+    }
+
+    .page-ellipsis {
+      min-width: 22px;
+      color: #6f829b;
+      text-align: center;
+    }
+
+    @media (max-width: 1500px) {
+      .stats-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .control-wrap {
+        width: 220px;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .foreign-page-head,
+      .foreign-pagination {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .foreign-head-actions,
+      .page-controls {
+        justify-content: flex-start;
+        overflow-x: auto;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .query-grid {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .query-field,
+      .control-wrap {
+        width: 100%;
+      }
+
+      .query-actions {
+        justify-content: flex-start;
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body data-module="foreign-person" data-page="overseas-person-list-new">
+  <div id="app"></div>
+  <script src="../assets/js/menu-config.js"></script>
+  <script src="../assets/js/mock-data.js"></script>
+  <script src="../assets/js/layout.js"></script>
+  <script>
+    const overseasPeople = [
+      {
+        personNo: "JW-2025-0001",
+        chineseName: "阿里·哈桑",
+        foreignName: "Ali Hassan",
+        idCardNo: "110101199001010017",
+        documentNo: "P45890231",
+        gender: "男",
+        policeStation: "河西派出所",
+        controlUnit: "一大队",
+        ryCategory: "重点人员",
+        ryStatus: "在位中",
+        auditStatus: "已审核",
+        updatedAt: "2025-05-24 10:28",
+      },
+      {
+        personNo: "JW-2025-0002",
+        chineseName: "约翰·马丁",
+        foreignName: "John Martin",
+        idCardNo: "310104198806150033",
+        documentNo: "A90877122",
+        gender: "男",
+        policeStation: "城南派出所",
+        controlUnit: "二大队",
+        ryCategory: "关注人员",
+        ryStatus: "临控中",
+        auditStatus: "待审核",
+        updatedAt: "2025-05-23 18:06",
+      },
+      {
+        personNo: "JW-2025-0003",
+        chineseName: "玛丽亚·洛佩兹",
+        foreignName: "Maria Lopez",
+        idCardNo: "440106199204220028",
+        documentNo: "ID-7729013",
+        gender: "女",
+        policeStation: "新城派出所",
+        controlUnit: "情报科",
+        ryCategory: "一般人员",
+        ryStatus: "在位中",
+        auditStatus: "已审核",
+        updatedAt: "2025-05-22 14:35",
+      },
+      {
+        personNo: "JW-2025-0004",
+        chineseName: "山田健一",
+        foreignName: "Yamada Kenichi",
+        idCardNo: "320105197512301210",
+        documentNo: "T12345678",
+        gender: "男",
+        policeStation: "滨江派出所",
+        controlUnit: "一大队",
+        ryCategory: "一般人员",
+        ryStatus: "离位中",
+        auditStatus: "已审核",
+        updatedAt: "2025-05-21 16:40",
+      },
+      {
+        personNo: "JW-2025-0005",
+        chineseName: "金泰贤",
+        foreignName: "Kim Taehyun",
+        idCardNo: "330106199303050019",
+        documentNo: "M87654321",
+        gender: "男",
+        policeStation: "东城派出所",
+        controlUnit: "三大队",
+        ryCategory: "重点人员",
+        ryStatus: "临控中",
+        auditStatus: "待审核",
+        updatedAt: "2025-05-22 11:22",
+      },
+      {
+        personNo: "JW-2025-0006",
+        chineseName: "莉娜·贝克尔",
+        foreignName: "Lina Becker",
+        idCardNo: "310115198912120025",
+        documentNo: "C98765432",
+        gender: "女",
+        policeStation: "北站派出所",
+        controlUnit: "外管科",
+        ryCategory: "关注人员",
+        ryStatus: "在位中",
+        auditStatus: "已审核",
+        updatedAt: "2025-05-21 09:15",
+      },
+      {
+        personNo: "JW-2025-0007",
+        chineseName: "穆罕默德·汗",
+        foreignName: "Mohammed Khan",
+        idCardNo: "420106198702180018",
+        documentNo: "R55443322",
+        gender: "男",
+        policeStation: "高新派出所",
+        controlUnit: "二大队",
+        ryCategory: "一般人员",
+        ryStatus: "离位中",
+        auditStatus: "待审核",
+        updatedAt: "2025-05-20 17:48",
+      },
+      {
+        personNo: "JW-2025-0008",
+        chineseName: "安娜·伊万诺娃",
+        foreignName: "Anna Ivanova",
+        idCardNo: "310107199106070046",
+        documentNo: "E11223344",
+        gender: "女",
+        policeStation: "虹桥派出所",
+        controlUnit: "情报科",
+        ryCategory: "关注人员",
+        ryStatus: "在位中",
+        auditStatus: "已审核",
+        updatedAt: "2025-05-20 10:12",
+      },
+    ];
+
+    const icons = {
+      people: '<svg class="foreign-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M16 19v-1.2c0-2.1-1.7-3.8-3.8-3.8H6.8C4.7 14 3 15.7 3 17.8V19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9.5" cy="7" r="4" fill="currentColor" opacity=".96"/><path d="M21 19v-1.1c0-1.8-1.2-3.3-2.9-3.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="17.5" cy="7.8" r="3" fill="currentColor" opacity=".72"/></svg>',
+      check: '<svg class="foreign-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor" opacity=".95"/><path d="m7.5 12.2 3 3 6-6.8" stroke="#fff" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      hourglass: '<svg class="foreign-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 3h12M6 21h12M8 3v4.2c0 1 .4 1.9 1.2 2.5L12 12l2.8-2.3c.8-.6 1.2-1.5 1.2-2.5V3M8 21v-4.2c0-1 .4-1.9 1.2-2.5L12 12l2.8 2.3c.8.6 1.2 1.5 1.2 2.5V21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      pin: '<svg class="foreign-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s7-6.1 7-12A7 7 0 0 0 5 10c0 5.9 7 12 7 12Z" fill="currentColor"/><circle cx="12" cy="10" r="2.6" fill="#fff"/></svg>',
+      trend: '<svg class="foreign-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m4 16 5-5 4 4 7-8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 7h5v5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      plus: '<svg class="foreign-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+      upload: '<svg class="foreign-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 15V4m0 0L8 8m4-4 4 4M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      search: '<svg class="foreign-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+      reset: '<svg class="foreign-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4v4.6h4.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      card: '<svg class="field-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 10h3M8 14h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+      user: '<svg class="field-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M5 20c.8-3.5 3.3-5.2 7-5.2s6.2 1.7 7 5.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+      refresh: '<svg class="foreign-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7L20 8.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 4v4.6h-4.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    };
+
+    const stats = [
+      { icon: "people", color: "blue", label: "境外人员总数", value: "2,356", note: "覆盖全部在库人员" },
+      { icon: "check", color: "green", label: "已审核人数", value: "1,842", note: "资料已完成核验" },
+      { icon: "hourglass", color: "orange", label: "待审核人数", value: "364", note: "需尽快补充核查" },
+      { icon: "pin", color: "purple", label: "在位人员数", value: "1,287", note: "当前状态为在位" },
+      { icon: "trend", color: "red", label: "近7日新增", value: "86", note: "较上期 +12.4%" },
+    ];
+
+    function statusClass(value) {
+      if (value === "在位中" || value === "已审核") return "status-green";
+      if (value === "临控中") return "status-blue";
+      if (value === "待审核") return "status-orange";
+      return "status-gray";
+    }
+
+    function renderStats() {
+      return stats
+        .map(
+          (item) => `
+            <article class="stat-card">
+              <div class="stat-icon ${item.color}">${icons[item.icon]}</div>
+              <div class="stat-text">
+                <div class="stat-label">${item.label}</div>
+                <div class="stat-value">${item.value}</div>
+                <div class="stat-note">${item.note}</div>
+              </div>
+            </article>
+          `,
+        )
+        .join("");
+    }
+
+    function renderRows(data) {
+      if (!data.length) {
+        return '<tr class="empty-row"><td colspan="12">暂无匹配人员，请调整查询条件。</td></tr>';
+      }
+
+      return data
+        .map(
+          (person) => `
+            <tr>
+              <td><span class="ellipsis" title="${person.personNo}">${person.personNo}</span></td>
+              <td><span class="ellipsis" title="${person.chineseName}">${person.chineseName}</span></td>
+              <td><span class="ellipsis" title="${person.foreignName}">${person.foreignName}</span></td>
+              <td><span class="ellipsis" title="${person.documentNo}">${person.documentNo}</span></td>
+              <td>${person.gender}</td>
+              <td><span class="ellipsis" title="${person.policeStation}">${person.policeStation}</span></td>
+              <td><span class="ellipsis" title="${person.controlUnit}">${person.controlUnit}</span></td>
+              <td><span class="ellipsis" title="${person.ryCategory}">${person.ryCategory}</span></td>
+              <td><span class="status-tag ${statusClass(person.ryStatus)}">${person.ryStatus}</span></td>
+              <td><span class="status-tag ${statusClass(person.auditStatus)}">${person.auditStatus}</span></td>
+              <td><span class="ellipsis" title="${person.updatedAt}">${person.updatedAt}</span></td>
+              <td>
+                <div class="row-actions">
+                  <button class="foreign-btn small" type="button" data-maintain="${person.personNo}">维护</button>
+                  <button class="foreign-btn small" type="button" data-detail="${person.personNo}">详情</button>
+                  <button class="foreign-btn small primary" type="button" data-audit="${person.personNo}">审核</button>
+                </div>
+              </td>
+            </tr>
+          `,
+        )
+        .join("");
+    }
+
+    function getFilters() {
+      return {
+        chineseName: document.getElementById("filterName").value.trim(),
+        gender: document.getElementById("filterGender").value,
+        documentNo: document.getElementById("filterDocumentNo").value.trim(),
+        ryStatus: document.getElementById("filterRyStatus").value,
+      };
+    }
+
+    function filterPeople() {
+      const filters = getFilters();
+      return overseasPeople.filter((person) => {
+        return (
+          (!filters.chineseName || person.chineseName.includes(filters.chineseName) || person.foreignName.toLowerCase().includes(filters.chineseName.toLowerCase())) &&
+          (!filters.gender || person.gender === filters.gender) &&
+          (!filters.documentNo || person.documentNo.includes(filters.documentNo)) &&
+          (!filters.ryStatus || person.ryStatus === filters.ryStatus)
+        );
+      });
+    }
+
+    function refreshList(data = overseasPeople) {
+      document.getElementById("personTableBody").innerHTML = renderRows(data);
+      bindTableActions();
+    }
+
+    function bindTableActions() {
+      document.querySelectorAll("[data-maintain]").forEach((button) => {
+        button.addEventListener("click", () => {
+          window.location.href = "person_register.html";
+        });
+      });
+      document.querySelectorAll("[data-detail]").forEach((button) => {
+        button.addEventListener("click", () => alert(`查看人员详情：${button.dataset.detail}`));
+      });
+      document.querySelectorAll("[data-audit]").forEach((button) => {
+        button.addEventListener("click", () => alert(`进入审核流程：${button.dataset.audit}`));
+      });
+    }
+
+    function renderPage() {
+      const pageContent = document.getElementById("pageContent");
+      const crumb = document.querySelector(".topbar-breadcrumb");
+      if (crumb) {
+        crumb.innerHTML = '<span>工作台</span><i>/</i><span>境外人员管理</span><i>/</i><span class="current">境外人员列表</span>';
+      }
+
+      pageContent.innerHTML = `
+        <div class="foreign-list-page">
+          <section class="foreign-page-head">
+            <div class="foreign-title-wrap">
+              <div class="foreign-title-icon">${icons.people}</div>
+              <div class="foreign-page-title">
+                <h1>境外人员列表</h1>
+                <p>统一管理境外人员信息、在位状态与审核进度，支持查询与批量操作。</p>
+              </div>
+            </div>
+            <div class="foreign-head-actions">
+              <button class="foreign-btn icon-text" type="button" id="batchImportBtn">${icons.upload}<span>批量导入</span></button>
+              <button class="foreign-btn primary icon-text" type="button" id="createPersonBtn">${icons.plus}<span>新增人员录入</span></button>
+            </div>
+          </section>
+
+          <section class="stats-grid" id="statGrid">${renderStats()}</section>
+
+          <section class="foreign-card query-card">
+            <div class="query-grid">
+              <div class="query-field">
+                <label for="filterName">姓名：</label>
+                <div class="control-wrap"><input class="foreign-control" id="filterName" placeholder="请输入" /></div>
+              </div>
+              <div class="query-field">
+                <label for="filterGender">性别：</label>
+                <div class="control-wrap"><select class="foreign-control" id="filterGender"><option value="">请选择</option><option>男</option><option>女</option></select></div>
+              </div>
+              <div class="query-field">
+                <label for="filterDocumentNo">证件号码：</label>
+                <div class="control-wrap"><input class="foreign-control" id="filterDocumentNo" placeholder="请输入" /></div>
+              </div>
+              <div class="query-field">
+                <label for="filterRyStatus">人员状态：</label>
+                <div class="control-wrap"><select class="foreign-control" id="filterRyStatus"><option value="">请选择</option><option>在位中</option><option>临控中</option><option>离位中</option></select></div>
+              </div>
+              <div class="query-actions">
+                <button class="foreign-btn primary" type="button" id="queryBtn">${icons.search}<span>查询</span></button>
+                <button class="foreign-btn" type="button" id="resetBtn">${icons.reset}<span>重置</span></button>
+              </div>
+            </div>
+          </section>
+
+          <section class="foreign-card table-card">
+            <div class="section-head">
+              <h2 class="section-title">人员列表</h2>
+              <div class="table-head-actions">
+                <span class="result-count">共 2,356 条结果</span>
+                <button class="refresh-btn" type="button" id="refreshBtn">${icons.refresh}<span>刷新</span></button>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <table class="foreign-table">
+                <colgroup>
+                  <col style="width: 124px" />
+                  <col style="width: 112px" />
+                  <col style="width: 142px" />
+                  <col style="width: 112px" />
+                  <col style="width: 70px" />
+                  <col style="width: 116px" />
+                  <col style="width: 92px" />
+                  <col style="width: 104px" />
+                  <col style="width: 96px" />
+                  <col style="width: 96px" />
+                  <col style="width: 132px" />
+                  <col style="width: 168px" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>人员编号 <span class="sort-mark">↕</span></th>
+                    <th>姓名 <span class="sort-mark">↕</span></th>
+                    <th>外文名 <span class="sort-mark">↕</span></th>
+                    <th>证件号码 <span class="sort-mark">↕</span></th>
+                    <th>性别 <span class="sort-mark">↕</span></th>
+                    <th>所属派出所 <span class="sort-mark">↕</span></th>
+                    <th>管控单位 <span class="sort-mark">↕</span></th>
+                    <th>人员分类 <span class="sort-mark">↕</span></th>
+                    <th>人员状态 <span class="sort-mark">↕</span></th>
+                    <th>审核状态 <span class="sort-mark">↕</span></th>
+                    <th>最后更新 <span class="sort-mark">↕</span></th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="personTableBody"></tbody>
+              </table>
+            </div>
+            <div class="foreign-pagination">
+              <span>每页显示 10 条，共 2,356 条</span>
+              <div class="page-controls">
+                <button class="page-btn" type="button">上一页</button>
+                <button class="page-btn active" type="button">1</button>
+                <button class="page-btn" type="button">2</button>
+                <button class="page-btn" type="button">3</button>
+                <button class="page-btn" type="button">4</button>
+                <button class="page-btn" type="button">5</button>
+                <span class="page-ellipsis">…</span>
+                <button class="page-btn" type="button">236</button>
+                <button class="page-btn" type="button">下一页</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      `;
+
+      document.getElementById("createPersonBtn").addEventListener("click", () => {
+        window.location.href = "person_register.html";
+      });
+      document.getElementById("batchImportBtn").addEventListener("click", () => alert("批量导入功能开发中"));
+      document.getElementById("queryBtn").addEventListener("click", () => refreshList(filterPeople()));
+      document.getElementById("refreshBtn").addEventListener("click", () => refreshList(filterPeople()));
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        document.querySelectorAll(".query-card input, .query-card select").forEach((control) => {
+          control.value = "";
+        });
+        refreshList(overseasPeople);
+      });
+      refreshList(overseasPeople);
+    }
+
+    renderPage();
+  </script>
+</body>
+</html>

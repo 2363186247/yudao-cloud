@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>境外舆情分析系统 - 境外人员列表</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/css/target-pool.css" />
+  </head>
+  <body>
+    <div class="system-layout">
+      <aside class="sidebar">
+        <div class="brand-box">
+          <div class="brand-logo"><i class="ri-shield-keyhole-line"></i></div>
+          <div class="brand-text">
+            <div class="brand-title">境外舆情分析系统</div>
+            <div class="brand-subtitle">Overseas Public Opinion</div>
+          </div>
+        </div>
+
+        <nav class="menu-group">
+          <div class="menu-section">
+            <a class="menu-link" href="./dashboard.html">
+              <span class="menu-main"><span class="menu-icon">⌂</span><span class="menu-text">首页</span></span>
+            </a>
+          </div>
+          <div class="menu-section">
+            <a class="menu-link" href="./dashboard.html">
+              <span class="menu-main"><span class="menu-icon">W</span><span class="menu-text">工作台</span></span>
+            </a>
+          </div>
+          <div class="menu-section open">
+            <div class="menu-trigger">
+              <span class="menu-main"><span class="menu-icon">◎</span><span class="menu-text">情报中心</span></span>
+              <span class="menu-arrow">›</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="./judgement-workbench.html">情报汇总</a></li>
+              <li><a class="submenu-link" href="./search-info.html">情报查询</a></li>
+              <li><a class="submenu-link" href="./search-national-network.html">全国联网查询</a></li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main"><span class="menu-icon">◫</span><span class="menu-text">专题监测</span></span>
+              <span class="menu-arrow">›</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="./topic-tasks.html">专题池</a></li>
+              <li><a class="submenu-link" href="./topic-settings.html">创建专题</a></li>
+              <li><a class="submenu-link" href="./topic-reports.html">专题报告</a></li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <a class="menu-link" href="./overseas-person-list.html">
+              <span class="menu-main"><span class="menu-icon">☷</span><span class="menu-text">人员管理</span></span>
+            </a>
+          </div>
+          <div class="menu-section open">
+            <div class="menu-trigger">
+              <span class="menu-main"><span class="menu-icon">◉</span><span class="menu-text">目标画像</span></span>
+              <span class="menu-arrow">›</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link active" href="./overseas-person-list.html">目标池 / 目标列表</a></li>
+              <li><a class="submenu-link" href="./profile-detail.html">目标分析报告</a></li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <a class="menu-link" href="./judgement-workbench.html">
+              <span class="menu-main"><span class="menu-icon">⌘</span><span class="menu-text">综合研判</span></span>
+            </a>
+          </div>
+          <div class="menu-section">
+            <a class="menu-link" href="./warning-rank.html">
+              <span class="menu-main"><span class="menu-icon">⚑</span><span class="menu-text">事件预警</span></span>
+            </a>
+          </div>
+          <div class="menu-section">
+            <a class="menu-link" href="./business-push/index.html">
+              <span class="menu-main"><span class="menu-icon">⇢</span><span class="menu-text">业务推送</span></span>
+            </a>
+          </div>
+          <div class="menu-section">
+            <a class="menu-link" href="./gang-person-files.html">
+              <span class="menu-main"><span class="menu-icon">◌</span><span class="menu-text">反制数据分析</span></span>
+            </a>
+          </div>
+        </nav>
+      </aside>
+
+      <div class="main-wrapper">
+        <header class="topbar">
+          <div class="topbar-left">
+            <div class="topbar-title">境外人员列表</div>
+            <div class="topbar-breadcrumb">首页 / 目标画像 / 境外人员列表</div>
+          </div>
+          <div class="topbar-right">
+            <div class="topbar-btn" title="通知中心">🔔</div>
+            <div class="topbar-btn" title="系统设置">⚙</div>
+            <div class="shell-duty-chip"><i class="ri-group-line"></i>在线 28 人</div>
+            <div class="user-card">
+              <div class="user-avatar">管</div>
+              <div class="user-info">
+                <div class="user-name">管理员</div>
+                <div class="user-role">情报分析员</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="content-area">
+          <section class="module-header">
+            <div>
+              <h1 class="page-title">目标池</h1>
+              <p class="page-desc">按组织分组管理境外重点目标，支持目标检索、风险筛选与详情查看。</p>
+            </div>
+          </section>
+
+          <section class="filter-card">
+            <div class="filter-row">
+              <div class="filter-item wide">
+                <label class="filter-label" for="searchInput">目标姓名/别名/账号</label>
+                <input class="filter-input" id="searchInput" type="text" placeholder="请输入目标姓名、别名或账号" />
+              </div>
+              <div class="filter-item">
+                <label class="filter-label" for="orgFilter">所属组织</label>
+                <select class="filter-select" id="orgFilter">
+                  <option value="">全部组织</option>
+                  <option value="org1">东突厥斯坦伊斯兰运动</option>
+                  <option value="org2">基地组织</option>
+                  <option value="org3">伊斯兰国</option>
+                  <option value="org4">真主党</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label class="filter-label" for="identityFilter">身份类型</label>
+                <select class="filter-select" id="identityFilter">
+                  <option value="">全部类型</option>
+                  <option value="core">核心成员</option>
+                  <option value="peripheral">外围人员</option>
+                  <option value="contact">联络人员</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label class="filter-label" for="riskFilter">风险等级</label>
+                <select class="filter-select" id="riskFilter">
+                  <option value="">全部等级</option>
+                  <option value="high">高风险</option>
+                  <option value="medium">中风险</option>
+                  <option value="low">低风险</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label class="filter-label" for="statusFilter">活跃状态</label>
+                <select class="filter-select" id="statusFilter">
+                  <option value="">全部状态</option>
+                  <option value="active">活跃</option>
+                  <option value="monitor">持续监测</option>
+                  <option value="paused">暂停关注</option>
+                </select>
+              </div>
+              <div class="filter-actions">
+                <button class="btn btn-primary" id="searchButton" type="button"><i class="ri-search-line"></i>查询</button>
+                <button class="btn btn-secondary" id="resetButton" type="button"><i class="ri-refresh-line"></i>重置</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="section-header">
+            <div class="section-title"><i class="ri-team-line"></i>目标列表</div>
+          </section>
+
+          <div id="targetPoolContent"></div>
+        </main>
+      </div>
+    </div>
+
+    <script src="../assets/js/overseas-person-list.js"></script>
+  </body>
+</html>

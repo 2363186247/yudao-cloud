@@ -1,0 +1,1452 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>境外舆情分析系统 - 比对发现</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <link rel="stylesheet" href="shell_shared.css" />
+    <link rel="stylesheet" href="header_index_standard.css" />
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --panel: rgba(255, 255, 255, 0.96);
+        --panel-solid: #ffffff;
+        --primary: #1f5fbf;
+        --primary-dark: #164a96;
+        --primary-light: #eaf2ff;
+        --text: #1f2a3d;
+        --text-secondary: #627089;
+        --line: #e5ecf5;
+        --success: #20a464;
+        --warning: #f0a63a;
+        --danger: #e25555;
+        --shadow: 0 10px 30px rgba(20, 56, 114, 0.08);
+        --radius-xl: 24px;
+        --radius-lg: 18px;
+        --radius-md: 14px;
+        --radius-sm: 8px;
+        --sidebar-width: 288px;
+        --topbar-height: 72px;
+        --nav-bg: linear-gradient(180deg, #102742 0%, #173a61 56%, #1b446f 100%);
+        --nav-border: rgba(148, 176, 218, 0.2);
+        --nav-border-strong: rgba(148, 176, 218, 0.36);
+        --nav-surface: rgba(255, 255, 255, 0.06);
+        --nav-surface-hover: rgba(255, 255, 255, 0.1);
+        --nav-text: #d4e0f2;
+        --nav-text-muted: #95a9c6;
+        --nav-text-strong: #f7fbff;
+        --nav-accent: #82b2ff;
+        --topbar-bg: linear-gradient(180deg, rgba(252, 254, 255, 0.96) 0%, rgba(243, 247, 252, 0.92) 100%);
+        --topbar-line: #d8e2ee;
+        --topbar-surface: linear-gradient(180deg, #ffffff 0%, #f4f8fc 100%);
+        --topbar-shadow: 0 12px 24px rgba(16, 34, 63, 0.08);
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      html, body {
+        width: 100%;
+        height: 100%;
+        font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      a { text-decoration: none; color: inherit; }
+
+      .system-layout {
+        display: grid;
+        grid-template-columns: var(--sidebar-width) 1fr;
+        grid-template-rows: 100vh;
+        width: 100%;
+        height: 100%;
+      }
+
+      .sidebar {
+        background: var(--nav-bg);
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.04), 10px 0 32px rgba(10, 28, 53, 0.18);
+        display: flex;
+        flex-direction: column;
+        padding: 18px 16px 20px;
+        overflow-y: auto;
+      }
+
+      .brand-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 14px 18px;
+        margin-bottom: 14px;
+        border: 1px solid var(--nav-border);
+        border-radius: 20px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+      }
+
+      .brand-logo {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #4c86df 0%, #2d63b3 100%);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 18px;
+        box-shadow: 0 10px 18px rgba(8, 22, 43, 0.24);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        flex-shrink: 0;
+      }
+
+      .brand-text { display: flex; flex-direction: column; gap: 4px; }
+
+      .brand-title { font-size: 18px; font-weight: 700; color: var(--nav-text-strong); line-height: 1.2; }
+
+      .brand-subtitle { font-size: 12px; color: rgba(212, 224, 242, 0.74); line-height: 1.3; }
+
+      .menu-group { margin-top: 8px; }
+
+      .menu-section { margin-bottom: 8px; }
+
+      .menu-trigger, .menu-link {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid transparent;
+        color: var(--nav-text);
+        transition: all 0.2s ease;
+        cursor: pointer;
+        user-select: none;
+        font-weight: 600;
+      }
+
+      .menu-link:hover, .menu-trigger:hover {
+        background: var(--nav-surface-hover);
+        color: var(--nav-text-strong);
+        border-color: var(--nav-border);
+      }
+
+      .menu-link.active, .submenu-link.active {
+        background: linear-gradient(90deg, rgba(62, 109, 197, 0.42) 0%, rgba(116, 162, 241, 0.16) 100%);
+        color: var(--nav-text-strong);
+        font-weight: 700;
+        border-color: var(--nav-border-strong);
+        box-shadow: 0 10px 18px rgba(8, 22, 43, 0.18);
+      }
+
+      .menu-main { display: flex; align-items: center; gap: 12px; min-width: 0; }
+
+      .menu-icon { width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; color: inherit; flex-shrink: 0; }
+
+      .menu-text { font-size: 14px; white-space: nowrap; }
+
+      .menu-arrow { font-size: 12px; color: var(--nav-text-muted); transition: transform 0.2s ease; flex-shrink: 0; }
+
+      .menu-section.open > .menu-trigger { background: var(--nav-surface); color: var(--nav-text-strong); border-color: var(--nav-border); }
+
+      .menu-section.open .menu-arrow { transform: rotate(90deg); }
+
+      .submenu { list-style: none; margin-top: 6px; margin-left: 14px; padding-left: 18px; border-left: 1px solid rgba(148, 176, 218, 0.2); display: none; }
+
+      .menu-section.open .submenu { display: block; }
+
+      .submenu li { margin: 4px 0; }
+
+      .submenu-link {
+        display: flex;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 12px;
+        font-size: 13px;
+        color: var(--nav-text);
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+      }
+
+      .submenu-link:hover { background: var(--nav-surface-hover); color: var(--nav-text-strong); border-color: var(--nav-border); }
+
+      .main-wrapper { display: flex; flex-direction: column; min-width: 0; height: 100vh; overflow: hidden; }
+
+      .topbar {
+        height: var(--topbar-height);
+        padding: 0 28px;
+        border-bottom: 1px solid var(--topbar-line);
+        background: var(--topbar-bg);
+        backdrop-filter: blur(18px);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-shrink: 0;
+        box-shadow: 0 8px 24px rgba(16, 34, 63, 0.05);
+      }
+
+      .topbar-left { display: flex; flex-direction: column; gap: 4px; }
+
+      .topbar-title { font-size: 20px; font-weight: 700; color: #18304d; }
+
+      .topbar-breadcrumb { font-size: 12px; color: #6a7a8c; }
+
+      .topbar-right { display: flex; align-items: center; gap: 12px; }
+
+      .topbar-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        border: 1px solid var(--topbar-line);
+        background: var(--topbar-surface);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-dark);
+        box-shadow: var(--topbar-shadow);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .topbar-btn:hover { background: #eef4fb; border-color: #bfd0e6; transform: translateY(-1px); }
+
+      .user-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border-radius: 14px;
+        background: var(--topbar-surface);
+        border: 1px solid var(--topbar-line);
+        box-shadow: var(--topbar-shadow);
+      }
+
+      .user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #edf4ff 0%, #d7e4f7 100%);
+        color: var(--primary-dark);
+        box-shadow: inset 0 0 0 1px #cfdcf0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 14px;
+      }
+
+      .user-info { line-height: 1.25; }
+
+      .user-name { font-size: 14px; font-weight: 700; color: var(--text); }
+
+      .user-role { font-size: 12px; color: var(--text-secondary); }
+
+      .content-area { flex: 1; overflow-y: auto; padding: 24px; }
+
+      .filter-card {
+        background: var(--panel-solid);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        padding: 20px 24px;
+        margin-bottom: 16px;
+      }
+
+      .filter-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
+
+      .filter-item { display: flex; flex-direction: column; gap: 6px; min-width: 160px; }
+
+      .filter-item.wide { flex: 1; min-width: 220px; }
+
+      .filter-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+
+      .filter-input, .filter-select {
+        padding: 10px 14px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        color: var(--text);
+        background: var(--panel-solid);
+        outline: none;
+        transition: all 0.2s ease;
+      }
+
+      .filter-input:focus, .filter-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(31, 95, 191, 0.1);
+      }
+
+      .filter-select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23627089' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 32px;
+      }
+
+      .filter-actions { display: flex; gap: 10px; margin-left: auto; }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 18px;
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        outline: none;
+        white-space: nowrap;
+      }
+
+      .btn i { font-size: 16px; }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #1f5fbf 0%, #2d76db 100%);
+        color: #fff;
+        box-shadow: 0 6px 16px rgba(31, 95, 191, 0.25);
+      }
+
+      .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(31, 95, 191, 0.3); }
+
+      .btn-secondary { background: var(--panel-solid); color: var(--text); border: 1px solid var(--line); }
+
+      .btn-secondary:hover { background: #f5f7fb; border-color: #c5d0e0; }
+
+      .btn-outline { background: transparent; color: var(--text-secondary); border: 1px solid var(--line); }
+
+      .btn-outline:hover { background: #f5f7fb; color: var(--text); }
+
+      .btn-danger { background: linear-gradient(135deg, #dc3545 0%, #e55b63 100%); color: #fff; }
+
+      .table-card {
+        background: var(--panel-solid);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .table-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--line);
+        background: #fafbff;
+      }
+
+      .table-title { font-size: 15px; font-weight: 700; color: var(--text); }
+
+      .table-info { font-size: 13px; color: var(--text-secondary); }
+
+      .data-table { width: 100%; border-collapse: collapse; }
+
+      .data-table thead { background: #f8faff; }
+
+      .data-table th {
+        padding: 12px 14px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-secondary);
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+      }
+
+      .data-table td {
+        padding: 14px;
+        font-size: 13px;
+        color: var(--text);
+        border-bottom: 1px solid #f0f4fa;
+        vertical-align: middle;
+      }
+
+      .data-table tbody tr { transition: all 0.15s ease; }
+
+      .data-table tbody tr:hover { background: #f8fbff; }
+
+      .data-table tbody tr:last-child td { border-bottom: none; }
+
+      .photo-cell { display: flex; align-items: center; gap: 8px; }
+
+      .photo-thumb {
+        width: 48px;
+        height: 48px;
+        border-radius: 6px;
+        object-fit: cover;
+        border: 1px solid var(--line);
+        background: #f5f7fb;
+      }
+
+      .photo-placeholder {
+        width: 48px;
+        height: 48px;
+        border-radius: 6px;
+        background: #f0f2f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #c0c4ce;
+        font-size: 20px;
+      }
+
+      .person-info { display: flex; flex-direction: column; gap: 2px; }
+
+      .person-name { font-weight: 600; color: var(--text); }
+
+      .person-id { font-size: 11px; color: var(--text-secondary); font-family: "Consolas", monospace; }
+
+      .similarity-cell { display: flex; align-items: center; gap: 8px; }
+
+      .similarity-bar { width: 60px; height: 6px; background: #e5ecf5; border-radius: 999px; overflow: hidden; }
+
+      .similarity-fill { height: 100%; border-radius: 999px; background: var(--primary); }
+
+      .similarity-fill.high { background: var(--danger); }
+
+      .similarity-fill.medium { background: var(--warning); }
+
+      .similarity-fill.low { background: var(--success); }
+
+      .similarity-value { font-weight: 700; min-width: 40px; }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .tag-primary { background: var(--primary-light); color: var(--primary); }
+
+      .tag-success { background: #e9f8f1; color: var(--success); }
+
+      .tag-warning { background: #fff4e4; color: var(--warning); }
+
+      .tag-danger { background: #feecec; color: var(--danger); }
+
+      .tag-info { background: #eaf2ff; color: #3b82f6; }
+
+      .tag-gray { background: #f0f0f2; color: #8c8c8c; }
+
+      .status-untreated { background: #fff4e4; color: #b7791f; }
+
+      .status-pushed { background: #e9f8f1; color: #276749; }
+
+      .status-disposed { background: #ebf8ff; color: #2b6cb0; }
+
+      .action-btns { display: flex; gap: 4px; }
+
+      .action-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        background: var(--panel-solid);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        color: var(--text-secondary);
+      }
+
+      .action-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+      .action-btn i { font-size: 15px; }
+
+      .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 24px;
+        border-top: 1px solid var(--line);
+        background: #fafbff;
+      }
+
+      .pagination-info { font-size: 13px; color: var(--text-secondary); }
+
+      .pagination-controls { display: flex; align-items: center; gap: 6px; }
+
+      .page-btn {
+        min-width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        background: var(--panel-solid);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        font-size: 13px;
+        color: var(--text);
+        padding: 0 10px;
+      }
+
+      .page-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+      .page-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 28, 53, 0.5);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s ease;
+      }
+
+      .modal-overlay.show { opacity: 1; visibility: visible; }
+
+      .modal {
+        width: min(900px, 95vw);
+        max-height: 88vh;
+        background: var(--panel-solid);
+        border-radius: var(--radius-xl);
+        box-shadow: 0 25px 60px rgba(10, 28, 53, 0.25);
+        display: flex;
+        flex-direction: column;
+        transform: scale(0.95) translateY(10px);
+        transition: all 0.2s ease;
+      }
+
+      .modal-overlay.show .modal { transform: scale(1) translateY(0); }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .modal-title { font-size: 17px; font-weight: 700; color: var(--text); }
+
+      .modal-close {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        border: none;
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--text-secondary);
+        transition: all 0.15s ease;
+      }
+
+      .modal-close:hover { background: #f0f0f2; color: var(--text); }
+
+      .modal-close i { font-size: 18px; }
+
+      .modal-body { flex: 1; overflow-y: auto; padding: 24px; }
+
+      .modal-footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 16px 24px;
+        border-top: 1px solid var(--line);
+        background: #fafbff;
+        border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+      }
+
+      .compare-section { margin-bottom: 24px; }
+
+      .section-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .section-title i { color: var(--primary); font-size: 16px; }
+
+      .compare-grid { display: grid; grid-template-columns: 1fr 80px 1fr; gap: 16px; align-items: start; }
+
+      .photo-box {
+        background: #f8faff;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        padding: 16px;
+        text-align: center;
+      }
+
+      .photo-box-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px; }
+
+      .photo-box-img {
+        width: 100%;
+        max-width: 200px;
+        height: auto;
+        aspect-ratio: 4/3;
+        object-fit: cover;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--line);
+        margin-bottom: 10px;
+      }
+
+      .photo-box-info { font-size: 12px; color: var(--text-secondary); }
+
+      .vs-divider { display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 60px; }
+
+      .vs-badge {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary) 0%, #4c86df 100%);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 800;
+        box-shadow: 0 4px 12px rgba(31, 95, 191, 0.3);
+      }
+
+      .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+      .info-item { display: flex; flex-direction: column; gap: 4px; }
+
+      .info-label { font-size: 12px; color: var(--text-secondary); }
+
+      .info-value { font-size: 14px; font-weight: 600; color: var(--text); }
+
+      .conclusion-box {
+        background: linear-gradient(135deg, #fff8f0 0%, #fff4e8 100%);
+        border: 1px solid #fde8c8;
+        border-radius: var(--radius-md);
+        padding: 16px;
+      }
+
+      .conclusion-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px dashed #fde8c8; }
+
+      .conclusion-item:last-child { border-bottom: none; }
+
+      .conclusion-icon { color: var(--warning); font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+
+      .conclusion-text { font-size: 13px; color: #92400e; line-height: 1.6; }
+
+      .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+
+      .form-grid-full { grid-column: span 2; }
+
+      .form-field { display: flex; flex-direction: column; gap: 8px; }
+
+      .form-label { font-size: 14px; font-weight: 600; color: var(--text); }
+
+      .form-label .required { color: var(--danger); margin-left: 2px; }
+
+      .form-input, .form-select, .form-textarea {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        color: var(--text);
+        background: var(--panel-solid);
+        transition: all 0.2s ease;
+        outline: none;
+      }
+
+      .form-input:focus, .form-select:focus, .form-textarea:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(31, 95, 191, 0.1);
+      }
+
+      .form-select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23627089' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 32px;
+      }
+
+      .form-textarea { min-height: 80px; resize: vertical; }
+
+      .checkbox-cell { display: flex; align-items: center; justify-content: center; }
+
+      .checkbox {
+        width: 18px;
+        height: 18px;
+        border-radius: 4px;
+        border: 2px solid var(--line);
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .checkbox:hover { border-color: var(--primary); }
+
+      .checkbox.checked { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+      .checkbox i { font-size: 12px; display: none; }
+
+      .checkbox.checked i { display: block; }
+
+      @media (max-width: 1080px) {
+        .system-layout { grid-template-columns: 240px 1fr; }
+      }
+
+      @media (max-width: 900px) {
+        .filter-row { flex-direction: column; align-items: stretch; }
+        .filter-item { width: 100%; }
+        .filter-actions { margin-left: 0; margin-top: 10px; }
+        .compare-grid { grid-template-columns: 1fr; }
+        .vs-divider { flex-direction: row; padding: 16px 0; }
+        .info-grid { grid-template-columns: repeat(2, 1fr); }
+        .form-grid { grid-template-columns: 1fr; }
+        .form-grid-full { grid-column: span 1; }
+        .data-table { font-size: 12px; }
+        .data-table th, .data-table td { padding: 10px 8px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="system-layout">
+      <aside class="sidebar">
+        <div class="brand-box">
+          <div class="brand-logo">境</div>
+          <div class="brand-text">
+            <div class="brand-title">境外舆情分析系统</div>
+            <div class="brand-subtitle">Overseas Public Opinion Intelligence Platform</div>
+          </div>
+        </div>
+
+        <nav class="menu-group">
+          <div class="menu-section">
+            <a class="menu-link" href="index.html">
+              <span class="menu-main"><span class="menu-icon">⌂</span><span class="menu-text">首页</span></span>
+            </a>
+          </div>
+          <div class="menu-section">
+            <a class="menu-link" href="home.html">
+              <span class="menu-main"><span class="menu-icon">W</span><span class="menu-text">工作台</span></span>
+            </a>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main"><span class="menu-icon">◎</span><span class="menu-text">情报中心</span></span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="huiz.html">情报汇总</a></li>
+              <li><a class="submenu-link" href="query.html">情报查询</a></li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main"><span class="menu-icon">◫</span><span class="menu-text">专题监测</span></span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="topic_pool.html">专题池</a></li>
+              <li><a class="submenu-link" href="topic_create.html">创建专题</a></li>
+              <li><a class="submenu-link" href="topic_report.html">专题报告</a></li>
+            </ul>
+          </div>
+          <div class="menu-section open">
+            <div class="menu-trigger">
+              <span class="menu-main"><span class="menu-icon">☷</span><span class="menu-text">境外人员管理</span></span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="person_register.html">境外人员登记</a></li>
+              <li><a class="submenu-link" href="warning_rules.html">预警规则管理</a></li>
+              <li><a class="submenu-link active" href="comparison_findings.html">比对发现</a></li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main"><span class="menu-icon">◉</span><span class="menu-text">目标画像</span></span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="target_pool.html">目标池</a></li>
+              <li><a class="submenu-link" href="target_report.html">目标分析报告</a></li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main"><span class="menu-icon">⌘</span><span class="menu-text">综合研判</span></span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="analysis_judgment.html">研判分析</a></li>
+              <li><a class="submenu-link" href="correlation_analysis.html">关联分析</a></li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main"><span class="menu-icon">⚑</span><span class="menu-text">事件预警</span></span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="event_rank.html">事件榜单</a></li>
+              <li><a class="submenu-link" href="my_events.html">我的事件</a></li>
+              <li><a class="submenu-link" href="my_subscriptions.html">我的订阅</a></li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <a class="menu-link" href="business_push.html">
+              <span class="menu-main"><span class="menu-icon">⇢</span><span class="menu-text">业务推送</span></span>
+            </a>
+          </div>
+          <div class="menu-section">
+            <a class="menu-link" href="counter_data_analysis.html">
+              <span class="menu-main"><span class="menu-icon">◌</span><span class="menu-text">反制数据分析</span></span>
+            </a>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main"><span class="menu-icon">▣</span><span class="menu-text">智慧大屏</span></span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="hotspot_dashboard.html">热点分析大屏</a></li>
+              <li><a class="submenu-link" href="data_dashboard.html">数据分析大屏</a></li>
+            </ul>
+          </div>
+        </nav>
+      </aside>
+
+      <div class="main-wrapper">
+        <header class="topbar">
+          <div class="topbar-left">
+            <div class="topbar-title">比对发现</div>
+            <div class="topbar-breadcrumb">首页 / 境外人员管理 / 比对发现</div>
+          </div>
+          <div class="topbar-right">
+            <div class="topbar-btn" title="通知中心">🔔</div>
+            <div class="topbar-btn" title="系统设置">⚙</div>
+            <div class="shell-duty-chip">
+              <span>在线 12 人</span>
+            </div>
+            <div class="user-card">
+              <div class="user-avatar">管</div>
+              <div class="user-info">
+                <div class="user-name">管理员</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="content-area">
+          <div class="filter-card">
+            <div class="filter-row">
+              <div class="filter-item wide">
+                <label class="filter-label">姓名/证件号/护照号</label>
+                <input type="text" class="filter-input" id="searchInput" placeholder="输入搜索关键词" />
+              </div>
+              <div class="filter-item">
+                <label class="filter-label">比对状态</label>
+                <select class="filter-select" id="statusFilter">
+                  <option value="">全部状态</option>
+                  <option value="untreated">未处理</option>
+                  <option value="pushed">已推送</option>
+                  <option value="disposed">已处置</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label class="filter-label">预警等级</label>
+                <select class="filter-select" id="levelFilter">
+                  <option value="">全部等级</option>
+                  <option value="high">高危</option>
+                  <option value="medium">中危</option>
+                  <option value="low">低危</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label class="filter-label">相似度</label>
+                <select class="filter-select" id="similarityFilter">
+                  <option value="">全部</option>
+                  <option value="90">≥90%</option>
+                  <option value="80">≥80%</option>
+                  <option value="70">≥70%</option>
+                </select>
+              </div>
+              <div class="filter-actions">
+                <button class="btn btn-primary" onclick="searchRecords()"><i class="ri-search-line"></i>查询</button>
+                <button class="btn btn-secondary" onclick="resetFilters()"><i class="ri-refresh-line"></i>重置</button>
+                <button class="btn btn-primary" onclick="batchPush()"><i class="ri-send-plane-line"></i>批量推送</button>
+                <button class="btn btn-outline" onclick="exportData()"><i class="ri-download-line"></i>导出</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <div class="table-header">
+              <span class="table-title">比对结果列表</span>
+              <span class="table-info" id="tableInfo">共 6 条记录</span>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 40px;"><div class="checkbox-cell"><div class="checkbox" id="selectAll" onclick="toggleSelectAll()"><i class="ri-check-line"></i></div></div></th>
+                  <th>抓拍照片</th>
+                  <th>底库照片</th>
+                  <th>姓名/证件号</th>
+                  <th>国籍</th>
+                  <th>比对类型</th>
+                  <th>相似度</th>
+                  <th>发现地点</th>
+                  <th>发现时间</th>
+                  <th>预警等级</th>
+                  <th>比对状态</th>
+                  <th>推送状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="resultTableBody"></tbody>
+            </table>
+            <div class="pagination">
+              <span class="pagination-info" id="paginationInfo">显示 1-6 条，共 6 条</span>
+              <div class="pagination-controls">
+                <button class="page-btn" disabled><i class="ri-arrow-left-s-line"></i></button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn" disabled><i class="ri-arrow-right-s-line"></i></button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="detailModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">比对结果详情</h3>
+          <button class="modal-close" onclick="closeDetailModal()"><i class="ri-close-line"></i></button>
+        </div>
+        <div class="modal-body" id="detailContent"></div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeDetailModal()">关闭</button>
+          <button class="btn btn-primary" onclick="openPushModal()"><i class="ri-send-plane-line"></i>推送处置</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="pushModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">推送用户</h3>
+          <button class="modal-close" onclick="closePushModal()"><i class="ri-close-line"></i></button>
+        </div>
+        <div class="modal-body">
+          <form id="pushForm">
+            <input type="hidden" id="pushRecordId" />
+            <div class="form-grid">
+              <div class="form-field">
+                <label class="form-label">接收用户<span class="required">*</span></label>
+                <select class="form-select" id="receiveUser" required>
+                  <option value="">请选择接收用户</option>
+                  <option value="zhangsan">张三 / 一大队</option>
+                  <option value="lisi">李四 / 二大队</option>
+                  <option value="wangwu">王五 / 三大队</option>
+                  <option value="zhaoliu">赵六 / 情报科</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label class="form-label">接收部门</label>
+                <input type="text" class="form-input" id="receiveDept" placeholder="系统自动联动" value="" readonly />
+              </div>
+              <div class="form-field">
+                <label class="form-label">推送方式<span class="required">*</span></label>
+                <select class="form-select" id="pushMethod" required>
+                  <option value="">请选择推送方式</option>
+                  <option value="station">站内消息</option>
+                  <option value="sms">短信提醒</option>
+                  <option value="todo">系统待办</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label class="form-label">推送优先级</label>
+                <select class="form-select" id="pushPriority">
+                  <option value="high">高</option>
+                  <option value="medium" selected>中</option>
+                  <option value="low">低</option>
+                </select>
+              </div>
+              <div class="form-field form-grid-full">
+                <label class="form-label">推送说明<span class="required">*</span></label>
+                <textarea class="form-textarea" id="pushRemark" placeholder="请输入本次推送原因或办理要求" required></textarea>
+              </div>
+              <div class="form-field">
+                <label class="form-label">短信提醒</label>
+                <select class="form-select" id="smsRemind">
+                  <option value="yes">是</option>
+                  <option value="no">否</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label class="form-label">站内提醒</label>
+                <select class="form-select" id="stationRemind">
+                  <option value="yes">是</option>
+                  <option value="no">否</option>
+                </select>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closePushModal()">取消</button>
+          <button class="btn btn-primary" onclick="submitPush()"><i class="ri-send-plane-line"></i>确认推送</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const compareData = [
+        {
+          id: "CP001",
+          name: "艾哈迈德·侯赛因",
+          passport: "P12345678",
+          nationality: "巴基斯坦",
+          compareType: "人像比对",
+          similarity: 94,
+          location: "北京首都机场T3航站楼",
+          captureTime: "2026-04-15 14:32",
+          level: "high",
+          levelName: "高危",
+          status: "untreated",
+          statusName: "未处理",
+          pushStatus: "unpushed",
+          pushStatusName: "未推送",
+          pushTo: null,
+          gender: "男",
+          birthDate: "1985-06-15",
+          device: "安检口A-03",
+          sourceDept: "北京边防总站"
+        },
+        {
+          id: "CP002",
+          name: "穆罕默德·阿里",
+          passport: "P87654321",
+          nationality: "伊朗",
+          compareType: "人像比对",
+          similarity: 87,
+          location: "上海浦东机场海关",
+          captureTime: "2026-04-14 09:18",
+          level: "medium",
+          levelName: "中危",
+          status: "pushed",
+          statusName: "已推送",
+          pushStatus: "pushed",
+          pushStatusName: "已推送",
+          pushTo: "张三 / 一大队",
+          gender: "男",
+          birthDate: "1990-03-22",
+          device: "海关大厅B-02",
+          sourceDept: "上海海关"
+        },
+        {
+          id: "CP003",
+          name: "约翰·史密斯",
+          passport: "P11223344",
+          nationality: "美国",
+          compareType: "人像比对",
+          similarity: 76,
+          location: "深圳罗湖口岸",
+          captureTime: "2026-04-13 16:45",
+          level: "low",
+          levelName: "低危",
+          status: "disposed",
+          statusName: "已处置",
+          pushStatus: "pushed",
+          pushStatusName: "已推送",
+          pushTo: "李四 / 二大队",
+          gender: "男",
+          birthDate: "1978-11-08",
+          device: "入境大厅C-01",
+          sourceDept: "深圳边检"
+        },
+        {
+          id: "CP004",
+          name: "田中太郎",
+          passport: "P55667788",
+          nationality: "日本",
+          compareType: "人像比对",
+          similarity: 91,
+          location: "广州白云机场",
+          captureTime: "2026-04-12 11:20",
+          level: "high",
+          levelName: "高危",
+          status: "untreated",
+          statusName: "未处理",
+          pushStatus: "unpushed",
+          pushStatusName: "未推送",
+          pushTo: null,
+          gender: "男",
+          birthDate: "1982-09-30",
+          device: "安检口D-01",
+          sourceDept: "广州边检"
+        },
+        {
+          id: "CP005",
+          name: "金正恩",
+          passport: "P99887766",
+          nationality: "朝鲜",
+          compareType: "人像比对",
+          similarity: 83,
+          location: "沈阳桃仙机场",
+          captureTime: "2026-04-11 08:55",
+          level: "medium",
+          levelName: "中危",
+          status: "pushed",
+          statusName: "已推送",
+          pushStatus: "pushed",
+          pushStatusName: "已推送",
+          pushTo: "王五 / 三大队",
+          gender: "男",
+          birthDate: "1984-01-08",
+          device: "海关大厅A-04",
+          sourceDept: "沈阳海关"
+        },
+        {
+          id: "CP006",
+          name: "玛丽亚·科斯塔",
+          passport: "P33445566",
+          nationality: "西班牙",
+          compareType: "人像比对",
+          similarity: 68,
+          location: "成都双流机场",
+          captureTime: "2026-04-10 15:30",
+          level: "low",
+          levelName: "低危",
+          status: "untreated",
+          statusName: "未处理",
+          pushStatus: "unpushed",
+          pushStatusName: "未推送",
+          pushTo: null,
+          gender: "女",
+          birthDate: "1992-07-14",
+          device: "安检口B-02",
+          sourceDept: "成都边检"
+        }
+      ];
+
+      let selectedRecords = new Set();
+      let currentDetailId = null;
+
+      function getSimilarityClass(similarity) {
+        if (similarity >= 90) return "high";
+        if (similarity >= 75) return "medium";
+        return "low";
+      }
+
+      function getLevelTagClass(level) {
+        if (level === "high") return "tag-danger";
+        if (level === "medium") return "tag-warning";
+        return "tag-info";
+      }
+
+      function getStatusClass(status) {
+        if (status === "untreated") return "status-untreated";
+        if (status === "pushed") return "status-pushed";
+        if (status === "disposed") return "status-disposed";
+        return "status-failed";
+      }
+
+      function getPushStatusClass(status) {
+        if (status === "pushed") return "tag-success";
+        if (status === "failed") return "tag-danger";
+        return "tag-gray";
+      }
+
+      function renderTable(data) {
+        const tbody = document.getElementById("resultTableBody");
+        tbody.innerHTML = data.map(record => `
+          <tr>
+            <td><div class="checkbox-cell"><div class="checkbox ${selectedRecords.has(record.id) ? 'checked' : ''}" onclick="toggleSelect('${record.id}')"><i class="ri-check-line"></i></div></div></td>
+            <td><div class="photo-placeholder"><i class="ri-image-line"></i></div></td>
+            <td><div class="photo-placeholder"><i class="ri-image-line"></i></div></td>
+            <td>
+              <div class="person-info">
+                <span class="person-name">${record.name}</span>
+                <span class="person-id">${record.passport}</span>
+              </div>
+            </td>
+            <td>${record.nationality}</td>
+            <td><span class="tag tag-primary">${record.compareType}</span></td>
+            <td>
+              <div class="similarity-cell">
+                <div class="similarity-bar"><div class="similarity-fill ${getSimilarityClass(record.similarity)}" style="width: ${record.similarity}%"></div></div>
+                <span class="similarity-value">${record.similarity}%</span>
+              </div>
+            </td>
+            <td>${record.location}</td>
+            <td>${record.captureTime}</td>
+            <td><span class="tag ${getLevelTagClass(record.level)}">${record.levelName}</span></td>
+            <td><span class="tag ${getStatusClass(record.status)}">${record.statusName}</span></td>
+            <td>
+              <span class="tag ${getPushStatusClass(record.pushStatus)}">${record.pushStatusName}</span>
+              ${record.pushTo ? `<br><span style="font-size:11px;color:#627089">→ ${record.pushTo}</span>` : ''}
+            </td>
+            <td>
+              <div class="action-btns">
+                <button class="action-btn" title="查看详情" onclick="viewDetail('${record.id}')"><i class="ri-eye-line"></i></button>
+                <button class="action-btn" title="推送用户" onclick="openPushModal('${record.id}')"><i class="ri-send-plane-line"></i></button>
+                <button class="action-btn" title="标记处置" onclick="markDisposed('${record.id}')"><i class="ri-check-line"></i></button>
+              </div>
+            </td>
+          </tr>
+        `).join("");
+
+        document.getElementById("tableInfo").textContent = `共 ${data.length} 条记录`;
+        document.getElementById("paginationInfo").textContent = `显示 1-${data.length} 条，共 ${data.length} 条`;
+      }
+
+      function searchRecords() {
+        const keyword = document.getElementById("searchInput").value.toLowerCase();
+        const statusFilter = document.getElementById("statusFilter").value;
+        const levelFilter = document.getElementById("levelFilter").value;
+        const similarityFilter = document.getElementById("similarityFilter").value;
+
+        const filtered = compareData.filter(record => {
+          const matchKeyword = !keyword || record.name.toLowerCase().includes(keyword) || record.passport.toLowerCase().includes(keyword);
+          const matchStatus = !statusFilter || record.status === statusFilter;
+          const matchLevel = !levelFilter || record.level === levelFilter;
+          const matchSimilarity = !similarityFilter || record.similarity >= parseInt(similarityFilter);
+          return matchKeyword && matchStatus && matchLevel && matchSimilarity;
+        });
+
+        renderTable(filtered);
+      }
+
+      function resetFilters() {
+        document.getElementById("searchInput").value = "";
+        document.getElementById("statusFilter").value = "";
+        document.getElementById("levelFilter").value = "";
+        document.getElementById("similarityFilter").value = "";
+        selectedRecords.clear();
+        renderTable(compareData);
+      }
+
+      function toggleSelect(id) {
+        if (selectedRecords.has(id)) {
+          selectedRecords.delete(id);
+        } else {
+          selectedRecords.add(id);
+        }
+        renderTable(compareData);
+      }
+
+      function toggleSelectAll() {
+        const selectAllEl = document.getElementById("selectAll");
+        if (selectedRecords.size === compareData.length) {
+          selectedRecords.clear();
+          selectAllEl.classList.remove("checked");
+        } else {
+          compareData.forEach(r => selectedRecords.add(r.id));
+          selectAllEl.classList.add("checked");
+        }
+        renderTable(compareData);
+      }
+
+      function viewDetail(id) {
+        const record = compareData.find(r => r.id === id);
+        if (!record) return;
+        currentDetailId = id;
+
+        const conclusions = [];
+        if (record.similarity >= 90) conclusions.push("疑似命中重点关注人员，建议立即核查");
+        if (record.level === "high") conclusions.push("预警等级高，需优先处理");
+        conclusions.push("相似度达到" + record.similarity + "%，建议人工复核确认");
+
+        document.getElementById("detailContent").innerHTML = `
+          <div class="compare-section">
+            <div class="section-title"><i class="ri-image-fill"></i>人像对比</div>
+            <div class="compare-grid">
+              <div class="photo-box">
+                <div class="photo-box-label">抓拍照片</div>
+                <div class="photo-box-img" style="display:flex;align-items:center;justify-content:center;background:#f0f2f5;color:#c0c4ce;"><i class="ri-image-line" style="font-size:48px;"></i></div>
+                <div class="photo-box-info">${record.captureTime}<br>${record.location}</div>
+              </div>
+              <div class="vs-divider">
+                <div class="vs-badge">VS</div>
+              </div>
+              <div class="photo-box">
+                <div class="photo-box-label">底库照片</div>
+                <div class="photo-box-img" style="display:flex;align-items:center;justify-content:center;background:#f0f2f5;color:#c0c4ce;"><i class="ri-image-line" style="font-size:48px;"></i></div>
+                <div class="photo-box-info">${record.name}<br>${record.passport}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="compare-section">
+            <div class="section-title"><i class="ri-information-line"></i>基本信息</div>
+            <div class="info-grid">
+              <div class="info-item"><span class="info-label">姓名</span><span class="info-value">${record.name}</span></div>
+              <div class="info-item"><span class="info-label">性别</span><span class="info-value">${record.gender}</span></div>
+              <div class="info-item"><span class="info-label">出生日期</span><span class="info-value">${record.birthDate}</span></div>
+              <div class="info-item"><span class="info-label">护照号</span><span class="info-value">${record.passport}</span></div>
+              <div class="info-item"><span class="info-label">国籍</span><span class="info-value">${record.nationality}</span></div>
+              <div class="info-item"><span class="info-label">预警等级</span><span class="info-value"><span class="tag ${getLevelTagClass(record.level)}">${record.levelName}</span></span></div>
+            </div>
+          </div>
+
+          <div class="compare-section">
+            <div class="section-title"><i class="ri-map-pin-line"></i>比对信息</div>
+            <div class="info-grid">
+              <div class="info-item"><span class="info-label">比对类型</span><span class="info-value">${record.compareType}</span></div>
+              <div class="info-item"><span class="info-label">相似度</span><span class="info-value" style="color: ${record.similarity >= 90 ? 'var(--danger)' : record.similarity >= 75 ? 'var(--warning)' : 'var(--success)'}">${record.similarity}%</span></div>
+              <div class="info-item"><span class="info-label">发现地点</span><span class="info-value">${record.location}</span></div>
+              <div class="info-item"><span class="info-label">发现时间</span><span class="info-value">${record.captureTime}</span></div>
+              <div class="info-item"><span class="info-label">来源设备</span><span class="info-value">${record.device}</span></div>
+              <div class="info-item"><span class="info-label">来源部门</span><span class="info-value">${record.sourceDept}</span></div>
+            </div>
+          </div>
+
+          <div class="compare-section">
+            <div class="section-title"><i class="ri-file-list-3-line"></i>处置状态</div>
+            <div class="info-grid">
+              <div class="info-item"><span class="info-label">比对状态</span><span class="info-value"><span class="tag ${getStatusClass(record.status)}">${record.statusName}</span></span></div>
+              <div class="info-item"><span class="info-label">推送状态</span><span class="info-value"><span class="tag ${getPushStatusClass(record.pushStatus)}">${record.pushStatusName}</span></span></div>
+              <div class="info-item"><span class="info-label">接收人</span><span class="info-value">${record.pushTo || '-'}</span></div>
+            </div>
+          </div>
+
+          <div class="compare-section">
+            <div class="section-title"><i class="ri-error-warning-line"></i>比对结论摘要</div>
+            <div class="conclusion-box">
+              ${conclusions.map(c => `<div class="conclusion-item"><i class="ri-alert-fill conclusion-icon"></i><span class="conclusion-text">${c}</span></div>`).join('')}
+            </div>
+          </div>
+        `;
+
+        document.getElementById("detailModal").classList.add("show");
+      }
+
+      function closeDetailModal() {
+        document.getElementById("detailModal").classList.remove("show");
+        currentDetailId = null;
+      }
+
+      function openPushModal(id) {
+        if (id) {
+          document.getElementById("pushRecordId").value = id;
+        } else if (selectedRecords.size > 0) {
+          document.getElementById("pushRecordId").value = Array.from(selectedRecords).join(",");
+        } else {
+          alert("请选择要推送的记录！");
+          return;
+        }
+        document.getElementById("pushForm").reset();
+        document.getElementById("receiveDept").value = "";
+        document.getElementById("pushModal").classList.add("show");
+      }
+
+      function closePushModal() {
+        document.getElementById("pushModal").classList.remove("show");
+      }
+
+      function submitPush() {
+        const user = document.getElementById("receiveUser").value;
+        const method = document.getElementById("pushMethod").value;
+        const remark = document.getElementById("pushRemark").value;
+
+        if (!user || !method || !remark) {
+          alert("请填写必填项！");
+          return;
+        }
+
+        const deptMap = { zhangsan: "一大队", lisi: "二大队", wangwu: "三大队", zhaoliu: "情报科" };
+        const userMap = { zhangsan: "张三", lisi: "李四", wangwu: "王五", zhaoliu: "赵六" };
+        const dept = deptMap[user] || "";
+        const userName = userMap[user] || "";
+
+        document.getElementById("receiveDept").value = dept;
+
+        const ids = document.getElementById("pushRecordId").value.split(",");
+        ids.forEach(id => {
+          const record = compareData.find(r => r.id === id);
+          if (record) {
+            record.status = "pushed";
+            record.statusName = "已推送";
+            record.pushStatus = "pushed";
+            record.pushStatusName = "已推送";
+            record.pushTo = userName + " / " + dept;
+          }
+        });
+
+        closePushModal();
+        renderTable(compareData);
+        alert("推送成功！");
+      }
+
+      function markDisposed(id) {
+        const record = compareData.find(r => r.id === id);
+        if (record) {
+          record.status = "disposed";
+          record.statusName = "已处置";
+          renderTable(compareData);
+          alert("已标记为处置完成！");
+        }
+      }
+
+      function batchPush() {
+        if (selectedRecords.size === 0) {
+          alert("请先选择要推送的记录！");
+          return;
+        }
+        openPushModal();
+      }
+
+      function exportData() {
+        alert("导出功能开发中...");
+      }
+
+      document.getElementById("receiveUser").addEventListener("change", function() {
+        const deptMap = { zhangsan: "一大队", lisi: "二大队", wangwu: "三大队", zhaoliu: "情报科" };
+        document.getElementById("receiveDept").value = deptMap[this.value] || "";
+      });
+
+      document.querySelectorAll(".menu-section").forEach(section => {
+        const trigger = section.querySelector(".menu-trigger");
+        if (trigger) {
+          trigger.addEventListener("click", () => {
+            section.classList.toggle("open");
+          });
+        }
+      });
+
+      document.querySelectorAll(".modal-overlay").forEach(overlay => {
+        overlay.addEventListener("click", e => {
+          if (e.target.classList.contains("modal-overlay")) {
+            overlay.classList.remove("show");
+          }
+        });
+      });
+
+      renderTable(compareData);
+    </script>
+    <script src="shell_shared.js"></script>
+    <script src="header_index_standard.js"></script>
+  </body>
+</html>
+

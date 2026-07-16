@@ -1,0 +1,1714 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>境外舆情分析系统 - 目标池</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --bg-secondary: #eef2f8;
+        --panel: rgba(255, 255, 255, 0.96);
+        --panel-solid: #ffffff;
+        --panel-elevated: #ffffff;
+        --primary: #1a56db;
+        --primary-dark: #1442a0;
+        --primary-light: #e8effe;
+        --primary-gradient: linear-gradient(135deg, #1a56db 0%, #2d72e8 100%);
+        --text: #1a2332;
+        --text-secondary: #5a6781;
+        --text-muted: #8896ab;
+        --line: #e4e9f0;
+        --line-light: #f0f3f8;
+        --success: #0d9f6e;
+        --success-light: #e3faf2;
+        --warning: #c27803;
+        --warning-light: #fef3cd;
+        --danger: #c81e1e;
+        --danger-light: #fee2e2;
+        --info: #0e9dd9;
+        --info-light: #e0f5fe;
+        --shadow: 0 4px 20px rgba(26, 54, 132, 0.08);
+        --shadow-lg: 0 12px 40px rgba(26, 54, 132, 0.12);
+        --shadow-card: 0 2px 12px rgba(26, 54, 132, 0.06);
+        --radius-xl: 20px;
+        --radius-lg: 16px;
+        --radius-md: 12px;
+        --radius-sm: 8px;
+        --radius-xs: 6px;
+        --sidebar-width: 220px;
+        --topbar-height: 58px;
+        --nav-bg: linear-gradient(180deg, #102742 0%, #173a61 56%, #1b446f 100%);
+        --nav-border: rgba(148, 176, 218, 0.2);
+        --nav-border-strong: rgba(148, 176, 218, 0.36);
+        --nav-surface: rgba(255, 255, 255, 0.06);
+        --nav-surface-hover: rgba(255, 255, 255, 0.1);
+        --nav-surface-active: rgba(255, 255, 255, 0.12);
+        --nav-text: #d4e0f2;
+        --nav-text-muted: #95a9c6;
+        --nav-text-strong: #f7fbff;
+        --nav-active-bg: rgba(26, 86, 219, 0.25);
+        --nav-accent: #82b2ff;
+        --topbar-bg: #071f49;
+        --topbar-line: rgba(255, 255, 255, 0.12);
+        --topbar-shadow: 0 4px 18px rgba(4, 18, 45, 0.18);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        font-family:
+          "Microsoft YaHei",
+          "PingFang SC",
+          "Segoe UI",
+          -apple-system,
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .system-layout {
+        display: grid;
+        grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+        grid-template-rows: 100vh;
+        width: 100%;
+        height: 100%;
+      }
+
+      .sidebar {
+        width: auto;
+        min-width: 0;
+        background: var(--nav-bg);
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow:
+          inset -1px 0 0 rgba(255, 255, 255, 0.04),
+          10px 0 32px rgba(10, 28, 53, 0.18);
+        display: flex;
+        flex-direction: column;
+        padding: 0 12px 12px;
+        overflow-y: auto;
+      }
+
+      .brand-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        height: var(--topbar-height);
+        padding: 0 6px;
+        margin-bottom: 12px;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+      }
+
+      .brand-logo {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #4c86df 0%, #2d63b3 100%);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 14px;
+        box-shadow: 0 10px 18px rgba(8, 22, 43, 0.24);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        flex-shrink: 0;
+      }
+
+      .brand-text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .brand-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--nav-text-strong);
+        line-height: 1.2;
+        letter-spacing: 0;
+      }
+
+      .brand-subtitle {
+        display: none;
+        font-size: 12px;
+        color: rgba(212, 224, 242, 0.74);
+        line-height: 1.3;
+      }
+
+      .menu-group {
+        margin-top: 0;
+      }
+
+      .side-menu {
+        display: grid;
+        gap: 4px;
+      }
+
+      .menu-section {
+        margin-bottom: 8px;
+      }
+
+      .menu-trigger,
+      .menu-link {
+        width: 100%;
+        min-height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 0 10px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        color: var(--nav-text);
+        transition: all 0.2s ease;
+        cursor: pointer;
+        user-select: none;
+        font-weight: 600;
+      }
+
+      .menu-link:hover,
+      .menu-trigger:hover {
+        background: var(--nav-surface-hover);
+        color: var(--nav-text-strong);
+        border-color: var(--nav-border);
+      }
+
+      .menu-link.active,
+      .submenu-link.active {
+        background: linear-gradient(
+          90deg,
+          rgba(62, 109, 197, 0.42) 0%,
+          rgba(116, 162, 241, 0.16) 100%
+        );
+        color: var(--nav-text-strong);
+        font-weight: 700;
+        border-color: var(--nav-border-strong);
+        box-shadow: 0 10px 18px rgba(8, 22, 43, 0.18);
+      }
+
+      .menu-main {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      .menu-icon {
+        width: 18px;
+        height: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: inherit;
+        flex-shrink: 0;
+        font-size: 16px;
+        line-height: 1;
+      }
+
+      .menu-text {
+        font-size: 14px;
+        white-space: nowrap;
+      }
+
+      .menu-arrow {
+        font-size: 12px;
+        color: var(--nav-text-muted);
+        transition: transform 0.2s ease;
+        flex-shrink: 0;
+        line-height: 1;
+      }
+
+      .menu-section.open > .menu-trigger {
+        background: var(--nav-surface);
+        color: var(--nav-text-strong);
+        border-color: var(--nav-border);
+      }
+
+      .menu-section.open .menu-arrow {
+        transform: rotate(90deg);
+      }
+
+      .submenu {
+        list-style: none;
+        margin-top: 6px;
+        margin-left: 14px;
+        padding-left: 18px;
+        border-left: 1px solid rgba(148, 176, 218, 0.2);
+        display: none;
+      }
+
+      .menu-section.open .submenu {
+        display: block;
+      }
+
+      .submenu li {
+        margin: 4px 0;
+      }
+
+      .submenu-link {
+        display: flex;
+        align-items: center;
+        min-height: 32px;
+        padding: 0 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        color: var(--nav-text);
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+      }
+
+      .submenu-link:hover {
+        background: var(--nav-surface-hover);
+        color: var(--nav-text-strong);
+        border-color: var(--nav-border);
+      }
+
+
+      .main-wrapper {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        height: 100vh;
+        overflow: hidden;
+        background: var(--bg);
+      }
+
+      .topbar {
+        height: var(--topbar-height);
+        padding: 0 22px;
+        border-bottom: 1px solid var(--topbar-line);
+        background: var(--topbar-bg);
+        backdrop-filter: blur(12px);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-shrink: 0;
+        box-shadow: var(--topbar-shadow);
+      }
+
+      .topbar-left {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .topbar-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: -0.3px;
+      }
+
+      .topbar-breadcrumb {
+        font-size: 12px;
+        color: #bbd1f2;
+      }
+
+      .topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .topbar-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(219, 234, 254, 0.18);
+        background: rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        color: #ffffff;
+        font-size: 16px;
+      }
+
+      .topbar-btn:hover {
+        background: rgba(255, 255, 255, 0.14);
+        border-color: rgba(219, 234, 254, 0.3);
+      }
+
+      .user-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 12px 6px 6px;
+        border-radius: var(--radius-md);
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(219, 234, 254, 0.18);
+      }
+
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-sm);
+        background: linear-gradient(135deg, #edf4ff 0%, #d7e4f7 100%);
+        color: var(--primary-dark);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 13px;
+      }
+
+      .user-info {
+        line-height: 1.3;
+      }
+
+      .user-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: #ffffff;
+      }
+
+      .user-role {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+
+      .content-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px 24px;
+      }
+
+      .page-header {
+        margin-bottom: 24px;
+      }
+
+      .page-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 6px;
+        letter-spacing: -0.5px;
+      }
+
+      .page-desc {
+        font-size: 13px;
+        color: var(--text-secondary);
+      }
+
+      .filter-card {
+        background: var(--panel-solid);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        box-shadow: var(--shadow-card);
+        padding: 16px 18px;
+        margin-bottom: 16px;
+      }
+
+      .filter-row {
+        display: grid;
+        grid-template-columns: 2fr 1.1fr 1.1fr 1.1fr 1.1fr 72px 72px;
+        gap: 16px;
+        align-items: flex-end;
+      }
+
+      .filter-item {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 0;
+      }
+
+      .filter-item.wide {
+        min-width: 0;
+      }
+
+      .filter-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        letter-spacing: 0.3px;
+      }
+
+      .filter-input,
+      .filter-select {
+        width: 100%;
+        height: 38px;
+        padding: 9px 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        color: var(--text);
+        background: var(--panel-solid);
+        outline: none;
+        transition: all 0.15s ease;
+      }
+
+      .filter-input:focus,
+      .filter-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.08);
+      }
+
+      .filter-select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%235a6781' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 30px;
+      }
+
+      .filter-actions {
+        display: grid;
+        grid-template-columns: 72px 72px;
+        gap: 8px;
+        grid-column: span 2;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-height: 38px;
+        padding: 8px 14px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        border: none;
+        outline: none;
+        white-space: nowrap;
+        letter-spacing: 0.2px;
+      }
+
+      .btn i {
+        font-size: 15px;
+      }
+
+      .btn-primary {
+        background: var(--primary-gradient);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(26, 86, 219, 0.25);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(26, 86, 219, 0.3);
+      }
+
+      .btn-secondary {
+        background: var(--panel-solid);
+        color: var(--text);
+        border: 1px solid var(--line);
+      }
+
+      .btn-secondary:hover {
+        background: var(--bg-secondary);
+        border-color: #c8d4e8;
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: var(--text-secondary);
+        border: 1px solid var(--line);
+      }
+
+      .btn-outline:hover {
+        background: var(--bg-secondary);
+        color: var(--text);
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, #c81e1e 0%, #dc2626 100%);
+        color: #fff;
+      }
+
+      .btn-sm {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      .btn-sm i {
+        font-size: 13px;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .section-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .section-title i {
+        color: var(--primary);
+        font-size: 17px;
+      }
+
+      .section-count {
+        font-size: 12px;
+        color: var(--primary);
+        background: var(--primary-light);
+        padding: 3px 10px;
+        border-radius: 999px;
+        margin-left: 8px;
+        font-weight: 700;
+      }
+
+      .org-group {
+        margin-bottom: 12px;
+        background: var(--panel-solid);
+        border: 1px solid #e5eaf3;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+        overflow: hidden;
+      }
+
+      .org-title {
+        width: 100%;
+        min-height: 48px;
+        padding: 0 18px;
+        border: 0;
+        background: #fff;
+        font-family: inherit;
+        text-align: left;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .org-title::before {
+        content: "";
+        width: 4px;
+        height: 20px;
+        background: var(--primary);
+        border-radius: 4px;
+        flex-shrink: 0;
+      }
+
+      .org-title-text {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .org-arrow {
+        color: var(--text-muted);
+        font-size: 18px;
+        transition: transform 0.15s ease;
+      }
+
+      .org-group.collapsed .org-arrow {
+        transform: rotate(180deg);
+      }
+
+      .target-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+        padding: 0 18px 18px;
+      }
+
+      .target-card {
+        background: var(--panel-solid);
+        border: 1px solid #e5eaf3;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+        min-height: 236px;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+
+      .target-card:hover {
+        border-color: var(--primary);
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+        transform: translateY(-2px);
+      }
+
+      .target-card.active {
+        border-color: var(--primary);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 16px 10px;
+      }
+
+      .target-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #e8f1ff, #dbeafe) !important;
+        border: 1px solid #c9ddff !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #1f6fff !important;
+        font-size: 20px;
+        flex-shrink: 0;
+        overflow: hidden;
+      }
+
+      .target-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .target-main {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .target-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 3px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .target-alias {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-bottom: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .target-org {
+        font-size: 12px;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .target-org i {
+        font-size: 13px;
+        color: var(--primary);
+      }
+
+      .card-body {
+        padding: 0 16px 12px;
+        flex: 1;
+      }
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+        letter-spacing: 0.2px;
+      }
+
+      .tag-identity {
+        background: var(--primary-light);
+        color: var(--primary);
+      }
+
+      .tag-role {
+        background: #f0e8ff;
+        color: #7c3aed;
+      }
+
+      .tag-risk-high {
+        background: var(--danger-light);
+        color: var(--danger);
+      }
+
+      .tag-risk-medium {
+        background: var(--warning-light);
+        color: var(--warning);
+      }
+
+      .tag-risk-low {
+        background: var(--success-light);
+        color: var(--success);
+      }
+
+      .tag-status-active {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+
+      .tag-status-monitor {
+        background: #fef9c3;
+        color: #ca8a04;
+      }
+
+      .tag-status-paused {
+        background: var(--bg-secondary);
+        color: var(--text-muted);
+      }
+
+      .card-info {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+
+      .info-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: var(--text-secondary);
+        min-width: 0;
+      }
+
+      .info-label {
+        color: #64748b;
+        flex-shrink: 0;
+      }
+
+      .info-value {
+        color: #243247;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .profile-field-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 4px 10px;
+      }
+
+      .profile-field {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        min-width: 0;
+      }
+
+      .field-label {
+        flex-shrink: 0;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 18px;
+      }
+
+      .field-label::after {
+        content: "：";
+      }
+
+      .field-value {
+        min-width: 0;
+        overflow: hidden;
+        color: #243247;
+        font-size: 12px;
+        line-height: 18px;
+        font-weight: 600;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .profile-time {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 8px;
+        overflow: hidden;
+      }
+
+      .profile-time span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .target-avatar.avatar-text {
+        font-weight: 800;
+      }
+
+      .card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 16px 14px;
+        background: #fff;
+        border-top: 1px solid var(--line-light);
+      }
+
+      .card-actions {
+        display: flex;
+        gap: 6px;
+      }
+
+      .action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+        padding: 5px 10px;
+        border-radius: var(--radius-xs);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        border: 1px solid var(--line);
+        background: var(--panel-solid);
+        color: var(--text-secondary);
+      }
+
+      .action-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--primary-light);
+      }
+
+      .action-btn i {
+        font-size: 13px;
+      }
+
+      .action-btn.primary {
+        background: #fff;
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      .action-btn.primary:hover {
+        background: var(--primary-light);
+      }
+
+      .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--success);
+      }
+
+      .status-dot.active {
+        background: var(--success);
+      }
+
+      .status-dot.monitor {
+        background: var(--warning);
+      }
+
+      .status-dot.paused {
+        background: var(--text-muted);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-muted);
+      }
+
+      .empty-state i {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
+
+      .empty-state h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--text-secondary);
+      }
+
+      .empty-state p {
+        font-size: 13px;
+      }
+
+      .pagination-bar {
+        min-height: 48px;
+        margin-top: 16px;
+        padding: 10px 16px;
+        background: #fff;
+        border: 1px solid #e5eaf3;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 14px;
+        color: var(--text-secondary);
+        font-size: 13px;
+      }
+
+      .page-size,
+      .page-jump {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .page-size select,
+      .page-jump input {
+        height: 30px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--text);
+        font-size: 13px;
+      }
+
+      .page-size select {
+        padding: 0 8px;
+      }
+
+      .page-jump input {
+        width: 42px;
+        text-align: center;
+      }
+
+      .page-btn {
+        min-width: 30px;
+        height: 30px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--text-secondary);
+        cursor: pointer;
+      }
+
+      .page-btn.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+      }
+
+      .org-group.collapsed .target-grid {
+        display: none;
+      }
+
+      @media (max-width: 1600px) {
+        .target-grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 1280px) {
+        .target-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .filter-row {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .filter-actions {
+          grid-column: auto / span 2;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .filter-row {
+          grid-template-columns: 1fr;
+        }
+        .filter-actions {
+          grid-column: auto;
+        }
+        .target-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="system-layout">
+      <aside class="sidebar">
+        <a class="brand-box" href="dashboard.html">
+          <div class="brand-logo">境</div>
+          <div class="brand-text">
+            <div class="brand-title">境外舆情分析系统</div>
+            <div class="brand-subtitle">
+              Overseas Public Opinion Intelligence Platform
+            </div>
+          </div>
+        </a>
+
+        <nav class="side-menu menu-group">
+          <div class="menu-section">
+            <a class="menu-link" href="dashboard.html">
+              <span class="menu-main"
+                ><span class="menu-icon">工</span
+                ><span class="menu-text">工作台</span></span
+              >
+            </a>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main"
+                ><span class="menu-icon">查</span
+                ><span class="menu-text">信息查询</span></span
+              >
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="search-info.html">信息查询</a></li>
+              <li><a class="submenu-link" href="search-national-network.html">全国联网查询</a></li>
+            </ul>
+          </div>
+          <div class="menu-section open">
+            <div class="menu-trigger">
+              <span class="menu-main"
+                ><span class="menu-icon">目</span
+                ><span class="menu-text">目标管理</span></span
+              >
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link active" href="target_pool.html">目标列表</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="profile-detail.html">目标详情</a>
+              </li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main"
+                ><span class="menu-icon">追</span
+                ><span class="menu-text">情报追踪</span></span
+              >
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="judgement-workbench.html">综合研判</a></li>
+              <li><a class="submenu-link" href="business-push/index.html">业务推送</a></li>
+              <li><a class="submenu-link" href="overseas-person-list.html">境外人员</a></li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main"
+                ><span class="menu-icon">人</span
+                ><span class="menu-text">境外人员管理</span></span
+              >
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="overseas_person_list.html">境外人员列表</a></li>
+              <li>
+                <a class="submenu-link" href="person_register.html">境外人员登记</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="warning_rules.html"
+                  >预警规则管理</a
+                >
+              </li>
+              <li>
+                <a class="submenu-link" href="compare_result.html">比对发现</a>
+              </li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main"
+                ><span class="menu-icon">反</span
+                ><span class="menu-text">反制数据分析</span></span
+              >
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="gang-person-files.html">FF人员反制数据分析</a></li>
+              <li><a class="submenu-link" href="counter-account-pool.html">反制编号库</a></li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main"
+                ><span class="menu-icon">专</span
+                ><span class="menu-text">专题监测</span></span
+              >
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="topic-dynamics.html">专题池</a></li>
+              <li><a class="submenu-link" href="topic-reports.html">专题报告</a></li>
+              <li><a class="submenu-link" href="topic-settings.html">专题创建</a></li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main"
+                ><span class="menu-icon">警</span
+                ><span class="menu-text">事件预警</span></span
+              >
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link" href="warning-rank.html">事件榜单</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="warning-my-events.html">我的事件</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="warning-subscriptions.html"
+                  >我的订阅</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <a class="menu-link" href="#">
+              <span class="menu-main"
+                ><span class="menu-icon">库</span
+                ><span class="menu-text">知识库</span></span
+              >
+            </a>
+          </div>
+          <div class="menu-section">
+            <a class="menu-link" href="#">
+              <span class="menu-main"
+                ><span class="menu-icon">系</span
+                ><span class="menu-text">系统管理</span></span
+              >
+            </a>
+          </div>
+        </nav>
+      </aside>
+
+      <div class="main-wrapper">
+        <header class="topbar">
+          <div class="topbar-left">
+            <div class="topbar-title">目标池</div>
+            <div class="topbar-breadcrumb">工作台 / 目标管理 / 目标列表</div>
+          </div>
+          <div class="topbar-right">
+            <div class="topbar-btn" title="通知中心">🔔</div>
+            <div class="topbar-btn" title="系统设置">⚙</div>
+            <div class="shell-duty-chip">
+              <span>在线 12 人</span>
+            </div>
+            <div class="user-card">
+              <div class="user-avatar">张</div>
+              <div class="user-info">
+                <div class="user-name">张警官</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="content-area">
+          <div class="workspace-shell">
+            <section class="module-header">
+              <div class="module-copy">
+                <h1>目标池</h1>
+                <p>按组织分组管理境外重点目标，支持目标检索、风险筛选与详情查看。</p>
+              </div>
+            </section>
+          </div>
+
+          <div class="filter-card">
+            <div class="filter-row">
+              <div class="filter-item wide">
+                <label class="filter-label">目标姓名/别名/账号</label>
+                <input
+                  type="text"
+                  class="filter-input"
+                  id="searchInput"
+                  placeholder="请输入目标姓名、别名或账号"
+                />
+              </div>
+              <div class="filter-item">
+                <label class="filter-label">所属组织</label>
+                <select class="filter-select" id="orgFilter">
+                  <option value="">全部组织</option>
+                  <option value="org1">东突厥斯坦伊斯兰运动</option>
+                  <option value="org2">基地组织</option>
+                  <option value="org3">哈亚特解放阵线</option>
+                  <option value="org4">伊斯兰国（ISIS）</option>
+                  <option value="org5">其他组织</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label class="filter-label">人员类别</label>
+                <select class="filter-select" id="categoryFilter">
+                  <option value="">全部类别</option>
+                  <option value="core">核心成员</option>
+                  <option value="organizer">组织者</option>
+                  <option value="propagandist">宣传者</option>
+                  <option value="contact">联络人员</option>
+                  <option value="supporter">支持者</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label class="filter-label">风险等级</label>
+                <select class="filter-select" id="riskFilter">
+                  <option value="">全部等级</option>
+                  <option value="high">高风险</option>
+                  <option value="medium">中风险</option>
+                  <option value="low">低风险</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label class="filter-label">活跃状态</label>
+                <select class="filter-select" id="statusFilter">
+                  <option value="">全部状态</option>
+                  <option value="active">活跃</option>
+                  <option value="monitor">持续监测</option>
+                  <option value="paused">暂停关注</option>
+                </select>
+              </div>
+              <div class="filter-actions">
+                <button class="btn btn-primary" onclick="searchTargets()">
+                  <i class="ri-search-line"></i>查询
+                </button>
+                <button class="btn btn-secondary" onclick="resetFilters()">
+                  <i class="ri-refresh-line"></i>重置
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="targetPoolContent"></div>
+
+          <div class="pagination-bar">
+            <span class="total-count">共 6 条</span>
+            <span class="page-size">
+              <select aria-label="每页条数">
+                <option>10条/页</option>
+                <option>20条/页</option>
+              </select>
+            </span>
+            <button class="page-btn" type="button">&lt;</button>
+            <button class="page-btn active" type="button">1</button>
+            <button class="page-btn" type="button">2</button>
+            <button class="page-btn" type="button">&gt;</button>
+            <span class="page-jump">跳至 <input value="1" aria-label="跳转页码" /> 页</span>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      const targetList = [
+        {
+          id: "target-001",
+          name: "北美政要A",
+          alias: "North America Figure A",
+          account: "@north_policy_a",
+          avatarText: "北",
+          gender: "男",
+          nationality: "美国",
+          identityType: "政治人物 / 企业家",
+          mainIdentity: "前政府要员 / 公众人物",
+          organization: "某政党组织",
+          orgKey: "org1",
+          location: "美国 佛罗里达州",
+          focusLevel: "高",
+          riskLevel: "高风险",
+          activeStatus: "重点关注",
+          personCategory: "政治人物",
+          activePlatforms: ["Truth Social", "X"],
+          mainSpreadPlatforms: ["Twitter", "Facebook"],
+          tags: ["政治人物", "领导人", "商人", "媒体焦点", "高关注度", "强影响力"],
+          latestDynamicTime: "2025-05-24 09:12",
+          updateTime: "2025-05-24 10:30",
+          maintainer: "管理员",
+        },
+        {
+          id: "target-002",
+          name: "欧洲媒体人A",
+          alias: "European Media Figure A",
+          account: "@media_watch_a",
+          avatarText: "媒",
+          gender: "男",
+          nationality: "英国",
+          identityType: "媒体人士 / 评论员",
+          mainIdentity: "新闻评论员 / 内容传播者",
+          organization: "境外媒体机构",
+          orgKey: "org2",
+          location: "英国 伦敦",
+          focusLevel: "中",
+          riskLevel: "中风险",
+          activeStatus: "持续监测",
+          personCategory: "宣传者",
+          activePlatforms: ["Twitter", "YouTube"],
+          mainSpreadPlatforms: ["Facebook", "YouTube"],
+          tags: ["媒体人", "评论员", "舆论活跃", "传播节点"],
+          latestDynamicTime: "2025-05-23 18:40",
+          updateTime: "2025-05-24 08:20",
+          maintainer: "管理员",
+        },
+        {
+          id: "target-003",
+          name: "中东组织成员A",
+          alias: "Middle East Member A",
+          account: "@regional_link_a",
+          avatarText: "组",
+          gender: "男",
+          nationality: "土耳其",
+          identityType: "组织成员 / 联络人员",
+          mainIdentity: "组织联络人 / 活动参与者",
+          organization: "境外重点组织",
+          orgKey: "org3",
+          location: "土耳其 伊斯坦布尔",
+          focusLevel: "高",
+          riskLevel: "高风险",
+          activeStatus: "重点关注",
+          personCategory: "联络人员",
+          activePlatforms: ["Telegram", "WhatsApp"],
+          mainSpreadPlatforms: ["Telegram", "Facebook"],
+          tags: ["联络人员", "组织成员", "跨境活动", "高风险"],
+          latestDynamicTime: "2025-05-24 07:55",
+          updateTime: "2025-05-24 09:45",
+          maintainer: "管理员",
+        },
+        {
+          id: "target-004",
+          name: "南亚意见领袖A",
+          alias: "South Asia Opinion A",
+          account: "@opinion_node_a",
+          avatarText: "意",
+          gender: "男",
+          nationality: "印度",
+          identityType: "意见领袖 / 内容创作者",
+          mainIdentity: "社交平台意见领袖",
+          organization: "独立账号",
+          orgKey: "org4",
+          location: "印度 新德里",
+          focusLevel: "中",
+          riskLevel: "中风险",
+          activeStatus: "正常关注",
+          personCategory: "宣传者",
+          activePlatforms: ["Facebook", "Instagram"],
+          mainSpreadPlatforms: ["YouTube", "Facebook"],
+          tags: ["意见领袖", "内容创作者", "社媒活跃", "话题传播"],
+          latestDynamicTime: "2025-05-22 21:10",
+          updateTime: "2025-05-23 16:30",
+          maintainer: "管理员",
+        },
+        {
+          id: "target-005",
+          name: "境外账号运营者A",
+          alias: "Overseas Account Operator A",
+          account: "@crossborder_user01",
+          avatarText: "账",
+          gender: "未知",
+          nationality: "未知",
+          identityType: "账号运营者 / 信息传播者",
+          mainIdentity: "跨平台账号运营人员",
+          organization: "未知组织",
+          orgKey: "org5",
+          location: "境外地区",
+          focusLevel: "低",
+          riskLevel: "低风险",
+          activeStatus: "暂停关注",
+          personCategory: "账号运营者",
+          activePlatforms: ["TikTok", "Telegram"],
+          mainSpreadPlatforms: ["TikTok", "Facebook"],
+          tags: ["账号运营", "信息传播", "外围人员", "低风险"],
+          latestDynamicTime: "2025-05-20 15:22",
+          updateTime: "2025-05-21 11:05",
+          maintainer: "管理员",
+        },
+        {
+          id: "target-006",
+          name: "跨境活跃人员A",
+          alias: "Cross-border Active A",
+          account: "@global_voice_01",
+          avatarText: "跨",
+          gender: "女",
+          nationality: "加拿大",
+          identityType: "社会活动人员 / 网络传播者",
+          mainIdentity: "跨境议题参与人员",
+          organization: "境外社会组织",
+          orgKey: "org6",
+          location: "加拿大 多伦多",
+          focusLevel: "中",
+          riskLevel: "中风险",
+          activeStatus: "持续监测",
+          personCategory: "支持者",
+          activePlatforms: ["Twitter", "Facebook"],
+          mainSpreadPlatforms: ["X", "Instagram"],
+          tags: ["社会活动", "跨境传播", "支持者", "持续监测"],
+          latestDynamicTime: "2025-05-24 06:35",
+          updateTime: "2025-05-24 10:05",
+          maintainer: "管理员",
+        },
+      ];
+
+      function html(value) {
+        return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        })[char]);
+      }
+
+      function riskClass(level) {
+        if (level === "高风险") return "tag-risk-high";
+        if (level === "低风险") return "tag-risk-low";
+        return "tag-risk-medium";
+      }
+
+      function statusDotClass(status) {
+        if (status === "重点关注" || status === "正常关注") return "active";
+        if (status === "持续监测") return "monitor";
+        return "paused";
+      }
+
+      function field(label, value) {
+        return `<div class="profile-field"><span class="field-label">${label}</span><span class="field-value">${html(value || "--")}</span></div>`;
+      }
+
+      function renderTargetCard(target) {
+        return `
+          <div class="target-card" onclick="goToDetail('${html(target.id)}')">
+            <div class="card-header">
+              <div class="target-avatar avatar-text">${html(target.avatarText)}</div>
+              <div class="target-main">
+                <div class="target-name">${html(target.name)}</div>
+                <div class="target-alias">英文名：${html(target.alias)} / 账号：${html(target.account)}</div>
+                <div class="target-org"><i class="ri-shield-line"></i>${html(target.organization)}</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="tag-row">
+                <span class="tag tag-identity">${html(target.personCategory)}</span>
+                <span class="tag tag-role">关注${html(target.focusLevel)}</span>
+                <span class="tag ${riskClass(target.riskLevel)}">${html(target.riskLevel)}</span>
+              </div>
+              <div class="card-info profile-field-grid">
+                ${field("国籍", target.nationality)}
+                ${field("身份", target.identityType)}
+                ${field("主要身份", target.mainIdentity)}
+                ${field("所在地", target.location)}
+                ${field("活跃平台", target.activePlatforms.join(" / "))}
+                ${field("主要传播平台", target.mainSpreadPlatforms.join(" / "))}
+                ${field("维护人", target.maintainer)}
+                ${field("目标标签", target.tags.slice(0, 3).join(" / "))}
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="status-indicator profile-time">
+                <span><span class="status-dot ${statusDotClass(target.activeStatus)}"></span>${html(target.activeStatus)}</span>
+                <span>最近动态：${html(target.latestDynamicTime)}</span>
+                <span>最近维护：${html(target.updateTime)}</span>
+              </div>
+              <div class="card-actions">
+                <a href="profile-detail.html?id=${encodeURIComponent(target.id)}" class="action-btn primary" onclick="event.stopPropagation()"><i class="ri-eye-line"></i>查看详情</a>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderTargetPoolCards() {
+        const groups = Array.from(new Map(targetList.map((item) => [item.orgKey, item.organization])));
+        document.getElementById("targetPoolContent").innerHTML = groups
+          .map(([orgKey, orgName], index) => {
+            const rows = targetList.filter((item) => item.orgKey === orgKey);
+            return `
+              <div class="org-group ${index === 0 ? "" : "collapsed"}" data-org="${html(orgKey)}">
+                <button class="org-title" type="button" onclick="toggleOrgGroup(this)" aria-expanded="${index === 0 ? "true" : "false"}">
+                  <span class="org-title-text">${html(orgName)}</span>
+                  <span class="section-count">${rows.length}人</span>
+                  <span class="org-arrow">⌃</span>
+                </button>
+                <div class="target-grid">${rows.map(renderTargetCard).join("")}</div>
+              </div>
+            `;
+          })
+          .join("");
+        document.querySelector(".total-count").textContent = `共 ${targetList.length} 条`;
+      }
+
+      function updateTargetFilters() {
+        document.getElementById("orgFilter").innerHTML = '<option value="">全部组织</option>' +
+          Array.from(new Map(targetList.map((item) => [item.orgKey, item.organization])))
+            .map(([key, name]) => `<option value="${html(key)}">${html(name)}</option>`)
+            .join("");
+        document.getElementById("categoryFilter").innerHTML = `
+          <option value="">全部类别</option>
+          <option value="政治人物">政治人物</option>
+          <option value="媒体人士">媒体人士</option>
+          <option value="宣传者">宣传者</option>
+          <option value="联络人员">联络人员</option>
+          <option value="支持者">支持者</option>
+          <option value="外围人员">外围人员</option>
+          <option value="账号运营者">账号运营者</option>
+        `;
+        document.getElementById("statusFilter").innerHTML = `
+          <option value="">全部状态</option>
+          <option value="重点关注">重点关注</option>
+          <option value="正常关注">正常关注</option>
+          <option value="持续监测">持续监测</option>
+          <option value="暂停关注">暂停关注</option>
+          <option value="已归档">已归档</option>
+        `;
+      }
+
+      function searchTargets() {
+        const keyword = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const org = document.getElementById("orgFilter").value;
+        const category = document.getElementById("categoryFilter").value;
+        const risk = document.getElementById("riskFilter").value;
+        const status = document.getElementById("statusFilter").value;
+        const categoryMap = {
+          core: "核心成员",
+          organizer: "组织者",
+          propagandist: "宣传者",
+          contact: "联络人员",
+          supporter: "支持者",
+        };
+        const riskMap = {
+          high: "高风险",
+          medium: "中风险",
+          low: "低风险",
+        };
+        const statusMap = {
+          active: "活跃",
+          monitor: "持续监测",
+          paused: "暂停关注",
+        };
+
+        document.querySelectorAll(".target-card").forEach((card) => {
+          const name = card
+            .querySelector(".target-name")
+            .textContent.toLowerCase();
+          const alias = card
+            .querySelector(".target-alias")
+            .textContent.toLowerCase();
+          const orgName = card.closest(".org-group").dataset.org;
+          const tags = Array.from(card.querySelectorAll(".tag")).map(
+            (t) => t.className + " " + t.textContent,
+          );
+          const cardText = card.textContent;
+
+          const matchKeyword =
+            !keyword || name.includes(keyword) || alias.includes(keyword);
+          const matchOrg = !org || orgName === org;
+          const matchCategory =
+            !category || cardText.includes(categoryMap[category] || category);
+          const matchRisk = !risk || cardText.includes(riskMap[risk] || risk);
+          const matchStatus =
+            !status || cardText.includes(statusMap[status] || status);
+
+          card.hidden = !(
+            matchKeyword &&
+            matchOrg &&
+            matchCategory &&
+            matchRisk &&
+            matchStatus
+          );
+        });
+
+        document.querySelectorAll(".org-group").forEach((group) => {
+          const visibleCards = group.querySelectorAll(".target-card:not([hidden])");
+          const hasVisible = visibleCards.length > 0;
+          group.style.display = hasVisible ? "" : "none";
+          if (hasVisible) {
+            group.classList.remove("collapsed");
+            group.querySelector(".org-title")?.setAttribute("aria-expanded", "true");
+          }
+        });
+      }
+
+      function resetFilters() {
+        document.getElementById("searchInput").value = "";
+        document.getElementById("orgFilter").value = "";
+        document.getElementById("categoryFilter").value = "";
+        document.getElementById("riskFilter").value = "";
+        document.getElementById("statusFilter").value = "";
+        document
+          .querySelectorAll(".target-card")
+          .forEach((card) => (card.hidden = false));
+        document
+          .querySelectorAll(".org-group")
+          .forEach((group, index) => {
+            group.style.display = "";
+            group.classList.toggle("collapsed", index !== 0);
+            group.querySelector(".org-title")?.setAttribute(
+              "aria-expanded",
+              index === 0 ? "true" : "false",
+            );
+          });
+      }
+
+      function goToDetail(id) {
+        window.location.href = "profile-detail.html?id=" + id;
+      }
+
+      function toggleOrgGroup(button) {
+        const group = button.closest(".org-group");
+        if (!group) return;
+        const collapsed = group.classList.toggle("collapsed");
+        button.setAttribute("aria-expanded", collapsed ? "false" : "true");
+      }
+
+      updateTargetFilters();
+      renderTargetPoolCards();
+
+      document.querySelectorAll(".menu-section").forEach((section) => {
+        const trigger = section.querySelector(".menu-trigger");
+        if (trigger) {
+          trigger.addEventListener("click", () => {
+            section.classList.toggle("open");
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
+
+

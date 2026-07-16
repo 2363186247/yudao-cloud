@@ -1,0 +1,938 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>境外舆情分析系统 - 我的订阅</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="shell_shared.css" />
+    <link rel="stylesheet" href="event_warning_shared.css" />
+    <link rel="stylesheet" href="header_index_standard.css" />
+  </head>
+  <body>
+    <div class="system-layout">
+      <aside class="sidebar">
+        <div class="brand-box">
+          <div class="brand-logo">境</div>
+          <div class="brand-text">
+            <div class="brand-title">境外舆情分析系统</div>
+            <div class="brand-subtitle">
+              Overseas Public Opinion Intelligence Platform
+            </div>
+          </div>
+        </div>
+
+        <nav class="menu-group">
+          <div class="menu-section">
+            <a class="menu-link" href="index.html">
+              <span class="menu-main">
+                <span class="menu-icon"><i class="ri-home-5-line"></i></span>
+                <span class="menu-text">首页</span>
+              </span>
+            </a>
+          </div>
+          <div class="menu-section">
+            <a class="menu-link" href="home.html">
+              <span class="menu-main">
+                <span class="menu-icon"
+                  ><i class="ri-layout-grid-line"></i
+                ></span>
+                <span class="menu-text">工作台</span>
+              </span>
+            </a>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon"
+                  ><i class="ri-database-2-line"></i
+                ></span>
+                <span class="menu-text">情报中心</span>
+              </span>
+              <span class="menu-arrow"
+                ><i class="ri-arrow-right-s-line"></i
+              ></span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="huiz.html">情报汇总</a></li>
+              <li><a class="submenu-link" href="query.html">情报查询</a></li>
+              <li><a class="submenu-link" href="search-national-network.html">全国联网查询</a></li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon"><i class="ri-radar-line"></i></span>
+                <span class="menu-text">专题监测</span>
+              </span>
+              <span class="menu-arrow"
+                ><i class="ri-arrow-right-s-line"></i
+              ></span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="topic_pool.html">专题池</a></li>
+              <li>
+                <a class="submenu-link" href="topic_create.html">专题创建</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="topic_report.html">专题报告</a>
+              </li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon"><i class="ri-user-3-line"></i></span>
+                <span class="menu-text">人员管理</span>
+              </span>
+              <span class="menu-arrow"
+                ><i class="ri-arrow-right-s-line"></i
+              ></span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link" href="person_register.html">人员登记</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="warning_rules.html"
+                  >预警规则管理</a
+                >
+              </li>
+              <li>
+                <a class="submenu-link" href="compare_result.html">比对发现</a>
+              </li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon"><i class="ri-focus-3-line"></i></span>
+                <span class="menu-text">目标画像</span>
+              </span>
+              <span class="menu-arrow"
+                ><i class="ri-arrow-right-s-line"></i
+              ></span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link" href="target_pool.html">目标池</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="target_report.html"
+                  >目标分析报告</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon"
+                  ><i class="ri-bar-chart-box-line"></i
+                ></span>
+                <span class="menu-text">综合研判</span>
+              </span>
+              <span class="menu-arrow"
+                ><i class="ri-arrow-right-s-line"></i
+              ></span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link" href="analysis_judgment.html"
+                  >研判分析</a
+                >
+              </li>
+              <li>
+                <a class="submenu-link" href="correlation_analysis.html"
+                  >关联分析</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="menu-section open">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon"
+                  ><i class="ri-alarm-warning-line"></i
+                ></span>
+                <span class="menu-text">事件预警</span>
+              </span>
+              <span class="menu-arrow"
+                ><i class="ri-arrow-right-s-line"></i
+              ></span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link" href="warning-rank.html">事件榜单</a>
+              </li>
+              <li>
+                <a class="submenu-link" href="warning-my-events.html">我的事件</a>
+              </li>
+              <li>
+                <a class="submenu-link active" href="warning-subscriptions.html"
+                  >我的订阅</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <a class="menu-link" href="business_push.html">
+              <span class="menu-main">
+                <span class="menu-icon"
+                  ><i class="ri-send-plane-line"></i
+                ></span>
+                <span class="menu-text">业务推送</span>
+              </span>
+            </a>
+          </div>
+          <div class="menu-section">
+            <a class="menu-link" href="counter_data_analysis.html">
+              <span class="menu-main">
+                <span class="menu-icon"
+                  ><i class="ri-pie-chart-2-line"></i
+                ></span>
+                <span class="menu-text">反制数据分析</span>
+              </span>
+            </a>
+          </div>
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon"
+                  ><i class="ri-dashboard-3-line"></i
+                ></span>
+                <span class="menu-text">智慧大屏</span>
+              </span>
+              <span class="menu-arrow"
+                ><i class="ri-arrow-right-s-line"></i
+              ></span>
+            </div>
+            <ul class="submenu">
+              <li>
+                <a class="submenu-link" href="hotspot_dashboard.html"
+                  >热点分析大屏</a
+                >
+              </li>
+              <li>
+                <a class="submenu-link" href="data_dashboard.html"
+                  >数据分析大屏</a
+                >
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </aside>
+
+      <div class="main-wrapper">
+        <header class="topbar">
+          <div class="topbar-left">
+            <div class="topbar-title">我的订阅</div>
+            <div class="topbar-breadcrumb">首页 / 事件预警 / 我的订阅</div>
+          </div>
+          <div class="topbar-right">
+            <div class="topbar-btn" title="通知中心">🔔</div>
+            <div class="topbar-btn" title="系统设置">⚙</div>
+            <div class="shell-duty-chip">
+              <span>在线 12 人</span>
+            </div>
+            <div class="user-card">
+              <div class="user-avatar">管</div>
+              <div class="user-info">
+                <div class="user-name">管理员</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="content-area">
+          <section class="section">
+            <div class="panel filter-panel">
+              <div class="panel-head">
+                <div class="panel-title-wrap">
+                  <h2 class="panel-title">筛选条件</h2>
+                  <p class="panel-subtitle">
+                    支持按订阅名称、订阅类型、状态、推送方式和时间范围快速筛选当前订阅项。
+                  </p>
+                </div>
+                <div class="panel-action-note">
+                  <i class="ri-bookmark-3-line"></i>
+                  当前展示 <span id="subscriptionResultCount">0</span> 条订阅
+                </div>
+              </div>
+
+              <div class="filter-grid event-filter-grid">
+                <label class="field span-2">
+                  <span class="field-label">订阅名称</span>
+                  <input
+                    id="subscriptionSearch"
+                    class="field-control"
+                    type="text"
+                    placeholder="请输入订阅名称或关键词"
+                  />
+                </label>
+                <label class="field">
+                  <span class="field-label">订阅类型</span>
+                  <select id="subscriptionType" class="field-control">
+                    <option value="">全部类型</option>
+                    <option value="事件订阅">事件订阅</option>
+                    <option value="专题订阅">专题订阅</option>
+                    <option value="规则订阅">规则订阅</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span class="field-label">订阅状态</span>
+                  <select id="subscriptionStatus" class="field-control">
+                    <option value="">全部状态</option>
+                    <option value="生效中">生效中</option>
+                    <option value="暂停中">暂停中</option>
+                    <option value="已取消">已取消</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span class="field-label">推送方式</span>
+                  <select id="subscriptionChannel" class="field-control">
+                    <option value="">全部方式</option>
+                    <option value="App">App</option>
+                    <option value="邮件">邮件</option>
+                    <option value="短信">短信</option>
+                    <option value="Webhook">Webhook</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span class="field-label">时间范围</span>
+                  <select id="subscriptionRange" class="field-control">
+                    <option value="">全部时间</option>
+                    <option value="7d">近 7 天</option>
+                    <option value="30d">近 30 天</option>
+                    <option value="90d">近 90 天</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="toolbar-row filter-footer">
+                <div class="toolbar-actions filter-footer-actions">
+                  <button
+                    class="btn btn-primary"
+                    type="button"
+                    id="subscriptionQueryBtn"
+                  >
+                    <i class="ri-search-line"></i>查询
+                  </button>
+                  <button
+                    class="btn btn-secondary"
+                    type="button"
+                    id="subscriptionResetBtn"
+                  >
+                    <i class="ri-refresh-line"></i>重置
+                  </button>
+                  <button
+                    class="btn btn-ghost"
+                    type="button"
+                    id="subscriptionCreateBtn"
+                  >
+                    <i class="ri-add-line"></i>新增订阅
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel table-panel">
+              <div class="table-header">
+                <div class="table-title-wrap">
+                  <h2 class="table-title">订阅列表</h2>
+                  <p class="table-tip">
+                    展示订阅对象、推送方式、状态和最近推送时间，支持查看、编辑和取消订阅。
+                  </p>
+                </div>
+                <div class="panel-action-note" id="subscriptionTableSummary">
+                  已加载 0 条我的订阅
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>订阅名称</th>
+                      <th>订阅类型</th>
+                      <th>关联对象</th>
+                      <th>推送方式</th>
+                      <th>订阅状态</th>
+                      <th>创建时间</th>
+                      <th>最近推送时间</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="subscriptionTableBody"></tbody>
+                </table>
+              </div>
+              <div class="empty-state" id="subscriptionEmptyState" hidden>
+                <i class="ri-rss-line"></i>
+                <div class="empty-title">未找到符合条件的订阅项</div>
+                <div class="empty-desc">
+                  请调整筛选条件后重新查询，或点击“新增订阅”补充新的订阅对象。
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <div class="modal-mask" id="subscriptionDetailModal">
+      <div class="modal-card">
+        <div class="modal-head">
+          <div class="modal-title-wrap">
+            <h3 class="modal-title">订阅详情</h3>
+            <p class="modal-desc">
+              查看当前订阅项的对象、推送方式、频率和最近推送情况。
+            </p>
+          </div>
+          <button class="modal-close" type="button" data-modal-close>
+            <i class="ri-close-line"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="detail-grid" id="subscriptionDetailGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-mask" id="subscriptionEditorModal">
+      <div class="modal-card">
+        <div class="modal-head">
+          <div class="modal-title-wrap">
+            <h3 class="modal-title" id="subscriptionEditorTitle">新增订阅</h3>
+            <p class="modal-desc">
+              录入或维护订阅名称、关联对象、推送方式和接收频率。
+            </p>
+          </div>
+          <button class="modal-close" type="button" data-modal-close>
+            <i class="ri-close-line"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-grid">
+            <label class="field">
+              <span class="field-label">订阅名称</span>
+              <input
+                id="editorSubscriptionName"
+                class="field-control"
+                type="text"
+                placeholder="请输入订阅名称"
+              />
+            </label>
+            <label class="field">
+              <span class="field-label">订阅对象</span>
+              <input
+                id="editorSubscriptionTarget"
+                class="field-control"
+                type="text"
+                placeholder="请输入关联对象"
+              />
+            </label>
+            <label class="field">
+              <span class="field-label">订阅类型</span>
+              <select id="editorSubscriptionType" class="field-control">
+                <option value="事件订阅">事件订阅</option>
+                <option value="专题订阅">专题订阅</option>
+                <option value="规则订阅">规则订阅</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">推送方式</span>
+              <select id="editorSubscriptionChannel" class="field-control">
+                <option value="App">App</option>
+                <option value="邮件">邮件</option>
+                <option value="短信">短信</option>
+                <option value="Webhook">Webhook</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">推送频率</span>
+              <select id="editorSubscriptionFrequency" class="field-control">
+                <option value="实时">实时</option>
+                <option value="每日摘要">每日摘要</option>
+                <option value="工作日两次">工作日两次</option>
+                <option value="按规则触发">按规则触发</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">订阅状态</span>
+              <select id="editorSubscriptionStatus" class="field-control">
+                <option value="生效中">生效中</option>
+                <option value="暂停中">暂停中</option>
+                <option value="已取消">已取消</option>
+              </select>
+            </label>
+            <label class="field full">
+              <span class="field-label">备注</span>
+              <textarea
+                id="editorSubscriptionRemark"
+                class="field-control"
+                placeholder="请输入订阅说明或备注信息"
+              ></textarea>
+            </label>
+          </div>
+          <div class="toolbar-row" style="margin-top: 18px">
+            <div
+              class="toolbar-actions modal-actions"
+              style="margin-left: auto"
+            >
+              <button class="btn btn-secondary" type="button" data-modal-close>
+                取消
+              </button>
+              <button
+                class="btn btn-primary"
+                type="button"
+                id="subscriptionSaveBtn"
+              >
+                保存
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="main.js"></script>
+    <script src="shell_shared.js"></script>
+    <script src="event_warning_shared.js"></script>
+    <script src="header_index_standard.js"></script>
+    <script>
+      const subscriptions = [
+        {
+          id: "SUB-240417-01",
+          name: "涉华议题热点事件提醒",
+          type: "事件订阅",
+          target: "东南亚涉华议题传播链",
+          channel: "App",
+          status: "生效中",
+          createdAt: "2026-04-08 09:10",
+          pushedAt: "2026-04-17 10:35",
+          frequency: "实时",
+          remark: "针对高热高风险事件实时推送至移动端值班席。",
+        },
+        {
+          id: "SUB-240417-02",
+          name: "涉边评论专题日报",
+          type: "专题订阅",
+          target: "海外媒体涉边评论专题",
+          channel: "邮件",
+          status: "生效中",
+          createdAt: "2026-04-05 14:20",
+          pushedAt: "2026-04-17 08:00",
+          frequency: "每日摘要",
+          remark: "每天 08:00 发送专题摘要邮件，供晨会研判使用。",
+        },
+        {
+          id: "SUB-240417-03",
+          name: "重点账号异动规则推送",
+          type: "规则订阅",
+          target: "账号异动规则组 A",
+          channel: "短信",
+          status: "暂停中",
+          createdAt: "2026-03-28 16:05",
+          pushedAt: "2026-04-15 19:10",
+          frequency: "按规则触发",
+          remark: "当前暂停短信推送，仅保留历史记录待恢复。",
+        },
+        {
+          id: "SUB-240417-04",
+          name: "敏感视频回流监测",
+          type: "事件订阅",
+          target: "敏感议题视频片段再传播",
+          channel: "Webhook",
+          status: "生效中",
+          createdAt: "2026-04-11 11:40",
+          pushedAt: "2026-04-17 09:40",
+          frequency: "实时",
+          remark: "通过 webhook 向联动系统推送命中结果。",
+        },
+        {
+          id: "SUB-240417-05",
+          name: "区域谣传观察订阅",
+          type: "事件订阅",
+          target: "区域性误导信息回流",
+          channel: "邮件",
+          status: "已取消",
+          createdAt: "2026-03-18 10:15",
+          pushedAt: "2026-04-09 09:00",
+          frequency: "工作日两次",
+          remark: "历史订阅项，已完成阶段性观察并取消推送。",
+        },
+      ];
+
+      let editingSubscriptionId = "";
+
+      const subscriptionSearch = document.getElementById("subscriptionSearch");
+      const subscriptionType = document.getElementById("subscriptionType");
+      const subscriptionStatus = document.getElementById("subscriptionStatus");
+      const subscriptionChannel = document.getElementById(
+        "subscriptionChannel",
+      );
+      const subscriptionRange = document.getElementById("subscriptionRange");
+      const subscriptionQueryBtn = document.getElementById(
+        "subscriptionQueryBtn",
+      );
+      const subscriptionResetBtn = document.getElementById(
+        "subscriptionResetBtn",
+      );
+      const subscriptionCreateBtn = document.getElementById(
+        "subscriptionCreateBtn",
+      );
+      const subscriptionTableBody = document.getElementById(
+        "subscriptionTableBody",
+      );
+      const subscriptionEmptyState = document.getElementById(
+        "subscriptionEmptyState",
+      );
+      const subscriptionResultCount = document.getElementById(
+        "subscriptionResultCount",
+      );
+      const subscriptionTableSummary = document.getElementById(
+        "subscriptionTableSummary",
+      );
+      const subscriptionDetailGrid = document.getElementById(
+        "subscriptionDetailGrid",
+      );
+      const subscriptionDetailModal = document.getElementById(
+        "subscriptionDetailModal",
+      );
+      const subscriptionEditorModal = document.getElementById(
+        "subscriptionEditorModal",
+      );
+      const subscriptionEditorTitle = document.getElementById(
+        "subscriptionEditorTitle",
+      );
+      const editorSubscriptionName = document.getElementById(
+        "editorSubscriptionName",
+      );
+      const editorSubscriptionTarget = document.getElementById(
+        "editorSubscriptionTarget",
+      );
+      const editorSubscriptionType = document.getElementById(
+        "editorSubscriptionType",
+      );
+      const editorSubscriptionChannel = document.getElementById(
+        "editorSubscriptionChannel",
+      );
+      const editorSubscriptionFrequency = document.getElementById(
+        "editorSubscriptionFrequency",
+      );
+      const editorSubscriptionStatus = document.getElementById(
+        "editorSubscriptionStatus",
+      );
+      const editorSubscriptionRemark = document.getElementById(
+        "editorSubscriptionRemark",
+      );
+      const subscriptionSaveBtn = document.getElementById(
+        "subscriptionSaveBtn",
+      );
+
+      function getTypeClass(type) {
+        if (type === "事件订阅") return "tag-type-event";
+        if (type === "专题订阅") return "tag-type-topic";
+        return "tag-type-analysis";
+      }
+
+      function getChannelClass(channel) {
+        if (channel === "App") return "tag-channel-app";
+        if (channel === "邮件") return "tag-channel-email";
+        if (channel === "短信") return "tag-channel-sms";
+        return "tag-channel-webhook";
+      }
+
+      function getStatusClass(status) {
+        if (status === "生效中") return "tag-status-active";
+        if (status === "暂停中") return "tag-status-paused";
+        return "tag-status-cancelled";
+      }
+
+      function parseDate(value) {
+        return new Date(String(value).replace(/-/g, "/"));
+      }
+
+      function inRange(value, range) {
+        if (!range) return true;
+
+        const now = new Date("2026/04/17 12:00");
+        const diff = now.getTime() - parseDate(value).getTime();
+        const day = 24 * 60 * 60 * 1000;
+
+        if (range === "7d") return diff <= 7 * day;
+        if (range === "30d") return diff <= 30 * day;
+        if (range === "90d") return diff <= 90 * day;
+        return true;
+      }
+
+      function getFilteredSubscriptions() {
+        const keyword = subscriptionSearch.value.trim().toLowerCase();
+
+        return subscriptions.filter((item) => {
+          const text = (
+            item.name +
+            " " +
+            item.target +
+            " " +
+            item.remark
+          ).toLowerCase();
+
+          return (
+            (!keyword || text.includes(keyword)) &&
+            (!subscriptionType.value || item.type === subscriptionType.value) &&
+            (!subscriptionStatus.value ||
+              item.status === subscriptionStatus.value) &&
+            (!subscriptionChannel.value ||
+              item.channel === subscriptionChannel.value) &&
+            inRange(item.pushedAt, subscriptionRange.value)
+          );
+        });
+      }
+
+      function openSubscriptionEditor(record) {
+        editingSubscriptionId = record ? record.id : "";
+        subscriptionEditorTitle.textContent = record ? "编辑订阅" : "新增订阅";
+        editorSubscriptionName.value = record ? record.name : "";
+        editorSubscriptionTarget.value = record ? record.target : "";
+        editorSubscriptionType.value = record ? record.type : "事件订阅";
+        editorSubscriptionChannel.value = record ? record.channel : "App";
+        editorSubscriptionFrequency.value = record ? record.frequency : "实时";
+        editorSubscriptionStatus.value = record ? record.status : "生效中";
+        editorSubscriptionRemark.value = record ? record.remark : "";
+        EventWarningModule.openModal(subscriptionEditorModal);
+      }
+
+      function renderSubscriptionDetail(record) {
+        subscriptionDetailGrid.innerHTML =
+          '<div class="detail-item"><div class="detail-label">订阅名称</div><div class="detail-value"><strong>' +
+          EventWarningModule.escapeHtml(record.name) +
+          "</strong></div></div>" +
+          '<div class="detail-item"><div class="detail-label">订阅编号</div><div class="detail-value">' +
+          EventWarningModule.escapeHtml(record.id) +
+          "</div></div>" +
+          '<div class="detail-item"><div class="detail-label">订阅类型</div><div class="detail-value">' +
+          EventWarningModule.escapeHtml(record.type) +
+          "</div></div>" +
+          '<div class="detail-item"><div class="detail-label">关联对象</div><div class="detail-value">' +
+          EventWarningModule.escapeHtml(record.target) +
+          "</div></div>" +
+          '<div class="detail-item"><div class="detail-label">推送方式 / 订阅状态</div><div class="detail-value">' +
+          EventWarningModule.escapeHtml(record.channel) +
+          " / " +
+          EventWarningModule.escapeHtml(record.status) +
+          "</div></div>" +
+          '<div class="detail-item"><div class="detail-label">推送频率</div><div class="detail-value">' +
+          EventWarningModule.escapeHtml(record.frequency) +
+          "</div></div>" +
+          '<div class="detail-item"><div class="detail-label">创建时间</div><div class="detail-value">' +
+          EventWarningModule.escapeHtml(record.createdAt) +
+          "</div></div>" +
+          '<div class="detail-item"><div class="detail-label">最近推送时间</div><div class="detail-value">' +
+          EventWarningModule.escapeHtml(record.pushedAt) +
+          "</div></div>" +
+          '<div class="detail-item" style="grid-column: 1 / -1;"><div class="detail-label">订阅说明</div><div class="detail-value">' +
+          EventWarningModule.escapeHtml(record.remark) +
+          "</div></div>";
+
+        EventWarningModule.openModal(subscriptionDetailModal);
+      }
+
+      function bindSubscriptionActions(records) {
+        subscriptionTableBody
+          .querySelectorAll("[data-view-id]")
+          .forEach((button) => {
+            button.addEventListener("click", function () {
+              const record = records.find(
+                (item) => item.id === this.dataset.viewId,
+              );
+              if (record) renderSubscriptionDetail(record);
+            });
+          });
+
+        subscriptionTableBody
+          .querySelectorAll("[data-edit-id]")
+          .forEach((button) => {
+            button.addEventListener("click", function () {
+              const record = subscriptions.find(
+                (item) => item.id === this.dataset.editId,
+              );
+              if (record) openSubscriptionEditor(record);
+            });
+          });
+
+        subscriptionTableBody
+          .querySelectorAll("[data-cancel-id]")
+          .forEach((button) => {
+            button.addEventListener("click", function () {
+              const record = subscriptions.find(
+                (item) => item.id === this.dataset.cancelId,
+              );
+              if (!record) return;
+
+              record.status = "已取消";
+              renderSubscriptions();
+              EventWarningModule.showToast(
+                "已取消订阅",
+                record.name + " 已停止推送。",
+              );
+            });
+          });
+      }
+
+      function renderSubscriptions() {
+        const records = getFilteredSubscriptions().sort(
+          (a, b) => parseDate(b.pushedAt) - parseDate(a.pushedAt),
+        );
+
+        subscriptionResultCount.textContent = records.length;
+        subscriptionTableSummary.textContent =
+          "已展示 " + records.length + " 条我的订阅";
+
+        if (!records.length) {
+          subscriptionTableBody.innerHTML = "";
+          subscriptionEmptyState.hidden = false;
+          return;
+        }
+
+        subscriptionEmptyState.hidden = true;
+        subscriptionTableBody.innerHTML = records
+          .map((record) => {
+            return (
+              "<tr>" +
+              '<td><div class="primary-cell"><div class="primary-name">' +
+              EventWarningModule.escapeHtml(record.name) +
+              '</div><div class="primary-desc">' +
+              EventWarningModule.escapeHtml(record.remark) +
+              "</div></div></td>" +
+              '<td><span class="tag ' +
+              getTypeClass(record.type) +
+              '">' +
+              EventWarningModule.escapeHtml(record.type) +
+              "</span></td>" +
+              "<td>" +
+              EventWarningModule.escapeHtml(record.target) +
+              "</td>" +
+              '<td><span class="tag ' +
+              getChannelClass(record.channel) +
+              '">' +
+              EventWarningModule.escapeHtml(record.channel) +
+              "</span></td>" +
+              '<td><span class="tag ' +
+              getStatusClass(record.status) +
+              '">' +
+              EventWarningModule.escapeHtml(record.status) +
+              "</span></td>" +
+              "<td>" +
+              EventWarningModule.escapeHtml(record.createdAt) +
+              "</td>" +
+              "<td>" +
+              EventWarningModule.escapeHtml(record.pushedAt) +
+              "</td>" +
+              '<td><div class="table-actions">' +
+              '<button class="action-link" type="button" data-view-id="' +
+              EventWarningModule.escapeHtml(record.id) +
+              '"><i class="ri-eye-line"></i>查看</button>' +
+              '<button class="action-link" type="button" data-edit-id="' +
+              EventWarningModule.escapeHtml(record.id) +
+              '"><i class="ri-edit-line"></i>编辑</button>' +
+              '<button class="action-link danger" type="button" data-cancel-id="' +
+              EventWarningModule.escapeHtml(record.id) +
+              '"><i class="ri-close-circle-line"></i>取消订阅</button>' +
+              "</div></td>" +
+              "</tr>"
+            );
+          })
+          .join("");
+
+        bindSubscriptionActions(records);
+      }
+
+      subscriptionQueryBtn.addEventListener("click", renderSubscriptions);
+      subscriptionResetBtn.addEventListener("click", function () {
+        subscriptionSearch.value = "";
+        subscriptionType.value = "";
+        subscriptionStatus.value = "";
+        subscriptionChannel.value = "";
+        subscriptionRange.value = "";
+        renderSubscriptions();
+      });
+      subscriptionCreateBtn.addEventListener("click", function () {
+        openSubscriptionEditor(null);
+      });
+
+      subscriptionSaveBtn.addEventListener("click", function () {
+        const name = editorSubscriptionName.value.trim();
+        const target = editorSubscriptionTarget.value.trim();
+
+        if (!name || !target) {
+          EventWarningModule.showToast(
+            "请完善订阅信息",
+            "保存前请补充订阅名称和关联对象。",
+          );
+          return;
+        }
+
+        const now = "2026-04-17 11:10";
+
+        if (editingSubscriptionId) {
+          const record = subscriptions.find(
+            (item) => item.id === editingSubscriptionId,
+          );
+          if (!record) return;
+
+          record.name = name;
+          record.target = target;
+          record.type = editorSubscriptionType.value;
+          record.channel = editorSubscriptionChannel.value;
+          record.frequency = editorSubscriptionFrequency.value;
+          record.status = editorSubscriptionStatus.value;
+          record.remark =
+            editorSubscriptionRemark.value.trim() || "已更新订阅说明。";
+          record.pushedAt = now;
+          EventWarningModule.showToast(
+            "订阅已更新",
+            name + " 的订阅配置已保存。",
+          );
+        } else {
+          subscriptions.unshift({
+            id: "SUB-" + String(Date.now()).slice(-8),
+            name,
+            type: editorSubscriptionType.value,
+            target,
+            channel: editorSubscriptionChannel.value,
+            status: editorSubscriptionStatus.value,
+            createdAt: now,
+            pushedAt: now,
+            frequency: editorSubscriptionFrequency.value,
+            remark:
+              editorSubscriptionRemark.value.trim() ||
+              "新增订阅项，待补充说明。",
+          });
+          EventWarningModule.showToast(
+            "订阅已创建",
+            name + " 已加入我的订阅列表。",
+          );
+        }
+
+        EventWarningModule.closeModal(subscriptionEditorModal);
+        renderSubscriptions();
+      });
+
+      [
+        subscriptionSearch,
+        subscriptionType,
+        subscriptionStatus,
+        subscriptionChannel,
+        subscriptionRange,
+      ].forEach((element) => {
+        element.addEventListener("change", renderSubscriptions);
+        element.addEventListener("input", renderSubscriptions);
+      });
+
+      renderSubscriptions();
+    </script>
+  </body>
+</html>

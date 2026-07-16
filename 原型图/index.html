@@ -1,0 +1,2488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>境外舆情分析系统 - 工作台</title>
+  <link rel="stylesheet" href="./assets/css/reset.css" />
+  <link rel="stylesheet" href="./assets/css/theme.css" />
+  <link rel="stylesheet" href="./assets/css/layout.css" />
+  <link rel="stylesheet" href="./assets/css/page.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      color: #13233f;
+      background: #f3f7fd;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .workbench {
+      width: 100%;
+      min-height: calc(100vh - 106px);
+      padding: 0;
+      background: transparent;
+    }
+
+    .workbench-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      height: 48px;
+      margin-bottom: 22px;
+    }
+
+    .page-title {
+      margin: 0;
+      color: #10213f;
+      font-size: 38px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: #1a2944;
+      font-size: 18px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .date-item,
+    .user-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .top-divider {
+      width: 1px;
+      height: 24px;
+      background: #d6e0ee;
+    }
+
+    .top-icon {
+      display: inline-grid;
+      width: 24px;
+      height: 24px;
+      place-items: center;
+      color: #1c2c49;
+      font-size: 21px;
+      line-height: 1;
+    }
+
+    .avatar {
+      display: grid;
+      width: 26px;
+      height: 26px;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 50%;
+      color: #fff;
+      background: linear-gradient(145deg, #1d66db, #f59f6a);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .welcome-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .welcome-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .badge-emblem {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      border: 1px solid #d7e4f5;
+      border-radius: 50%;
+      color: #0e62d7;
+      background:
+        radial-gradient(circle, #fff 0 42%, #dfeeff 43% 59%, #fff 60%),
+        linear-gradient(135deg, #fff, #eaf3ff);
+      box-shadow: 0 4px 12px rgba(30, 99, 214, 0.12);
+      font-size: 25px;
+      font-weight: 900;
+    }
+
+    .welcome-title {
+      margin: 0;
+      color: #172744;
+      font-size: 22px;
+      line-height: 1.2;
+      font-weight: 900;
+    }
+
+    .welcome-subtitle {
+      margin: 8px 0 0;
+      color: #566985;
+      font-size: 16px;
+      line-height: 1.3;
+    }
+
+    .layout-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      height: 44px;
+      padding: 0 18px;
+      border: 1px solid #d7e3f2;
+      border-radius: 8px;
+      color: #21324f;
+      background: #fff;
+      box-shadow: 0 4px 14px rgba(30, 99, 214, 0.08);
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      grid-template-areas:
+        "hero summary"
+        "search risk"
+        "dynamic hotwords";
+      gap: 16px;
+      align-items: start;
+    }
+
+    .card {
+      border: 1px solid #d7e3f2;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 6px 18px rgba(42, 92, 160, 0.07);
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      height: 34px;
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      color: #172744;
+      font-size: 18px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .card-title::before {
+      content: "";
+      width: 4px;
+      height: 22px;
+      border-radius: 999px;
+      background: #1f6fea;
+    }
+
+    .more {
+      border: 0;
+      color: #1d66db;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .hero-card {
+      grid-area: hero;
+      position: relative;
+      display: flex;
+      min-height: 170px;
+      overflow: hidden;
+      align-items: center;
+      justify-content: space-between;
+      padding: 42px 0 38px 42px;
+      background:
+        linear-gradient(90deg, rgba(226, 237, 255, 0.98) 0%, rgba(234, 243, 255, 0.86) 43%, rgba(214, 230, 255, 0.34) 100%),
+        #e9f2ff;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 2;
+      flex: 0 0 45%;
+    }
+
+    .hero-card h2 {
+      margin: 0 0 14px;
+      color: #1261d4;
+      font-size: 38px;
+      line-height: 1.1;
+      font-weight: 900;
+    }
+
+    .hero-card p {
+      margin: 0;
+      color: #183153;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .hero-art {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 58%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(233, 242, 255, 0.1), rgba(233, 242, 255, 0)), url("./assets/img/dashboard-hero-reference.png") center right / cover no-repeat;
+    }
+
+    .summary-card {
+      grid-area: summary;
+      min-height: 170px;
+      padding: 18px 20px 20px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      height: calc(100% - 46px);
+      align-items: center;
+    }
+
+    .stat-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+      height: 126px;
+      padding: 0 14px;
+      border: 1px solid #dce6f4;
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    .stat-icon {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    .blue { background: linear-gradient(135deg, #0f69e8, #2d8cff); }
+    .cyan { background: linear-gradient(135deg, #208cf1, #42c5ff); }
+    .red { background: linear-gradient(135deg, #ef3434, #ff736e); }
+    .purple { background: linear-gradient(135deg, #7252df, #9e6cff); }
+    .green { background: linear-gradient(135deg, #15ad94, #23cfb6); }
+    .orange { background: linear-gradient(135deg, #ff8a2a, #ffb14d); }
+    .yellow { background: linear-gradient(135deg, #ffa72b, #ffd061); }
+
+    .stat-name {
+      overflow: hidden;
+      color: #677792;
+      font-size: 14px;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .stat-value {
+      margin-top: 9px;
+      color: #162744;
+      font-size: 27px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .stat-change {
+      margin-top: 10px;
+      color: #ff1d1d;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px 36px;
+      padding: 8px 10px 0;
+    }
+
+    .app-tile {
+      display: grid;
+      height: 98px;
+      place-items: center;
+      align-content: center;
+      gap: 10px;
+      border: 1px solid #dce6f4;
+      border-radius: 10px;
+      color: #20304d;
+      background: #fbfdff;
+      font-size: 15px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .app-icon {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 26px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .search-card {
+      grid-area: search;
+      min-height: 210px;
+      padding: 18px 20px 22px;
+    }
+
+    .search-line {
+      display: grid;
+      grid-template-columns: 126px minmax(0, 1fr) 88px;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .control {
+      width: 100%;
+      height: 42px;
+      border: 1px solid #d7e3f2;
+      border-radius: 8px;
+      color: #263854;
+      background: #fff;
+      font-size: 14px;
+    }
+
+    select.control {
+      padding: 0 12px;
+    }
+
+    input.control {
+      padding: 0 14px;
+    }
+
+    .search-btn {
+      border: 0;
+      border-radius: 8px;
+      color: #fff;
+      background: #1767de;
+      box-shadow: 0 6px 14px rgba(23, 103, 222, 0.22);
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .hot-label {
+      margin: 30px 0 12px;
+      color: #263854;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .tag {
+      min-width: 66px;
+      height: 32px;
+      padding: 0 13px;
+      border: 1px solid #d9e5f4;
+      border-radius: 6px;
+      color: #29405d;
+      background: #f4f8ff;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .risk-todo-card {
+      grid-area: risk;
+      min-height: 210px;
+      padding: 18px 20px;
+    }
+
+    .risk-todo-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .risk-list {
+      display: grid;
+      gap: 0;
+      margin-top: 8px;
+    }
+
+    .risk-item {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) 46px 72px;
+      gap: 10px;
+      align-items: center;
+      min-height: 58px;
+      border-bottom: 1px solid #e5edf7;
+    }
+
+    .risk-item:last-child {
+      border-bottom: 0;
+    }
+
+    .risk-icon {
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .risk-name {
+      color: #21324f;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .risk-num {
+      color: #172744;
+      font-size: 24px;
+      text-align: right;
+      font-weight: 900;
+    }
+
+    .risk-change {
+      color: #77869c;
+      font-size: 13px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .risk-change b {
+      color: #ff1d1d;
+    }
+
+    .panel-card {
+      min-height: 230px;
+      padding: 18px 20px;
+    }
+
+    .system-layout .workbench-topbar {
+      height: 40px;
+      margin-bottom: 14px;
+    }
+
+    .system-layout .page-title {
+      font-size: 32px;
+    }
+
+    .system-layout .top-actions {
+      gap: 18px;
+      font-size: 16px;
+    }
+
+    .system-layout .welcome-row {
+      margin-bottom: 18px;
+    }
+
+    .system-layout .welcome-title {
+      font-size: 20px;
+    }
+
+    .system-layout .welcome-subtitle {
+      margin-top: 6px;
+      font-size: 14px;
+    }
+
+    .system-layout .layout-btn {
+      height: 40px;
+    }
+
+    .system-layout .hero-card,
+    .system-layout .summary-card {
+      height: 188px;
+    }
+
+    .system-layout .hero-card {
+      padding: 32px 0 30px 42px;
+    }
+
+    .system-layout .hero-card h2 {
+      font-size: 34px;
+    }
+
+    .system-layout .hero-card p {
+      font-size: 16px;
+    }
+
+    .system-layout .summary-card {
+      padding: 16px 20px;
+    }
+
+    .system-layout .stat-grid {
+      height: calc(100% - 42px);
+      gap: 10px;
+    }
+
+    .system-layout .stat-box {
+      height: 96px;
+      gap: 12px;
+      padding: 0 12px;
+    }
+
+    .system-layout .stat-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      font-size: 22px;
+    }
+
+    .system-layout .stat-name {
+      font-size: 13px;
+    }
+
+    .system-layout .stat-value {
+      margin-top: 7px;
+      font-size: 25px;
+    }
+
+    .system-layout .stat-change {
+      margin-top: 8px;
+      font-size: 12px;
+    }
+
+    .system-layout .search-card,
+    .system-layout .risk-todo-card {
+      height: 256px;
+      padding: 16px 20px;
+    }
+
+    .system-layout .app-grid {
+      gap: 12px 34px;
+      padding-top: 4px;
+    }
+
+    .system-layout .app-tile {
+      height: 80px;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .system-layout .app-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      font-size: 22px;
+    }
+
+    .system-layout .search-line {
+      margin-top: 6px;
+    }
+
+    .system-layout .hot-label {
+      margin: 22px 0 10px;
+    }
+
+    .system-layout .tag-list {
+      gap: 8px;
+    }
+
+    .system-layout .tag {
+      height: 30px;
+      min-width: 60px;
+      padding: 0 12px;
+      font-size: 13px;
+    }
+
+    .system-layout .risk-item {
+      min-height: 48px;
+    }
+
+    .system-layout .risk-num {
+      font-size: 22px;
+    }
+
+    .system-layout .panel-card {
+      height: 286px;
+      padding: 16px 20px;
+    }
+
+    .system-layout .news-item,
+    .system-layout .follow-item {
+      min-height: 33px;
+      font-size: 13px;
+    }
+
+    .system-layout .word-tags {
+      gap: 10px;
+      padding-top: 10px;
+    }
+
+    .system-layout .word {
+      height: 34px;
+      min-width: 72px;
+      padding: 0 14px;
+      font-size: 14px;
+    }
+
+    .system-layout .word.big,
+    .system-layout .word.mid {
+      height: 46px;
+      min-width: 132px;
+      font-size: 26px;
+    }
+
+    .system-layout .word.mid {
+      min-width: 126px;
+      font-size: 23px;
+    }
+
+    .system-layout .todo-item {
+      min-height: 44px;
+      font-size: 14px;
+    }
+
+    .dynamic-card { grid-area: dynamic; }
+    .hotwords-card { grid-area: hotwords; }
+
+    .tabs {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .tab {
+      position: relative;
+      border: 0;
+      color: #677792;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .tab.active {
+      color: #1767de;
+    }
+
+    .tab.active::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: -9px;
+      left: 0;
+      height: 2px;
+      border-radius: 999px;
+      background: #1767de;
+    }
+
+    .news-list,
+    .follow-list,
+    .todo-list {
+      display: grid;
+      gap: 0;
+      margin-top: 8px;
+    }
+
+    .news-item {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr) 76px 48px;
+      gap: 10px;
+      align-items: center;
+      min-height: 39px;
+      color: #263854;
+      font-size: 14px;
+    }
+
+    .news-index {
+      display: grid;
+      width: 20px;
+      height: 20px;
+      place-items: center;
+      border-radius: 5px;
+      color: #ff2f2f;
+      background: #ffe9e6;
+      font-weight: 900;
+    }
+
+    .news-title,
+    .follow-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 800;
+    }
+
+    .source,
+    .time {
+      color: #667792;
+      font-size: 13px;
+    }
+
+    .time {
+      text-align: right;
+    }
+
+    .follow-item {
+      display: grid;
+      grid-template-columns: 12px minmax(0, 1fr) 76px 48px;
+      gap: 10px;
+      align-items: center;
+      min-height: 39px;
+      color: #263854;
+      font-size: 14px;
+    }
+
+    .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #1767de;
+    }
+
+    .word-tags {
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      justify-content: center;
+      gap: 12px;
+      padding: 14px 8px 0;
+    }
+
+    .word {
+      display: inline-flex;
+      min-width: 78px;
+      height: 38px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 18px;
+      border-radius: 8px;
+      color: #0961d7;
+      background: #f0f6ff;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .word.big {
+      min-width: 150px;
+      height: 52px;
+      color: #0961d7;
+      font-size: 29px;
+      letter-spacing: 0;
+    }
+
+    .word.mid {
+      min-width: 142px;
+      height: 52px;
+      font-size: 25px;
+    }
+
+    .todo-item {
+      display: grid;
+      grid-template-columns: 32px minmax(0, 1fr) 36px;
+      gap: 10px;
+      align-items: center;
+      min-height: 55px;
+      border-bottom: 1px solid #e5edf7;
+      color: #263854;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .todo-item:last-child {
+      border-bottom: 0;
+    }
+
+    .todo-icon {
+      display: grid;
+      width: 24px;
+      height: 24px;
+      place-items: center;
+      border: 1px solid currentColor;
+      border-radius: 5px;
+      color: #1767de;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .todo-icon.red { color: #ff2f2f; background: transparent; }
+    .todo-icon.orange { color: #ff8a2a; background: transparent; }
+
+    .todo-badge {
+      display: grid;
+      width: 32px;
+      height: 32px;
+      place-items: center;
+      border-radius: 50%;
+      color: #f04438;
+      background: #ffe9e6;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .system-layout .content-area {
+      padding: 18px 32px 28px;
+    }
+
+    .system-layout .workbench-topbar {
+      height: 54px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #d9e3f0;
+    }
+
+    .system-layout .page-title {
+      font-size: 32px;
+    }
+
+    .system-layout .top-actions {
+      gap: 20px;
+      font-size: 16px;
+    }
+
+    .system-layout .welcome-row {
+      margin-bottom: 18px;
+    }
+
+    .system-layout .dashboard {
+      grid-template-columns: minmax(0, 1.04fr) minmax(0, 1fr);
+      grid-template-areas:
+        "hero summary"
+        "search risk"
+        "dynamic hotwords";
+      gap: 14px 16px;
+    }
+
+    .system-layout .hero-card,
+    .system-layout .summary-card {
+      height: 202px;
+      min-height: 202px;
+    }
+
+    .system-layout .hero-card {
+      padding: 32px 0 30px 30px;
+    }
+
+    .system-layout .hero-copy {
+      flex-basis: 42%;
+    }
+
+    .system-layout .hero-card h2 {
+      font-size: 31px;
+    }
+
+    .system-layout .hero-card p {
+      font-size: 16px;
+    }
+
+    .system-layout .hero-art {
+      width: 55%;
+      background-size: cover;
+    }
+
+    .system-layout .summary-card {
+      padding: 20px;
+    }
+
+    .system-layout .summary-card .card-head,
+    .system-layout .search-card .card-head,
+    .system-layout .risk-todo-card .card-head,
+    .system-layout .panel-card .card-head {
+      height: 30px;
+      margin-bottom: 14px;
+    }
+
+    .system-layout .stat-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      height: auto;
+    }
+
+    .system-layout .stat-box {
+      height: 126px;
+      align-items: center;
+      gap: 14px;
+      padding: 0 16px;
+    }
+
+    .system-layout .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      font-size: 24px;
+    }
+
+    .system-layout .stat-name {
+      font-size: 13px;
+    }
+
+    .system-layout .stat-value {
+      margin-top: 8px;
+      font-size: 26px;
+    }
+
+    .system-layout .stat-change {
+      display: block;
+      margin-top: 10px;
+    }
+
+    .system-layout .search-card,
+    .system-layout .risk-todo-card {
+      height: 276px;
+      min-height: 276px;
+      padding: 20px;
+    }
+
+    .system-layout .search-line {
+      grid-template-columns: 128px minmax(0, 1fr) 120px;
+      margin-top: 0;
+    }
+
+    .system-layout .hot-label {
+      margin: 12px 0 10px;
+    }
+
+    .system-layout .tag-list {
+      gap: 9px;
+      margin-bottom: 14px !important;
+    }
+
+    .system-layout .tag {
+      height: 30px;
+      min-width: 66px;
+      padding: 0 13px;
+    }
+
+    .system-layout .search-card .app-grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+      gap: 12px !important;
+      padding: 0 !important;
+    }
+
+    .system-layout .search-card .app-tile {
+      height: 56px !important;
+      gap: 6px;
+      font-size: 13px !important;
+    }
+
+    .system-layout .search-card .app-icon {
+      width: 30px !important;
+      height: 30px !important;
+      font-size: 15px !important;
+      border-radius: 9px;
+    }
+
+    .system-layout .risk-todo-split {
+      grid-template-columns: 1fr 1fr;
+      gap: 26px;
+    }
+
+    .system-layout .risk-item {
+      grid-template-columns: 28px minmax(0, 1fr) 38px;
+      min-height: 42px;
+      gap: 8px;
+    }
+
+    .system-layout .risk-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      font-size: 13px;
+    }
+
+    .system-layout .risk-name {
+      font-size: 14px;
+    }
+
+    .system-layout .risk-num {
+      font-size: 20px;
+    }
+
+    .system-layout .todo-item {
+      min-height: 42px !important;
+      font-size: 14px;
+    }
+
+    .system-layout .todo-badge {
+      width: 28px;
+      height: 28px;
+    }
+
+    .system-layout .panel-card {
+      height: 306px;
+      min-height: 306px;
+      padding: 20px;
+    }
+
+    .system-layout .news-item {
+      min-height: 34px;
+      font-size: 13px;
+    }
+
+    .system-layout .word-tags {
+      min-height: 220px;
+      align-content: center;
+      gap: 18px 26px;
+      padding: 8px 18px 0;
+    }
+
+    .system-layout .word {
+      height: 38px;
+      min-width: 92px;
+      padding: 0 18px;
+      font-size: 16px;
+    }
+
+    .system-layout .word.big {
+      min-width: 148px;
+      height: 52px;
+      font-size: 30px;
+    }
+
+    .system-layout .word.mid {
+      min-width: 138px;
+      height: 50px;
+      font-size: 26px;
+    }
+
+    .workbench-toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 80;
+      display: none;
+      padding: 10px 14px;
+      border: 1px solid #bfd7ff;
+      border-radius: 8px;
+      color: #174ea6;
+      background: #f2f7ff;
+      box-shadow: 0 8px 22px rgba(30, 99, 214, 0.16);
+      font-weight: 800;
+    }
+
+    .workbench-toast.show {
+      display: block;
+    }
+
+    /* Final refinements for task-stat and common-tool style blocks. */
+    .system-layout .summary-card {
+      padding: 20px 24px;
+    }
+
+    .system-layout .summary-card .card-head {
+      margin-bottom: 10px;
+    }
+
+    .system-layout .summary-card .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 28px;
+      height: calc(100% - 40px);
+      align-items: stretch;
+    }
+
+    .system-layout .summary-card .stat-box {
+      position: relative;
+      display: flex;
+      height: auto;
+      min-width: 0;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 0;
+      padding: 4px 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .system-layout .summary-card .stat-box + .stat-box::before {
+      content: "";
+      position: absolute;
+      top: 18px;
+      bottom: 18px;
+      left: -14px;
+      width: 1px;
+      background: #edf2f8;
+    }
+
+    .system-layout .summary-card .stat-icon {
+      display: none;
+    }
+
+    .system-layout .summary-card .stat-name {
+      overflow: visible;
+      color: #667085;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+      text-overflow: clip;
+      white-space: nowrap;
+    }
+
+    .system-layout .summary-card .stat-value {
+      margin-top: 8px;
+      color: #172744;
+      font-size: 38px;
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .system-layout .summary-card .stat-change {
+      margin-top: 9px;
+      color: #ef4444;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 500;
+    }
+
+    .quick-entry-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .quick-entry-item {
+      display: flex;
+      height: 50px;
+      min-width: 0;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border: 1px solid #e5ebf3;
+      border-radius: 12px;
+      color: #1f2937;
+      background: #fff;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(31, 68, 128, 0.04);
+    }
+
+    .quick-entry-item:hover {
+      border-color: #c9dcf8;
+      background: #f8fbff;
+    }
+
+    .quick-entry-icon {
+      display: flex;
+      width: 24px;
+      height: 24px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .quick-entry-name {
+      color: #1f2937;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 500;
+      line-height: 20px;
+      white-space: nowrap;
+    }
+
+    .tools-card {
+      grid-area: tools;
+      min-height: 210px;
+      padding: 18px 20px 22px;
+    }
+
+    .risk-card {
+      grid-area: risk;
+      min-height: 230px;
+      padding: 18px 20px;
+    }
+
+    .risk-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px 18px;
+      margin-top: 12px;
+    }
+
+    .news-dot {
+      display: block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #2563eb;
+    }
+
+    .system-layout .dynamic-card .card-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .system-layout .dynamic-card .tabs {
+      gap: 22px;
+      align-items: center;
+    }
+
+    .system-layout .dynamic-card .tab {
+      padding: 0;
+      color: #667085;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 22px;
+    }
+
+    .system-layout .dynamic-card .tab.active {
+      color: #2563eb;
+      font-weight: 500;
+    }
+
+    .system-layout .dynamic-card .tab.active::after {
+      bottom: -8px;
+      height: 2px;
+    }
+
+    .system-layout .dynamic-card .news-list {
+      margin-top: 12px;
+    }
+
+    .system-layout .dynamic-card .news-item,
+    .system-layout .dynamic-card .follow-item {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr) 112px 72px;
+      gap: 12px;
+      align-items: center;
+      min-height: 42px;
+      padding: 7px 0;
+      border-bottom: 1px solid #eef3f8;
+    }
+
+    .system-layout .dynamic-card .news-item:last-child,
+    .system-layout .dynamic-card .follow-item:last-child {
+      border-bottom: 0;
+    }
+
+    .system-layout .dynamic-card .news-title,
+    .system-layout .dynamic-card .follow-title {
+      color: #1f2937;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 22px;
+    }
+
+    .system-layout .dynamic-card .source,
+    .system-layout .dynamic-card .time {
+      color: #6b7280;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 20px;
+    }
+
+    .system-layout .dynamic-card .time {
+      text-align: right;
+    }
+
+    .system-layout .dynamic-card .news-index {
+      color: #ef4444;
+      font-size: 13px;
+      font-weight: 600;
+      background: #feecec;
+    }
+
+    .system-layout .dashboard {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      grid-template-areas:
+        "hero summary"
+        "search tools"
+        "dynamic risk"
+        ". hotwords";
+      gap: 16px;
+    }
+
+    .system-layout .card {
+      border-color: #e5eaf3;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    }
+
+    .system-layout .card-title {
+      color: #0f1f3d;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .system-layout .card-title::before {
+      width: 4px;
+      height: 22px;
+      border-radius: 4px;
+      background: #1f6fff;
+    }
+
+    .system-layout .search-card,
+    .system-layout .tools-card {
+      height: 190px;
+      min-height: 190px;
+      padding: 20px 22px;
+    }
+
+    .system-layout .search-card .tag-list {
+      margin-bottom: 0 !important;
+    }
+
+    .system-layout .tools-card .quick-entry-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      height: calc(100% - 44px);
+      align-items: center;
+    }
+
+    .system-layout .tools-card .quick-entry-item {
+      height: 104px;
+      gap: 10px;
+      border: 0;
+      border-radius: 12px;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .system-layout .tools-card .quick-entry-item:hover {
+      background: #f4f8ff;
+      transform: translateY(-1px);
+    }
+
+    .system-layout .tools-card .quick-entry-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      font-size: 20px;
+    }
+
+    .system-layout .tools-card .quick-entry-name {
+      color: #1f2937;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+    }
+
+    .system-layout .risk-card {
+      height: 252px;
+      min-height: 252px;
+      padding: 20px 22px;
+    }
+
+    .system-layout .risk-grid {
+      height: calc(100% - 44px);
+      align-content: center;
+      gap: 16px;
+    }
+
+    .system-layout .risk-card .risk-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        "name num"
+        "change num";
+      gap: 4px 12px;
+      min-height: 70px;
+      padding: 12px 14px;
+      border: 1px solid #edf2f8;
+      border-radius: 12px;
+      background: #fbfdff;
+    }
+
+    .system-layout .risk-card .risk-name {
+      grid-area: name;
+      color: #334155;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .system-layout .risk-card .risk-num {
+      grid-area: num;
+      align-self: center;
+      color: #0f1f3d;
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .system-layout .risk-card .risk-change {
+      grid-area: change;
+      color: #ef4444;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: left;
+    }
+
+    .system-layout .hotwords-card {
+      grid-area: hotwords;
+      height: 238px;
+      min-height: 238px;
+      padding: 20px 22px;
+    }
+
+    .system-layout .dynamic-card {
+      height: 252px;
+      min-height: 252px;
+      padding: 20px 22px;
+    }
+
+    .system-layout .dynamic-card .news-item,
+    .system-layout .dynamic-card .follow-item {
+      min-height: 34px;
+      padding: 5px 0;
+    }
+
+    /* Prototype-aligned main page. Navigation shell is intentionally untouched. */
+    .system-layout .content-area {
+      padding: 18px 36px 28px;
+    }
+
+    .system-layout .workbench-topbar {
+      display: none;
+    }
+
+    .system-layout .welcome-row {
+      height: 86px;
+      margin-bottom: 16px;
+      padding: 18px 22px;
+      border: 1px solid #e5eaf3;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    }
+
+    .system-layout .layout-btn {
+      display: none;
+    }
+
+    .system-layout .welcome-left {
+      gap: 16px;
+    }
+
+    .system-layout .badge-emblem {
+      width: 48px;
+      height: 48px;
+      border: 0;
+      color: #fff;
+      background: linear-gradient(135deg, #1f6fff, #3b82f6);
+      box-shadow: 0 8px 18px rgba(31, 111, 255, 0.18);
+    }
+
+    .system-layout .welcome-title {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .system-layout .welcome-subtitle {
+      margin-top: 6px;
+      color: #667085;
+      font-size: 14px;
+    }
+
+    .system-layout .dashboard {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      grid-template-areas:
+        "hero summary"
+        "search tools"
+        "dynamic risk"
+        "dynamic hotwords";
+      gap: 16px;
+    }
+
+    .system-layout .card {
+      border: 1px solid #e5eaf3;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    }
+
+    .system-layout .hero-card,
+    .system-layout .summary-card {
+      height: 220px;
+      min-height: 220px;
+    }
+
+    .system-layout .hero-card {
+      padding: 44px 0 34px 54px;
+    }
+
+    .system-layout .hero-copy {
+      flex-basis: 42%;
+    }
+
+    .system-layout .hero-card h2 {
+      font-size: 35px;
+      font-weight: 800;
+    }
+
+    .system-layout .hero-card p {
+      margin-top: 14px;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .system-layout .hero-art {
+      width: 58%;
+      background-position: center right;
+      background-size: cover;
+    }
+
+    .system-layout .summary-card {
+      padding: 24px 26px;
+    }
+
+    .system-layout .summary-card .stat-grid {
+      height: calc(100% - 44px);
+      align-items: center;
+    }
+
+    .system-layout .search-card,
+    .system-layout .tools-card {
+      height: 180px;
+      min-height: 180px;
+      padding: 20px 22px;
+    }
+
+    .system-layout .tools-card .quick-entry-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      height: calc(100% - 42px);
+      align-items: center;
+    }
+
+    .system-layout .tools-card .quick-entry-item {
+      height: 92px;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .system-layout .tools-card .quick-entry-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 12px;
+      font-size: 24px;
+    }
+
+    .system-layout .tools-card .quick-entry-name {
+      margin-top: 2px;
+      font-size: 14px;
+    }
+
+    .system-layout .dynamic-card,
+    .system-layout .risk-card {
+      padding: 20px 22px;
+    }
+
+    .system-layout .dynamic-card {
+      height: auto;
+      min-height: 100%;
+    }
+
+    .system-layout .risk-card {
+      height: 170px;
+      min-height: 170px;
+    }
+
+    .system-layout .dynamic-card .news-item,
+    .system-layout .dynamic-card .follow-item {
+      min-height: 42px;
+      padding: 7px 0;
+    }
+
+    .system-layout .risk-card .risk-grid {
+      height: calc(100% - 44px);
+      align-content: center;
+      gap: 10px 14px;
+    }
+
+    .system-layout .risk-card .risk-item {
+      min-height: 52px;
+      padding: 10px 14px;
+      background: #fff;
+    }
+
+    .system-layout .hotwords-card {
+      height: 196px;
+      min-height: 196px;
+      padding: 18px 22px;
+    }
+
+    .system-layout .hotwords-card .word-tags {
+      min-height: 124px;
+      align-content: center;
+      gap: 12px 22px;
+      padding: 0 16px;
+      background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.1), transparent 46%);
+    }
+
+    .system-layout .hot-title::before {
+      content: "●";
+      width: auto;
+      height: auto;
+      border-radius: 0;
+      color: #ef4444;
+      background: transparent;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    /* Local tightening: smaller figures, safer search tags, fewer hot words. */
+    .system-layout .summary-card .stat-value {
+      font-size: 30px;
+      line-height: 1.1;
+      font-weight: 700;
+    }
+
+    .system-layout .risk-card .risk-num {
+      font-size: 26px;
+      line-height: 1.1;
+      font-weight: 700;
+    }
+
+    .system-layout .hotwords-card .word-tags {
+      overflow: hidden;
+      justify-content: center;
+      align-content: center;
+      gap: 14px 18px;
+      padding: 18px 28px 12px;
+    }
+
+    .system-layout .hotwords-card .word.big,
+    .system-layout .hotwords-card .word.mid {
+      height: auto;
+      min-width: 0;
+      padding: 8px 28px;
+      font-size: 24px;
+      line-height: 1.1;
+      font-weight: 700;
+    }
+
+    .system-layout .hotwords-card .word {
+      height: auto;
+      min-width: 0;
+      padding: 7px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1;
+      font-weight: 600;
+    }
+
+    .system-layout .search-card .search-line {
+      display: grid;
+      grid-template-columns: 130px minmax(0, 1fr) 120px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .system-layout .search-card .search-line input {
+      min-width: 0;
+    }
+
+    .system-layout .search-card .tag-list {
+      display: flex;
+      max-width: 100%;
+      flex-wrap: wrap;
+      gap: 8px 10px;
+      overflow: hidden;
+    }
+
+    .system-layout .search-card .tag {
+      height: auto;
+      min-width: 0;
+      padding: 7px 12px;
+      border-radius: 7px;
+      font-size: 13px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 1500px) {
+      .workbench {
+        padding: 20px 28px 26px;
+      }
+
+      .dashboard {
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+          "hero summary"
+          "search risk"
+          "dynamic hotwords";
+      }
+
+      .summary-card,
+      .hero-card {
+        height: 220px;
+      }
+
+      .stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .stat-box {
+        height: 76px;
+      }
+
+      .stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .workbench-topbar,
+      .welcome-row {
+        align-items: flex-start;
+        flex-direction: column;
+        height: auto;
+      }
+
+      .dashboard {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "hero"
+          "summary"
+          "search"
+          "risk"
+          "dynamic"
+          "hotwords";
+      }
+
+      .hero-card,
+      .summary-card,
+      .search-card,
+      .risk-todo-card,
+      .panel-card {
+        height: auto;
+        min-height: 260px;
+      }
+    }
+
+    .dashboard,
+    .system-layout .dashboard {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-areas:
+        "hero summary"
+        "reminder tools"
+        "search risk"
+        "dynamic hotwords";
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .latest-dynamic-reminder {
+      grid-area: reminder;
+      height: 156px;
+      min-height: 156px;
+      padding: 20px 22px;
+    }
+
+    .latest-dynamic-reminder .card-title::after {
+      content: "预";
+      display: inline-grid;
+      width: 22px;
+      height: 22px;
+      margin-left: 2px;
+      place-items: center;
+      border-radius: 7px;
+      color: #1e6bff;
+      background: #eef5ff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .monitor-alert {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 12px 14px;
+      width: 100%;
+      min-height: 82px;
+      align-items: center;
+      padding: 18px 20px;
+      border: 1px solid #cfe1ff;
+      border-radius: 12px;
+      color: #30415f;
+      background: linear-gradient(135deg, #f3f7ff 0%, #ffffff 100%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      text-align: left;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .monitor-alert:hover {
+      border-color: #8fb8ff;
+      box-shadow: 0 8px 18px rgba(30, 107, 255, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .monitor-type {
+      display: inline-flex;
+      height: 26px;
+      align-items: center;
+      padding: 0 10px;
+      border-radius: 999px;
+      color: #fff;
+      background: #ff4d4f;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .monitor-main {
+      min-width: 0;
+    }
+
+    .monitor-title-row {
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .monitor-title {
+      overflow: hidden;
+      color: #0f2347;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .monitor-source {
+      flex: 0 0 auto;
+      padding: 4px 10px;
+      border-radius: 7px;
+      color: #1e6bff;
+      background: #eaf2ff;
+      font-size: 14px;
+      line-height: 18px;
+      font-weight: 700;
+    }
+
+    .monitor-summary {
+      display: -webkit-box;
+      overflow: hidden;
+      margin-top: 8px;
+      color: #30415f;
+      font-size: 14px;
+      line-height: 20px;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    .monitor-time {
+      align-self: end;
+      color: #7b8aa5;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .monitor-alert.empty {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      color: #7b8aa5;
+      background: #fff;
+    }
+
+    .monitor-alert.error {
+      grid-template-columns: 1fr;
+      color: #ff4d4f;
+      background: #fff8f8;
+    }
+
+    .system-layout .latest-dynamic-reminder {
+      height: 156px;
+      min-height: 156px;
+      padding: 20px 22px;
+    }
+
+    .news-item,
+    .risk-item {
+      cursor: pointer;
+    }
+
+    .risk-item:hover,
+    .news-item:hover {
+      border-color: #cfe1ff;
+      background: #f8fbff;
+    }
+
+    .system-layout .hero-card,
+    .system-layout .summary-card {
+      height: 198px;
+      min-height: 198px;
+    }
+
+    .system-layout .search-card,
+    .system-layout .risk-card {
+      height: 190px;
+      min-height: 190px;
+      padding: 20px 22px;
+    }
+
+    .system-layout .tools-card {
+      height: 156px;
+      min-height: 156px;
+      padding: 20px 22px;
+    }
+
+    .system-layout .dynamic-card,
+    .system-layout .hotwords-card {
+      height: 280px;
+      min-height: 280px;
+      padding: 20px 22px;
+    }
+
+    .system-layout .risk-card .risk-grid {
+      height: calc(100% - 42px);
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: 12px 18px;
+    }
+
+    .system-layout .risk-card .risk-item {
+      min-height: 52px;
+      padding: 10px 16px;
+    }
+
+    .system-layout .hotwords-card .word-tags {
+      min-height: calc(100% - 44px);
+      align-content: center;
+      padding: 18px 28px 12px;
+      background: transparent;
+    }
+
+    .system-layout .dynamic-card .news-list {
+      margin-top: 10px;
+    }
+
+    .system-layout .dynamic-card .news-item {
+      min-height: 38px;
+      padding: 6px 0;
+    }
+
+    @media (max-width: 1500px) {
+      .dashboard,
+      .system-layout .dashboard {
+        grid-template-areas:
+          "hero summary"
+          "reminder tools"
+          "search risk"
+          "dynamic hotwords";
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .dashboard,
+      .system-layout .dashboard {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "hero"
+          "summary"
+          "reminder"
+          "search"
+          "tools"
+          "risk"
+          "dynamic"
+          "hotwords";
+      }
+
+      .monitor-alert,
+      .monitor-title-row {
+        grid-template-columns: 1fr;
+        align-items: start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body data-module="dashboard" data-page="dashboard">
+  <div id="app"></div>
+  <template id="workbenchTemplate">
+  <main class="workbench">
+    <header class="workbench-topbar">
+      <h1 class="page-title">工作台</h1>
+      <div class="top-actions">
+        <span class="date-item"><span class="top-icon">▣</span>2025-05-25</span>
+        <span>星期日</span>
+        <span>10:30:24</span>
+        <span class="top-divider"></span>
+      </div>
+    </header>
+
+    <section class="welcome-row">
+      <div class="welcome-left">
+        <div class="badge-emblem">警</div>
+        <div>
+          <h2 class="welcome-title">欢迎回来，张警官</h2>
+          <p class="welcome-subtitle">专注情报研判 · 提升决策效率 · 守护网络安全</p>
+        </div>
+      </div>
+      <button class="layout-btn" type="button"><span>▦</span>自定义布局</button>
+    </section>
+
+    <section class="dashboard">
+      <article class="card hero-card">
+        <div class="hero-copy">
+          <h2>情报研判</h2>
+          <p>数据驱动 · 智能研判 · 快速响应</p>
+          <div class="hero-tags" style="margin-top: 16px; display: flex; gap: 12px;">
+            <span style="padding: 4px 10px; background: rgba(23, 103, 222, 0.1); color: #1767de; border-radius: 6px; font-size: 13px; font-weight: 800;">全域监测</span>
+            <span style="padding: 4px 10px; background: rgba(23, 103, 222, 0.1); color: #1767de; border-radius: 6px; font-size: 13px; font-weight: 800;">智能分析</span>
+            <span style="padding: 4px 10px; background: rgba(23, 103, 222, 0.1); color: #1767de; border-radius: 6px; font-size: 13px; font-weight: 800;">及时预警</span>
+          </div>
+        </div>
+        <div class="hero-art" aria-hidden="true"></div>
+      </article>
+
+      <section class="card summary-card">
+        <div class="card-head">
+          <h2 class="card-title">数据汇总</h2>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-box"><div><div class="stat-name">目标总数</div><div class="stat-value">1,289</div><div class="stat-change">月增 128</div></div></div>
+          <div class="stat-box"><div><div class="stat-name">预警事件数</div><div class="stat-value">368</div><div class="stat-change">月增 148</div></div></div>
+          <div class="stat-box"><div><div class="stat-name">专题任务数</div><div class="stat-value">24</div><div class="stat-change">月增 14</div></div></div>
+          <div class="stat-box"><div><div class="stat-name">今日新增数据</div><div class="stat-value">24</div><div class="stat-change">较昨日 14</div></div></div>
+        </div>
+      </section>
+
+      <section class="card latest-dynamic-reminder" id="latestDynamicReminder" aria-label="最新动态提醒">
+        <div class="card-head">
+          <h2 class="card-title">最新动态</h2>
+          <button class="more" type="button" data-href="./pages/topic-dynamics.html?type=monitor">更多 ›</button>
+        </div>
+        <button class="monitor-alert" type="button">
+          <span class="monitor-type">监测</span>
+          <span class="monitor-main">
+            <span class="monitor-title-row">
+              <span class="monitor-title">正在加载最新动态...</span>
+            </span>
+          </span>
+        </button>
+      </section>
+
+      <section class="card search-card">
+        <div class="card-head">
+          <h2 class="card-title">信息搜索</h2>
+        </div>
+        <div class="search-line">
+          <select class="control"><option>全部领域</option></select>
+          <input class="control" placeholder="请输入关键词" />
+          <button class="search-btn" type="button">搜索</button>
+        </div>
+        <div class="hot-label">热门搜索</div>
+        <div class="tag-list" style="margin-bottom: 20px;">
+          <button class="tag">全能神教会</button>
+          <button class="tag">有害气功组织</button>
+          <button class="tag">法轮功</button>
+          <button class="tag">重点人员</button>
+          <button class="tag">活动线索</button>
+        </div>
+      </section>
+
+      <section class="card tools-card">
+        <div class="card-head">
+          <h2 class="card-title">常用工具</h2>
+        </div>
+        <div class="quick-entry-grid">
+          <a class="quick-entry-item" href="./pages/warning-my-events.html"><span class="quick-entry-icon cyan">●</span><span class="quick-entry-name">我的事件</span></a>
+          <a class="quick-entry-item" href="./pages/warning-subscriptions.html"><span class="quick-entry-icon green">★</span><span class="quick-entry-name">我的订阅</span></a>
+          <a class="quick-entry-item" href="./pages/target_pool.html"><span class="quick-entry-icon blue">◆</span><span class="quick-entry-name">目标画像</span></a>
+          <a class="quick-entry-item" href="./pages/overseas_person_list.html"><span class="quick-entry-icon cyan">人</span><span class="quick-entry-name">境外人员管理</span></a>
+        </div>
+      </section>
+
+      <section class="card risk-card">
+        <div class="card-head">
+          <h2 class="card-title">风险预警</h2>
+          <button class="more" type="button" data-href="./pages/warning-rank.html">更多 ›</button>
+        </div>
+        <div class="risk-grid">
+          <div class="risk-item" data-href="./pages/warning-rank.html?level=high"><span class="risk-name">高风险事件</span><strong class="risk-num">2</strong><span class="risk-change">较昨日 ↑11</span></div>
+          <div class="risk-item" data-href="./pages/warning-rank.html?level=middle"><span class="risk-name">中风险事件</span><strong class="risk-num">7</strong><span class="risk-change">较昨日 ↑11</span></div>
+          <div class="risk-item" data-href="./pages/warning-rank.html?level=low"><span class="risk-name">低风险事件</span><strong class="risk-num">15</strong><span class="risk-change">较昨日 ↑13</span></div>
+          <div class="risk-item" data-href="./pages/warning-rank.html?type=today"><span class="risk-name">今日新增预警</span><strong class="risk-num">4</strong><span class="risk-change">较昨日 ↑4</span></div>
+        </div>
+      </section>
+
+      <section class="card panel-card dynamic-card">
+        <div class="card-head">
+          <h2 class="card-title">关注动态</h2>
+          <div class="tabs">
+            <button class="tab active" type="button" data-focus-tab="hot">动态趋势</button>
+            <button class="tab" type="button" data-focus-tab="international">国际动态</button>
+            <button class="tab" type="button" data-focus-tab="domestic">国内动态</button>
+            <button class="more" type="button" data-href="./pages/topic-dynamics.html">更多 ›</button>
+          </div>
+        </div>
+        <div class="news-list">
+          <div class="news-item" data-href="./pages/info-detail.html?id=D202605250001"><span class="news-index">1</span><span class="news-title">某网络直播平台网络主播整改行动</span><span class="source">瞭望社</span><span class="time">10:20</span></div>
+          <div class="news-item" data-href="./pages/info-detail.html?id=D202605250002"><span class="news-index">2</span><span class="news-title">美国公布新版国家网络安全战略</span><span class="source">澎湃社</span><span class="time">09:15</span></div>
+          <div class="news-item" data-href="./pages/info-detail.html?id=D202605250003"><span class="news-index">3</span><span class="news-title">东南亚国家加强跨境打击电信诈骗合作</span><span class="source">新华社</span><span class="time">08:40</span></div>
+          <div class="news-item" data-href="./pages/info-detail.html?id=D202605250004"><span class="news-index">4</span><span class="news-title">美韩联合演练网络攻防提升防御能力</span><span class="source">环球社</span><span class="time">07:30</span></div>
+          <div class="news-item" data-href="./pages/info-detail.html?id=D202605250005"><span class="news-index">5</span><span class="news-title">欧盟通过《人工智能法案》实施细则</span><span class="source">法新社</span><span class="time">06:10</span></div>
+        </div>
+      </section>
+
+      <section class="card panel-card hotwords-card">
+        <div class="card-head">
+          <h2 class="card-title hot-title">高频热词</h2>
+          <button class="more" type="button" data-href="./pages/search-info.html">更多 ›</button>
+        </div>
+        <div class="word-tags">
+          <span class="word">全能神教会</span>
+          <span class="word">有害气功组织</span>
+          <span class="word">法轮功</span>
+          <span class="word">重点人员轨迹</span>
+          <span class="word">重点人员关系</span>
+          <span class="word">重点人员动态</span>
+          <span class="word">重点人员预警</span>
+          <span class="word">活动线索</span>
+        </div>
+      </section>
+    </section>
+  </main>
+  </template>
+  <script src="./assets/js/menu-config.js"></script>
+  <script src="./assets/js/mock-data.js"></script>
+  <script src="./assets/js/layout.js"></script>
+  <script>
+    (function () {
+      const pageContent = document.getElementById("pageContent");
+      const template = document.getElementById("workbenchTemplate");
+      if (!pageContent || !template) return;
+
+      pageContent.innerHTML = template.innerHTML;
+      normalizeRootShellLinks();
+      normalizeTopbarUser();
+      bindWorkbenchEvents();
+      window.setTimeout(initLatestDynamicReminder, 0);
+    })();
+
+    function normalizeRootShellLinks() {
+      document.querySelectorAll(".sidebar a[href^='./'], .brand-box[href^='./']").forEach((link) => {
+        const href = link.getAttribute("href");
+        if (!href || href === "#" || href.startsWith("./pages/")) return;
+        link.setAttribute("href", "./pages/" + href.slice(2));
+      });
+    }
+
+    function normalizeTopbarUser() {
+      const avatar = document.querySelector(".topbar .user-avatar");
+      const name = document.querySelector(".topbar .user-info span:nth-child(2)");
+      if (avatar) avatar.textContent = "张";
+      if (name) name.textContent = "张警官";
+    }
+
+    function bindWorkbenchEvents() {
+      const searchButton = document.querySelector(".search-btn");
+      const searchInput = document.querySelector(".search-line input");
+      const searchSelect = document.querySelector(".search-line select");
+
+      searchButton?.addEventListener("click", () => {
+        const keyword = (searchInput?.value || "").trim();
+        const scope = searchSelect?.value || "全部领域";
+        const query = new URLSearchParams({ keyword, scope });
+        location.href = "./pages/search-info.html?" + query.toString();
+      });
+
+      document.querySelectorAll(".tag, .word").forEach((button) => {
+        button.addEventListener("click", () => {
+          const keyword = button.textContent.trim();
+          location.href = "./pages/search-info.html?keyword=" + encodeURIComponent(keyword);
+        });
+      });
+
+      document.querySelectorAll("[data-href]").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          location.href = button.dataset.href;
+        });
+      });
+
+      document.addEventListener("click", (event) => {
+        const trigger = event.target.closest(".news-item[data-href]");
+        if (!trigger) return;
+        location.href = trigger.dataset.href;
+      });
+
+      document.querySelector(".layout-btn")?.addEventListener("click", () => {
+        showWorkbenchToast("自定义布局已打开");
+      });
+
+      document.querySelectorAll("[data-focus-tab]").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll("[data-focus-tab]").forEach((item) => item.classList.remove("active"));
+          button.classList.add("active");
+          renderFocusList(button.dataset.focusTab);
+        });
+      });
+    }
+
+    function renderFocusList(type) {
+      const data = {
+        hot: [
+          ["某网络直播平台网络主播整改行动", "瞭望社", "10:20"],
+          ["美国公布新版国家网络安全战略", "澎湃社", "09:15"],
+          ["东南亚国家加强跨境打击电信诈骗合作", "新华社", "08:40"],
+          ["美韩联合演练网络攻防提升防御能力", "环球社", "07:30"],
+          ["欧盟通过《人工智能法案》实施细则", "法新社", "06:10"],
+        ],
+        international: [
+          ["美欧就对俄新一轮制裁达成一致", "路透社", "10:24"],
+          ["美联储暗示今年可能降息", "彭博社", "09:58"],
+          ["日本将加强半导体产业合作", "NHK", "08:41"],
+          ["欧盟通过新数字服务法案", "BBC", "07:33"],
+          ["印度与加拿大外交关系紧张升级", "Al Jazeera", "06:15"],
+        ],
+        domestic: [
+          ["多地发布数字经济重点项目清单", "新华社", "10:18"],
+          ["人工智能治理标准持续完善", "央视新闻", "09:42"],
+          ["新能源产业链协同能力提升", "经济日报", "08:36"],
+          ["跨境数据流动安全评估推进", "人民网", "07:58"],
+          ["重点区域网络安全演练启动", "光明网", "06:44"],
+        ]
+      };
+      const list = document.querySelector(".dynamic-card .news-list");
+      if (!list) return;
+      list.innerHTML = (data[type] || data.hot)
+        .map(
+          (item, index) => `
+              <div class="news-item" data-href="./pages/info-detail.html?id=D20260525${String(index + 1).padStart(4, "0")}">
+                <span class="${type === "hot" ? "news-index" : "news-dot"}">${type === "hot" ? index + 1 : ""}</span>
+                <span class="news-title">${item[0]}</span>
+                <span class="source">${item[1]}</span>
+                <span class="time">${item[2]}</span>
+              </div>
+            `
+        )
+        .join("");
+    }
+
+    const LATEST_DYNAMIC_API = "/api/workbench/dynamics/latest";
+    const LATEST_DYNAMIC_READ_KEY = "workbenchLatestDynamicReadId";
+    const latestDynamicMock = {
+      remindId: "R202605250001",
+      type: "monitor",
+      monitorId: "TP-2026-040612",
+      sourceTask: "专题监测任务",
+      intelligenceId: "I202605250089",
+      title: "监测到“东南亚电诈专题”相关情报",
+      summary: "监测任务发现：某境外社交平台出现与东南亚电诈专题相关的最新舆情信息。",
+      level: "high",
+      time: "10:20",
+      remindTime: "2026-05-25 10:20:00",
+      unreadCount: 1,
+      isRead: false,
+      targetUrl: "./pages/topic-reports.html?id=TP-2026-040612",
+      isMock: true,
+    };
+    let latestDynamicReminder = null;
+
+    function initLatestDynamicReminder() {
+      const card = document.getElementById("latestDynamicReminder");
+      if (!card) return;
+
+      card.addEventListener("click", () => openLatestDynamicReminder());
+
+      loadLatestDynamicReminder();
+      if (!window.latestDynamicReminderTimer && location.protocol !== "file:") {
+        window.latestDynamicReminderTimer = window.setInterval(loadLatestDynamicReminder, 60000);
+      }
+    }
+
+    async function loadLatestDynamicReminder() {
+      renderLatestDynamicReminder({ loading: true });
+
+      try {
+        const data = await getLatestDynamicData();
+        renderLatestDynamicReminder(applyLocalReadState(data));
+      } catch (error) {
+        console.warn("latest dynamic reminder load failed", error);
+        renderLatestDynamicReminder(applyLocalReadState(latestDynamicMock));
+      }
+    }
+
+    async function getLatestDynamicData() {
+      if (location.protocol === "file:") {
+        return latestDynamicMock;
+      }
+
+      const controller = new AbortController();
+      const timer = window.setTimeout(() => controller.abort(), 2500);
+      try {
+        const response = await fetch(LATEST_DYNAMIC_API, { signal: controller.signal });
+        if (!response.ok) throw new Error("latest dynamic api failed");
+        const result = await response.json();
+        return result && result.code === 200 ? result.data || latestDynamicMock : latestDynamicMock;
+      } finally {
+        window.clearTimeout(timer);
+      }
+    }
+
+    function applyLocalReadState(data) {
+      if (!data) return null;
+      const readId = localStorage.getItem(LATEST_DYNAMIC_READ_KEY);
+      if (readId === data.remindId) {
+        return { ...data, isRead: true, unreadCount: 0 };
+      }
+      return data;
+    }
+
+    function renderLatestDynamicReminder(data) {
+      const card = document.getElementById("latestDynamicReminder");
+      if (!card) return;
+      const alert = card.querySelector(".monitor-alert");
+      if (!alert) return;
+
+      if (data && data.loading) {
+        latestDynamicReminder = null;
+        alert.className = "monitor-alert";
+        alert.innerHTML = `
+          <span class="monitor-type">监测</span>
+          <span class="monitor-main">
+            <span class="monitor-title-row">
+              <span class="monitor-title">正在加载最新动态...</span>
+            </span>
+          </span>
+        `;
+        return;
+      }
+
+      if (data && data.error) {
+        latestDynamicReminder = null;
+        alert.className = "monitor-alert error";
+        alert.textContent = data.message || "最新动态加载失败，请稍后重试";
+        return;
+      }
+
+      if (!data) {
+        latestDynamicReminder = null;
+        alert.className = "monitor-alert empty";
+        alert.textContent = "暂无新的监测提醒";
+        return;
+      }
+
+      latestDynamicReminder = data;
+      const typeText = data.type === "monitor" ? "监测" : "提醒";
+      const sourceTask = data.sourceTask || data.monitorName || "专题监测任务";
+      const time = data.time || formatReminderTime(data.remindTime);
+
+      alert.className = "monitor-alert";
+      alert.innerHTML = `
+        <span class="monitor-type">${escapeWorkbenchHtml(typeText)}</span>
+        <span class="monitor-main">
+          <span class="monitor-title-row">
+            <span class="monitor-title">${escapeWorkbenchHtml(data.title || "监测到专题相关情报")}</span>
+            <span class="monitor-source">${escapeWorkbenchHtml(sourceTask)}</span>
+          </span>
+          <span class="monitor-summary">${escapeWorkbenchHtml(data.summary || "监测任务发现新的专题情报，请及时查看。")}</span>
+        </span>
+        <span class="monitor-time">${escapeWorkbenchHtml(time)}</span>
+      `;
+    }
+
+    async function openLatestDynamicReminder() {
+      const data = latestDynamicReminder;
+      const targetUrl = data?.targetUrl || data?.detailUrl;
+      if (!data || !targetUrl) return;
+
+      if (data.isRead || data.isMock || location.protocol === "file:") {
+        markLatestDynamicRead(data);
+        location.href = targetUrl;
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/workbench/dynamics/${encodeURIComponent(data.remindId)}/read`, { method: "PUT" });
+        if (!response.ok) throw new Error("mark latest dynamic read failed");
+        markLatestDynamicRead(data);
+        location.href = targetUrl;
+      } catch (error) {
+        console.warn("latest dynamic reminder read failed", error);
+        showWorkbenchToast("状态更新失败，请稍后重试");
+      }
+    }
+
+    function markLatestDynamicRead(data) {
+      if (data.remindId) {
+        localStorage.setItem(LATEST_DYNAMIC_READ_KEY, data.remindId);
+      }
+      renderLatestDynamicReminder({ ...data, isRead: true, unreadCount: 0 });
+    }
+
+    function formatReminderTime(value) {
+      if (!value) return "";
+      const match = String(value).match(/\d{2}:\d{2}/);
+      return match ? match[0] : String(value);
+    }
+
+    function escapeWorkbenchHtml(value) {
+      return String(value || "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      }[char]));
+    }
+
+    function showWorkbenchToast(text) {
+      let toast = document.getElementById("workbenchToast");
+      if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "workbenchToast";
+        toast.className = "workbench-toast";
+        document.body.appendChild(toast);
+      }
+      toast.textContent = text;
+      toast.classList.add("show");
+      clearTimeout(showWorkbenchToast.timer);
+      showWorkbenchToast.timer = setTimeout(() => toast.classList.remove("show"), 1500);
+    }
+  </script>
+</body>
+</html>

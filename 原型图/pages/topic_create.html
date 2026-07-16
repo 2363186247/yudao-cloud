@@ -1,0 +1,401 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>开源情报系统 - 创建专题</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="topic_shared.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand-box">
+          <div class="brand-logo">境</div>
+          <div class="brand-text">
+            <div class="brand-title">境外舆情分析系统</div>
+            <div class="brand-subtitle">
+              Overseas Public Opinion Intelligence Platform
+            </div>
+          </div>
+        </div>
+
+        <nav class="menu-group">
+          <div class="menu-section">
+            <a class="menu-link" href="index.html">
+              <span class="menu-main">
+                <span class="menu-icon">⌂</span>
+                <span class="menu-text">首页</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="menu-section">
+            <a class="menu-link" href="home.html">
+              <span class="menu-main">
+                <span class="menu-icon">W</span>
+                <span class="menu-text">工作台</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="menu-section open">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">◎</span>
+                <span class="menu-text">情报中心</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="huiz.html">情报汇总</a></li>
+              <li><a class="submenu-link" href="query.html">情报查询</a></li>
+              <li><a class="submenu-link" href="search-national-network.html">全国联网查询</a></li>
+            </ul>
+          </div>
+
+          <div class="menu-section open">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">◫</span>
+                <span class="menu-text">专题监测</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="topic_pool.html">专题池</a></li>
+              <li><a class="submenu-link active" href="topic_create.html">创建专题</a></li>
+              <li><a class="submenu-link" href="topic_report.html">专题报告</a></li>
+            </ul>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">☷</span>
+                <span class="menu-text">人员管理</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="person_register.html">人员登记</a></li>
+              <li><a class="submenu-link" href="warning_rules.html">预警规则管理</a></li>
+              <li><a class="submenu-link" href="compare_result.html">比对发现</a></li>
+            </ul>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">◉</span>
+                <span class="menu-text">目标画像</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="target_pool.html">目标池</a></li>
+              <li><a class="submenu-link" href="target_report.html">目标分析报告</a></li>
+            </ul>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-trigger">
+              <span class="menu-main">
+                <span class="menu-icon">⚑</span>
+                <span class="menu-text">事件预警</span>
+              </span>
+              <span class="menu-arrow">▶</span>
+            </div>
+            <ul class="submenu">
+              <li><a class="submenu-link" href="warning-rank.html">事件榜单</a></li>
+              <li><a class="submenu-link" href="warning-my-events.html">我的事件</a></li>
+              <li><a class="submenu-link" href="warning-subscriptions.html">我的订阅</a></li>
+            </ul>
+          </div>
+        </nav>
+      </aside>
+      <main class="main">
+        <div class="topbar">
+          <div class="topbar-left">
+            <div class="page-title">创建专题</div>
+            <div class="breadcrumb">首页 &gt; 专题监测 &gt; 创建专题</div>
+          </div>
+          <div class="topbar-right">
+            <a class="module-link" href="topic_pool.html" data-parent-frame-link="true">专题池</a>
+            <a class="module-link" href="topic_report.html" data-parent-frame-link="true">专题报告</a>
+            <div class="top-chip">
+              <i class="ri-time-line"></i><span id="nowTime">2026-04-15 09:30:00</span>
+            </div>
+            <div class="top-chip">
+              <i class="ri-add-circle-line"></i><span>支持即时生成专题</span>
+            </div>
+            <div class="avatar">专</div>
+          </div>
+        </div>
+
+        <div class="content">
+          <section class="section">
+            <div class="section-head">
+              <div class="section-title">
+                <i class="ri-add-circle-line"></i>创建专题
+              </div>
+            </div>
+
+            <div class="panel form-shell">
+              <div class="card-head">
+                <div class="card-title">专题配置表单</div>
+                <div class="card-action">根据关键词、人物、事件与组织建立监测任务</div>
+              </div>
+
+              <div class="form-grid">
+                <div class="field">
+                  <label for="topicName">专题名称</label>
+                  <input id="topicName" class="text-input" placeholder="请输入专题名称" />
+                </div>
+                <div class="field">
+                  <label for="topicType">专题类型</label>
+                  <select id="topicType" class="select-input">
+                    <option>跨境传播</option>
+                    <option>网络舆情</option>
+                    <option>重点人物</option>
+                    <option>重点组织</option>
+                    <option>信息外溢</option>
+                    <option>论坛扩散</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="topicKeywords">监测关键词</label>
+                  <input id="topicKeywords" class="text-input" placeholder="多个关键词用 / 分隔" />
+                </div>
+                <div class="field">
+                  <label for="topicPeople">重点人物</label>
+                  <input id="topicPeople" class="text-input" placeholder="请输入人物名称" />
+                </div>
+                <div class="field">
+                  <label for="topicOrg">重点组织</label>
+                  <input id="topicOrg" class="text-input" placeholder="请输入组织名称" />
+                </div>
+                <div class="field">
+                  <label for="topicCycle">监测周期</label>
+                  <select id="topicCycle" class="select-input">
+                    <option>近7日</option>
+                    <option>近15日</option>
+                    <option>近30日</option>
+                    <option>长期跟踪</option>
+                  </select>
+                </div>
+                <div class="field field-wide">
+                  <label for="topicDesc">专题描述</label>
+                  <textarea
+                    id="topicDesc"
+                    class="text-area"
+                    placeholder="请输入专题监测目标、关注方向与分析重点"
+                  ></textarea>
+                </div>
+              </div>
+
+              <div class="helper-grid">
+                <div class="helper-card">
+                  <strong>研判目标</strong>
+                  <span>用于描述专题需要长期跟踪的核心问题，便于后续输出专题报告。</span>
+                </div>
+                <div class="helper-card">
+                  <strong>监测对象</strong>
+                  <span>支持从关键词、人物、组织和事件四个维度组合配置监测条件。</span>
+                </div>
+                <div class="helper-card">
+                  <strong>输出结果</strong>
+                  <span>创建成功后将同步生成专题池记录，并可直接查看专题报告。</span>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button id="resetForm" class="btn-line" type="button">重置</button>
+                <button id="submitTopic" class="btn-main" type="button">创建专题</button>
+              </div>
+            </div>
+
+            <div class="result-banner" id="resultBanner">
+              <div class="result-copy">
+                <strong id="resultTitle">专题创建成功</strong>
+                <span id="resultText">已生成新的专题记录，可立即前往专题池或专题报告查看。</span>
+              </div>
+              <div class="result-actions">
+                <a class="btn-line" href="topic_pool.html" data-parent-frame-link="true">返回专题池</a>
+                <a class="btn-main" href="topic_report.html" data-parent-frame-link="true" id="reportLink">查看专题报告</a>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script src="main.js"></script>
+    <script src="topic_data.js"></script>
+    <script src="topic_shared.js"></script>
+    <script>
+      TopicModule.mountClock("nowTime");
+
+      (function initTopicSidebar() {
+        document.querySelectorAll(".menu-trigger").forEach(function (trigger) {
+          trigger.addEventListener("click", function () {
+            this.parentElement.classList.toggle("open");
+          });
+        });
+
+        const currentPath = window.location.pathname.split("/").pop() || "topic_create.html";
+        const links = document.querySelectorAll(".menu-link, .submenu-link");
+
+        links.forEach(function (link) {
+          link.classList.remove("active");
+          const href = (link.getAttribute("href") || "").split("?")[0];
+          if (href === currentPath) {
+            link.classList.add("active");
+            const parentSection = link.closest(".menu-section");
+            if (parentSection) {
+              parentSection.classList.add("open");
+            }
+          }
+        });
+      })();
+
+      const topicName = document.getElementById("topicName");
+      const topicType = document.getElementById("topicType");
+      const topicKeywords = document.getElementById("topicKeywords");
+      const topicPeople = document.getElementById("topicPeople");
+      const topicOrg = document.getElementById("topicOrg");
+      const topicCycle = document.getElementById("topicCycle");
+      const topicDesc = document.getElementById("topicDesc");
+      const resultBanner = document.getElementById("resultBanner");
+      const resultTitle = document.getElementById("resultTitle");
+      const resultText = document.getElementById("resultText");
+      const reportLink = document.getElementById("reportLink");
+
+      function resetForm() {
+        topicName.value = "";
+        topicType.selectedIndex = 0;
+        topicKeywords.value = "";
+        topicPeople.value = "";
+        topicOrg.value = "";
+        topicCycle.selectedIndex = 0;
+        topicDesc.value = "";
+        resultBanner.classList.remove("is-visible");
+      }
+
+      function buildTopicPayload() {
+        const now = new Date();
+        const pad = function (value) {
+          return String(value).padStart(2, "0");
+        };
+        const dateText =
+          now.getFullYear() +
+          "-" +
+          pad(now.getMonth() + 1) +
+          "-" +
+          pad(now.getDate());
+        const name = topicName.value.trim();
+        const type = topicType.value;
+        const desc =
+          topicDesc.value.trim() ||
+          "根据创建页配置的条件自动生成专题监测任务，用于持续追踪传播态势和重点节点。";
+        const tags = (topicKeywords.value || type + "/专题监测/" + (topicPeople.value || topicOrg.value || "综合分析"))
+          .split("/")
+          .map(function (item) {
+            return item.trim();
+          })
+          .filter(Boolean)
+          .slice(0, 3);
+        const peopleCount = topicPeople.value
+          ? topicPeople.value.split("/").filter(Boolean).length
+          : Math.floor(Math.random() * 4) + 2;
+        const intelCount = Math.floor(Math.random() * 45) + 68;
+        const nodeCount = Math.floor(Math.random() * 8) + 7;
+        const risk = intelCount > 95 ? "高热" : intelCount > 78 ? "中热" : "低热";
+        const topicId =
+          "TP-" +
+          now.getFullYear() +
+          "-" +
+          String(now.getTime()).slice(-6);
+
+        return {
+          id: topicId,
+          name: name,
+          type: type,
+          time: dateText,
+          owner: "创建人 / 当前用户",
+          cycle: topicCycle.value,
+          risk: risk,
+          desc: desc,
+          keywords: tags,
+          tags: tags,
+          metrics: {
+            intel: intelCount,
+            people: peopleCount,
+            nodes: nodeCount,
+          },
+          overview: [
+            ["监测情报总量", intelCount + " 条"],
+            ["涉及重点人物", peopleCount + " 人"],
+            ["重点传播节点", nodeCount + " 个"],
+            ["当前态势", "专题已创建，系统将持续聚合后续监测结果"],
+          ],
+          timeline: [
+            [dateText + " 09:10", "专题创建完成，系统开始聚合历史与实时情报。"],
+            [dateText + " 10:25", "根据关键词与对象条件完成第一轮关联分析。"],
+            [dateText + " 11:40", "初步识别重点传播节点并生成监测摘要。"],
+            [dateText + " 12:10", "专题报告草稿已准备，可进入报告页查看。"],
+          ],
+          opinions: [
+            ["主要观点一", "当前传播观点仍以基础信息扩散为主，后续可能向关联议题延展。"],
+            ["主要观点二", "需关注重点对象与外围账号的联动放大作用。"],
+            ["主要观点三", "建议结合监测周期持续输出阶段性态势摘要。"],
+          ],
+          nodes: [
+            ["核心平台", "初步识别为主要信息扩散入口"],
+            ["关联账号", "存在连续转发与互动放大现象"],
+            ["引用来源", "多源内容聚合趋势已经形成"],
+          ],
+          intelPeople: [
+            ["涉及情报", "系统将持续聚合与该专题相关的新增情报。"],
+            ["涉及人物", topicPeople.value.trim() || "暂未指定固定重点人物，采用关联识别模式。"],
+            ["涉及组织", topicOrg.value.trim() || "暂未指定固定重点组织，采用综合聚合模式。"],
+          ],
+          conclusions: [
+            "专题配置已完成，后续应重点关注相关议题是否出现跨平台联动增长。",
+            "建议在专题运行初期优先跟踪首发平台和高频转述账号的结构变化。",
+            "若后续热度继续抬升，可结合专题池与专题报告进行持续输出。",
+          ],
+          trend: [26, 34, 39, 47, 56, 62, 69],
+        };
+      }
+
+      document.getElementById("resetForm").addEventListener("click", resetForm);
+
+      document.getElementById("submitTopic").addEventListener("click", function () {
+        if (!topicName.value.trim()) {
+          TopicModule.showToast("请先填写专题名称");
+          topicName.focus();
+          return;
+        }
+
+        const topic = buildTopicPayload();
+        TopicModule.addTopic(topic);
+        TopicModule.showToast("专题创建成功");
+
+        resultTitle.textContent = "专题《" + topic.name + "》创建成功";
+        resultText.textContent =
+          "已同步生成专题池记录，并将该专题设为当前专题，可继续查看专题报告。";
+        reportLink.dataset.topicId = topic.id;
+        resultBanner.classList.add("is-visible");
+      });
+
+      reportLink.addEventListener("click", function () {
+        TopicModule.setSelectedTopic(this.dataset.topicId || TopicModule.getSelectedTopicId());
+      });
+    </script>
+  </body>
+</html>
