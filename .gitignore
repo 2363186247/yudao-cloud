@@ -53,3 +53,5 @@ application-my.yaml
 /yudao-ui-app/unpackage/
 .DS_Store
 **/.DS_Store
+# Translation Offline Models
+translate-models/
