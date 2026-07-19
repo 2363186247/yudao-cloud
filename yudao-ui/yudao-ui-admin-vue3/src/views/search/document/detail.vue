@@ -215,7 +215,7 @@ const getDetail = async () => {
   }
 }
 
-/** 模拟翻译实现 */
+/** 真实翻译实现 */
 const handleTranslate = async () => {
   if (!translationInput.value.trim()) {
     ElMessage.warning('请输入待翻译的文本内容')
@@ -227,16 +227,20 @@ const handleTranslate = async () => {
   }
   translating.value = true
   translationOutput.value = ''
-  
-  // 模拟 RPC 翻译服务延迟
-  setTimeout(() => {
-    const langNames: Record<string, string> = { en: '英文', zh: '中文', ko: '朝鲜语', ru: '俄语' }
-    translationOutput.value = `[翻译系统结果 - 从 ${langNames[sourceLang.value]} 翻译为 ${langNames[targetLang.value]}]:\n\n` + 
-      `这是元数据正文的中文研判译文。经过智能分词与时空实体识别，该事件发生于近期，情报内容具有较高的安全参考价值。\n\n` +
-      `原文片段对照：\n${translationInput.value.substring(0, 150)}...`
-    translating.value = false
+  try {
+    const data = await SearchDocumentApi.translateText({
+      text: translationInput.value,
+      sourceLang: sourceLang.value,
+      targetLang: targetLang.value
+    })
+    translationOutput.value = data
     ElMessage.success('翻译处理完成')
-  }, 1000)
+  } catch (error) {
+    console.error(error)
+    ElMessage.error('离线翻译请求失败')
+  } finally {
+    translating.value = false
+  }
 }
 
 /** 文本高亮方法 */

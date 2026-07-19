@@ -41,3 +41,9 @@ export const getSearchDocumentPage = (params: { pageNo: number; pageSize: number
 export const batchImportSearchDocuments = (data: SearchDocumentVO[]) => {
   return request.post({ url: '/search/batch-import', data })
 }
+
+// 离线多语言智能翻译
+export const translateText = (data: { text: string; sourceLang: string; targetLang: string }) => {
+  return request.post({ url: '/search/translate', data })
+}
+

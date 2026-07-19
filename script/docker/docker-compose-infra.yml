@@ -27,7 +27,7 @@ services:
 
   # Nacos 注册/配置中心 (使用内嵌 Derby 数据库，免配置)
   nacos:
-    image: nacos/nacos-server:v2.2.3
+    image: nacos/nacos-server:v2.3.2
     container_name: yudao-nacos
     ports:
       - "8848:8848"

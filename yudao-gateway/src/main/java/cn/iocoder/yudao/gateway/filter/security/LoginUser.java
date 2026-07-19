@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.gateway.filter.security;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Map;
  * @author 芋道源码
  */
 @Data
+@Accessors(chain = true)
 public class LoginUser {
 
     /**

@@ -10,6 +10,8 @@ import cn.iocoder.yudao.module.search.controller.admin.vo.SearchDocumentRespVO;
 import cn.iocoder.yudao.module.search.controller.admin.vo.SearchDocumentSaveReqVO;
 import cn.iocoder.yudao.module.search.dal.mongodb.SearchDocument;
 import cn.iocoder.yudao.module.search.service.SearchService;
+import cn.iocoder.yudao.module.search.service.TranslationService;
+import cn.iocoder.yudao.module.search.controller.admin.vo.TranslationReqVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,6 +32,9 @@ public class SearchController {
 
     @Resource
     private SearchService searchService;
+
+    @Resource
+    private TranslationService translationService;
 
     @PostMapping("/create")
     @Operation(summary = "创建/索引文档")
@@ -83,5 +88,12 @@ public class SearchController {
     public CommonResult<Boolean> batchImportSearchDocuments(@Valid @RequestBody java.util.List<SearchDocumentSaveReqVO> importList) {
         searchService.batchImportSearchDocuments(importList);
         return success(true);
+    }
+
+    @PostMapping("/translate")
+    @Operation(summary = "多语言智能翻译")
+    public CommonResult<String> translate(@Valid @RequestBody TranslationReqVO reqVO) {
+        String result = translationService.translate(reqVO.getText(), reqVO.getSourceLang(), reqVO.getTargetLang());
+        return success(result);
     }
 }
