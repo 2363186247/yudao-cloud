@@ -1,18 +1,45 @@
 [← 返回主技术说明文档](../全文检索服务构建与学习文档.md)
 
-# MongoDB 全文检索、倒排索引与 Jieba 中文分词机制规范
+# MongoDB 双模检索架构、倒排索引与 Jieba 分词工具设计规范
 
-本文档阐述 MongoDB 全文检索技术实现、倒排索引（Inverted Index）数据结构与得分计算算法，以及 Jieba 分词器（`jieba-analysis`）在中文环境下的集成方案。
+本文档阐述 [SearchServiceImpl.java](../../yudao-module-search/yudao-module-search-server/src/main/java/cn/iocoder/yudao/module/search/service/SearchServiceImpl.java) 中实现的 MongoDB **双模式检索架构**（正则模糊匹配 vs 倒排索引全文匹配）、倒排索引（Inverted Index）打分计算公式，以及 [SegmentationUtils.java](../../yudao-module-search/yudao-module-search-server/src/main/java/cn/iocoder/yudao/module/search/framework/utils/SegmentationUtils.java) 分词工具类的封装规范。
 
 ---
 
-## 1. 核心概念规范
+## 1. 检索架构双模式设计 (Regex vs Full-Text Index)
 
-### 1.1 MongoDB 全文检索 (Full-Text Search)
-基于倒排索引机制的高级文本匹配引擎。在文档字段上建立 `text` 索引后，能够将长文本分割为独立词项（Term），并根据词频与字段权重计算相关度得分（`$textScore`），实现精准的高召回率检索。
+系统在 [SearchServiceImpl.java](../../yudao-module-search/yudao-module-search-server/src/main/java/cn/iocoder/yudao/module/search/service/SearchServiceImpl.java) 中支持两种不同的搜索模式，以满足精确字段过滤与全库相关度匹配的需求：
 
-### 1.2 中文分词器 (Segmenter / Tokenizer)
-英文文本天然以空格作为词汇分隔符，而中文文本为连续字符串。分词器用于在文本写入与检索前，将连续语句切割为有独立语义的词汇序列。本项目采用 `jieba-analysis` 库完成前置分词预处理。
+```java
+Query query;
+boolean isFullText = false;
+if (StrUtil.isNotBlank(searchKey)) {
+    if ("title".equals(searchType)) {
+        // 模式 A：特定字段正则模糊检索 (LIKE 精确匹配)
+        query = new Query();
+        query.addCriteria(Criteria.where("title").regex(searchKey, "i"));
+    } else if ("content".equals(searchType)) {
+        query = new Query();
+        query.addCriteria(Criteria.where("content").regex(searchKey, "i"));
+    } else {
+        // 模式 B：全局倒排索引全文检索 (Text Search + 相关度打分)
+        String segmentedKey = SegmentationUtils.segment(searchKey);
+        TextCriteria criteria = TextCriteria.forDefaultLanguage().matching(segmentedKey);
+        query = TextQuery.queryText(criteria);
+        isFullText = true;
+    }
+}
+```
+
+### 1.1 模式 A：特定字段正则模糊检索 (`Criteria.where().regex()`)
+*   **适用场景**：用户明确指定仅对 `title` 或 `content` 单个字段进行精确子串查找。
+*   **技术实现**：构造 `Criteria.where("title").regex(searchKey, "i")`。`"i"` 表示忽略大小写。
+*   **排序机制**：此模式不计算全文相关度得分，默认按创建时间降序排列：`Sort.by(Sort.Direction.DESC, "createTime")`。
+
+### 1.2 模式 B：全局倒排索引全文检索 (`TextCriteria.matching()`)
+*   **适用场景**：全局综合搜索（`searchType = "all"` 或为空）。
+*   **技术实现**：先调用 `SegmentationUtils.segment(searchKey)` 对搜索词进行切词，再通过 `TextCriteria.forDefaultLanguage().matching(segmentedKey)` 构造文本检索条件。
+*   **排序机制**：开启全文打分排序，优先按相关度得分降序，得分相同时按创建时间降序：`Sort.by(Sort.Order.desc("score"), Sort.Order.desc("createTime"))`。
 
 ---
 
@@ -37,68 +64,63 @@ $$\text{Score} = \sum (\text{TF} \times \text{IDF} \times \text{Field Weight})$$
 
 ---
 
-## 3. 文档实体类 [SearchDocument.java](../../yudao-module-search/yudao-module-search-server/src/main/java/cn/iocoder/yudao/module/search/dal/mongodb/SearchDocument.java) 注解规范
+## 3. 分词工具类设计 ([SegmentationUtils.java](../../yudao-module-search/yudao-module-search-server/src/main/java/cn/iocoder/yudao/module/search/framework/utils/SegmentationUtils.java))
 
 ```java
-package cn.iocoder.yudao.module.search.dal.mongodb;
+package cn.iocoder.yudao.module.search.framework.utils;
 
-import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.TextIndexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.TextScore;
+import cn.hutool.core.util.StrUtil;
+import com.huaban.analysis.jieba.JiebaSegmenter;
+import com.huaban.analysis.jieba.SegToken;
 
-@Document(collection = "search_document")
-@Data
-public class SearchDocument {
-    @Id
-    private String id; // 主键 ID
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
-    private String title; // 原始标题 (界面展现)
+public class SegmentationUtils {
 
-    @TextIndexed(weight = 10) // 权重 10
-    private String segmentedTitle; // 分词后标题 (索引匹配)
+    private static final JiebaSegmenter SEGMENTER = new JiebaSegmenter();
 
-    @TextIndexed(weight = 5)  // 权重 5
-    private List<String> keywords; // 标签列表
+    public static String segment(String text) {
+        if (StrUtil.isBlank(text)) {
+            return "";
+        }
+        List<SegToken> tokens = SEGMENTER.process(text, JiebaSegmenter.SegMode.SEARCH);
+        return tokens.stream()
+                .map(token -> token.word)
+                .filter(StrUtil::isNotBlank)
+                .collect(Collectors.joining(" "));
+    }
 
-    private String content; // 原始正文
-
-    @TextIndexed(weight = 1)  // 权重 1
-    private String segmentedContent; // 分词后正文 (索引匹配)
-
-    @TextScore
-    private Float score; // 检索相关度得分 ($textScore 自动注入)
-
-    private LocalDateTime createTime;
-}
-```
-
----
-
-## 4. 索引自动初始化器 [MongoIndexInitializer.java](../../yudao-module-search/yudao-module-search-server/src/main/java/cn/iocoder/yudao/module/search/framework/config/MongoIndexInitializer.java) 规范
-
-```java
-@Component
-@Slf4j
-public class MongoIndexInitializer implements CommandLineRunner {
-
-    @Resource
-    private MongoTemplate mongoTemplate;
-
-    @Override
-    public void run(String... args) {
-        TextIndexDefinition textIndex = new TextIndexDefinition.TextIndexDefinitionBuilder()
-                .onField("segmentedTitle", 10F)
-                .onField("keywords", 5F)
-                .onField("segmentedContent", 1F)
-                .named("search_text_index")
-                .withDefaultLanguage("none") // 禁用英文词干化规则，保护中文切词结构
-                .build();
-        mongoTemplate.indexOps(SearchDocument.class).ensureIndex(textIndex);
+    public static List<String> segmentToList(String text) {
+        if (StrUtil.isBlank(text)) {
+            return Collections.emptyList();
+        }
+        List<SegToken> tokens = SEGMENTER.process(text, JiebaSegmenter.SegMode.SEARCH);
+        return tokens.stream()
+                .map(token -> token.word)
+                .filter(StrUtil::isNotBlank)
+                .distinct()
+                .collect(Collectors.toList());
     }
 }
 ```
 
-*   **`CommandLineRunner`**：容器启动就绪后自动触发执行。
-*   **`.withDefaultLanguage("none")`**：禁用默认的英文字干化（Word Stemming）规则，防止系统误将中文切词后的词汇修改破坏。
+*   **线程安全单例**：静态实例化 `JiebaSegmenter`，避免每次切词重复创建分词器开销。
+*   **搜索模式 (`SegMode.SEARCH`)**：启用 Jieba 的搜索引擎细粒度切词模式，对长词再次进行二次拆分，提高检索召回率。
+*   **空格拼接与去重列表**：`segment` 方法返回由空格连接的字符串（写入 `segmentedTitle` 与 `segmentedContent`）；`segmentToList` 返回去重后的词汇列表（供高亮算法使用）。
+
+---
+
+## 4. Spring Data 分页偏移量转换规范
+
+前端分页参数 `pageNo` 通常从 `1` 开始（1-indexed），而 Spring Data 的 `PageRequest.of(page, size)` 要求页码从 `0` 开始（0-indexed）：
+
+```java
+int pageNo = pageReqVO.getPageNo();
+int pageSize = pageReqVO.getPageSize();
+Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+query.with(pageable);
+```
+
+通过 `pageNo - 1` 完成转换，并将总记录数 `total` 与当前页列表组装为通用 `PageResult<>(voList, total)` 对象返回。
