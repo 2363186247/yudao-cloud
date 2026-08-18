@@ -49,13 +49,13 @@
   <ContentWrap>
     <el-table v-loading="loading" :data="list">
       <el-table-column label="文档ID" align="center" prop="id" width="220" />
-      <el-table-column label="文档标题" align="center" :show-overflow-tooltip="true">
+      <el-table-column label="文档标题" align="center" width="220" :show-overflow-tooltip="true">
         <template #default="scope">
           <!-- 检索命中标题高亮 -->
           <span v-html="scope.row.titleHighlight || scope.row.title"></span>
         </template>
       </el-table-column>
-      <el-table-column label="关键字" align="center" prop="keywords">
+      <el-table-column label="关键字" align="center" width="180">
         <template #default="scope">
           <el-tag
             v-for="tag in scope.row.keywords"
@@ -68,11 +68,17 @@
           </el-tag>
         </template>
       </el-table-column>
+      <el-table-column label="正文摘要（动态切片）" align="left" min-width="260">
+        <template #default="scope">
+          <!-- 检索命中正文黄金切片与高亮 -->
+          <span class="text-gray-700 text-xs leading-relaxed" v-html="scope.row.contentSnippetHighlight || scope.row.content"></span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="创建时间"
         align="center"
         prop="createTime"
-        width="180"
+        width="160"
         :formatter="dateFormatter"
       />
       <el-table-column label="操作" align="center" width="180">

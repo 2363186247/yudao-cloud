@@ -254,10 +254,23 @@ const highlightText = (text: string, key: string) => {
   )
 }
 
-/** 获取内容片段摘要 */
-const getSnippet = (text: string) => {
+/** 获取内容片段摘要 (以关键词首发位置为中心提取动态上下文窗口) */
+const getSnippet = (text: string, key?: string) => {
   if (!text) return ''
-  return text.length > 150 ? text.substring(0, 150) + '...' : text
+  const search = (key || searchKey.value || '').trim()
+  if (!search) {
+    return text.length > 150 ? text.substring(0, 150) + '...' : text
+  }
+  const idx = text.toLowerCase().indexOf(search.toLowerCase())
+  if (idx === -1) {
+    return text.length > 150 ? text.substring(0, 150) + '...' : text
+  }
+  const start = Math.max(0, idx - 45)
+  const end = Math.min(text.length, idx + search.length + 45)
+  let snippet = text.substring(start, end)
+  if (start > 0) snippet = '...' + snippet
+  if (end < text.length) snippet = snippet + '...'
+  return snippet
 }
 
 const toggleFollow = () => {
