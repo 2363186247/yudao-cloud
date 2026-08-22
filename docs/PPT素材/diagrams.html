@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPT 核心架构与算法逻辑高清图表集</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background-color: #f1f5f9;
+            color: #1e293b;
+            padding: 40px 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+        .header p {
+            font-size: 15px;
+            color: #64748b;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            padding: 32px;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-export {
+            background: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-export:hover {
+            background: #1d4ed8;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+        .btn-svg {
+            background: #0284c7;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-svg:hover {
+            background: #0369a1;
+        }
+        .diagram-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 10px;
+            background: #ffffff;
+            overflow-x: auto;
+        }
+        .mermaid {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        .card-desc {
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>PPT 核心架构与算法逻辑高清图表库</h1>
+    <p>专为答辩 PPT 设计 · 高清矢量图渲染 · 支持一键下载 SVG / PNG 用于幻灯片无损插入</p>
+</div>
+
+<div class="container">
+
+    <!-- 图表 1: Sidecar 伴生离线翻译架构 -->
+    <div class="card" id="card-1">
+        <div class="card-header">
+            <div class="card-title">
+                <span>图表 1：Sidecar 伴生微服务离线翻译与冷启动优化流程图</span>
+                <span class="badge">对应 Slide 7</span>
+            </div>
+            <div class="btn-group">
+                <button class="btn-svg" onclick="downloadSVG('card-1-diagram', '图表1_Sidecar伴生微服务离线翻译架构与流程.svg')">📥 下载 SVG 矢量图</button>
+            </div>
+        </div>
+        <div class="diagram-container" id="card-1-diagram">
+            <pre class="mermaid">
+flowchart TD
+    subgraph JavaMicroservice["Java 检索微服务 (yudao-module-search-server:18082)"]
+        Req[前端多语言翻译请求: text, sourceLang, targetLang] --> PreCheck{前置校验与短路保护}
+        PreCheck -- 空白文本 / 同源互译 --> DirectReturn[短路拦截: 直接原样返回]
+        PreCheck -- 有效多语种翻译 --> CodeMap[ISO 语种标准化转换: zh-CN -> zh]
+        CodeMap --> HttpCall["Hutool HTTP POST (通信超时阈值: 30000ms)"]
+        RespHandler[解析响应 JSON 译文] --> ReturnVO[封装返回 TranslationRespVO]
+    end
+
+    subgraph SidecarContainer["Sidecar 伴生 Docker 容器 (yudao-translate:5000)"]
+        HttpCall -. 本地 127.0.0.1:5000 跨进程调用 .-> TransAPI[LibreTranslate REST API]
+        TransAPI --> LazyCheck{目标语种模型是否在内存?}
+        LazyCheck -- 首次冷启动调用 --> DiskLoad["从持久化数据卷加载 CTranslate2 计算图\n(耗时 5~10 秒)"]
+        DiskLoad --> NMTInfer[ArgosTranslate NMT 离线神经机器翻译]
+        LazyCheck -- 稳态常驻内存 --> NMTInfer
+        NMTInfer --> FastResp["快速返回译文结果\n(稳态响应延迟 ~100ms)"]
+        FastResp -. 响应返回 .-> RespHandler
+    end
+
+    style SidecarContainer fill:#f0f9ff,stroke:#0284c7,stroke-width:2px,stroke-dasharray: 5 5
+    style JavaMicroservice fill:#fefce8,stroke:#ca8a04,stroke-width:2px
+    style DirectReturn fill:#fee2e2,stroke:#ef4444,stroke-width:1.5px
+    style FastResp fill:#dcfce7,stroke:#16a34a,stroke-width:1.5px
+    style DiskLoad fill:#ffedd5,stroke:#f97316,stroke-width:1.5px
+            </pre>
+        </div>
+        <div class="card-desc">
+            <strong>💡 PPT 解说要点</strong>：体现 Sidecar 物理进程隔离（避免 C++ 崩溃导致 JVM 宕机）、防御性短路保护以及将超时阈值调优至 30s 完美解决 CPU 懒加载首次冷启动耗时的关键工程亮点。
+        </div>
+    </div>
+
+    <!-- 图表 2: 全文检索全链路请求时序图 -->
+    <div class="card" id="card-2">
+        <div class="card-header">
+            <div class="card-title">
+                <span>图表 2：全文检索全链路业务请求时序图</span>
+                <span class="badge">对应 Slide 4 / 5</span>
+            </div>
+            <div class="btn-group">
+                <button class="btn-svg" onclick="downloadSVG('card-2-diagram', '图表2_全文检索全链路业务请求时序图.svg')">📥 下载 SVG 矢量图</button>
+            </div>
+        </div>
+        <div class="diagram-container" id="card-2-diagram">
+            <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor User as 前端用户 (Vue3)
+    participant GW as 微服务网关 (18081)
+    participant Auth as 权限过滤器 (Security)
+    participant SC as 检索控制器 (18082)
+    participant SS as 检索业务服务 (SearchService)
+    participant Seg as 分词组件 (Jieba)
+    participant Mongo as MongoDB 数据库 (search_document)
+    participant Alg as 动态切片与高亮处理
+
+    User->>GW: POST /admin-api/search/document/page (关键词, 检索模式)
+    GW->>Auth: 校验 Token 与 SpEL 权限
+    Auth-->>GW: 鉴权通过
+    GW->>SC: 路由分发 (基于 Path 前缀与负载均衡)
+    SC->>SS: 调用 pageSearchDocuments(ReqVO)
+    alt 全库分词检索模式 (all)
+        SS->>Seg: segment(searchKey) 执行细粒度切词
+        Seg-->>SS: 返回空格拼接分词串
+        SS->>Mongo: 执行 TextQuery ($text 复合倒排索引)
+        Mongo-->>SS: 返回匹配文档列表 + $textScore 相关度得分
+    else 精准匹配模式 (title / content)
+        SS->>Mongo: 构造 Criteria.regex 执行正则模糊匹配
+        Mongo-->>SS: 返回按时间倒序排列的精准匹配文档列表
+    end
+    SS->>Alg: 触发正文动态切片 (getSnippet) 与长词降序高亮 (highlightText)
+    Alg-->>SS: 返回带 mark 标签与省略号的高亮阅读片段
+    SS-->>SC: 组装 PageResult 返回分页结果
+    SC-->>GW: 封装统一通用返回对象 (CommonResult)
+    GW-->>User: 响应 JSON 数据并在前端列表与研判阅读器渲染
+            </pre>
+        </div>
+        <div class="card-desc">
+            <strong>💡 PPT 解说要点</strong>：展示从 Vue3 前端 ➡️ Gateway 网关鉴权 ➡️ 检索微服务 ➡️ Jieba 分词 ➡️ MongoDB 倒排检索 ➡️ 动态切片高亮的全链路工业级微服务闭环。
+        </div>
+    </div>
+
+    <!-- 图表 3: 正文动态切片与长词降序高亮防破坏算法 -->
+    <div class="card" id="card-3">
+        <div class="card-header">
+            <div class="card-title">
+                <span>图表 3：正文动态切片与长词优先高亮算法流程图</span>
+                <span class="badge">对应 Slide 6</span>
+            </div>
+            <div class="btn-group">
+                <button class="btn-svg" onclick="downloadSVG('card-3-diagram', '图表3_正文动态切片与长词优先高亮算法.svg')">📥 下载 SVG 矢量图</button>
+            </div>
+        </div>
+        <div class="diagram-container" id="card-3-diagram">
+            <pre class="mermaid">
+flowchart TD
+    Start([输入: 原始长正文 content + 分词关键词列表 words]) --> Step1[遍历分词列表，忽略大小写定位关键词首次出现的最小起始下标 firstIdx]
+    
+    subgraph ContextSnippet["【模块一】正文上下文动态切片算法 (getSnippet)"]
+        Step1 --> Step2["计算动态取景窗口: 起始点 max(0, firstIdx - 40)，结束点 min(len, firstIdx + wordLen + 40)"]
+        Step2 --> Step3["截取 80~100 字符命中上下文片段，首尾按需拼接省略号 '...'"]
+    end
+
+    subgraph AntiCorruptionHighlight["【模块二】长词优先高亮处理 (highlightText)"]
+        Step3 --> Step4["长词降序排序 (Length-Desc Sorting):\n按关键词字符串长度从长到短严格重排"]
+        Step4 --> Step5["Pattern.quote 转义用户输入中的正则特殊元字符 (*, ?, ., (, ) 等)"]
+        Step5 --> Step6["使用 (?i) 忽略大小写匹配并在原位包装 HTML mark 标签 ($1 保持原文排版)"]
+        Step6 --> Step7[优先完成复合长词高亮，彻底杜绝短词替换破坏 HTML 标签自身内部字符]
+    end
+
+    Step7 --> End([输出: 边界安全、排版规范、标签无破坏的高亮切片摘要])
+
+    style ContextSnippet fill:#fefce8,stroke:#ca8a04,stroke-width:2px
+    style AntiCorruptionHighlight fill:#f0fdf4,stroke:#16a34a,stroke-width:2px
+    style Step4 fill:#dcfce7,stroke:#15803d,stroke-width:1.5px
+    style Step2 fill:#fef3c7,stroke:#d97706,stroke-width:1.5px
+            </pre>
+        </div>
+        <div class="card-desc">
+            <strong>💡 PPT 解说要点</strong>：重点突出在面对长文本与复合专业词汇时，算法逻辑如何解决“长文本列表页阅读盲区”与“长短词嵌套导致 HTML 标签自破坏”两个经典工业缺陷。
+        </div>
+    </div>
+
+    <!-- 图表 4: 系统微服务架构与混合路由拓扑 -->
+    <div class="card" id="card-4">
+        <div class="card-header">
+            <div class="card-title">
+                <span>图表 4：系统微服务架构拓扑与“单体+微服务”混合路由模式</span>
+                <span class="badge">对应 Slide 3</span>
+            </div>
+            <div class="btn-group">
+                <button class="btn-svg" onclick="downloadSVG('card-4-diagram', '图表4_系统微服务架构拓扑与混合路由模式.svg')">📥 下载 SVG 矢量图</button>
+            </div>
+        </div>
+        <div class="diagram-container" id="card-4-diagram">
+            <pre class="mermaid">
+flowchart TB
+    Client["前端客户端 (Vue3 + Vite + Element Plus)"] -->|统一访问 80 端口| Gateway["API 网关 (yudao-gateway:18081)"]
+
+    subgraph NacosCluster["服务治理中心 (Nacos:8848)"]
+        NacosReg["服务注册与健康检查 (Search-Server / Server / Gateway)"]
+        NacosConfig["动态配置中心 (application.yaml 集中下发)"]
+    end
+
+    Gateway -. 动态服务发现 .-> NacosReg
+
+    subgraph GatewayRouting["Spring Cloud Gateway 智能流量分发"]
+        R1["精确前缀路由: Path=/admin-api/search/** (高优先级)"]
+        R2["广义通用路由: Path=/admin-api/** (兜底路由)"]
+    end
+
+    Gateway --> R1
+    Gateway --> R2
+
+    subgraph SearchMicroservice["独立检索微服务 (yudao-module-search-server:18082)"]
+        SearchCtrl[SearchController 控制层] --> SearchSvc[SearchServiceImpl 业务层]
+        SearchSvc --> JiebaCore[Jieba 中文细粒度分词引擎]
+        SearchSvc --> AlgCore[动态切片与高亮算法模块]
+        SearchSvc --> MongoRepo[SearchDocumentRepository 数据层]
+    end
+
+    subgraph MonolithServer["本地单体后端 (yudao-server:18080)"]
+        SysModules[系统管理 / 权限 / 字典 / 基础设施模块]
+    end
+
+    subgraph StorageAndSidecar["底层存储与伴生容器集群 (Docker 容器化)"]
+        MongoDB[(MongoDB 6.0\n复合倒排索引\nB 树高效单点读)]
+        MySQL[(MySQL 8.0\n系统基础表)]
+        SidecarNode[yudao-translate:5000\nCTranslate2 NMT 离线翻译引擎]
+    end
+
+    R1 -->|grayLb://search-server 负载均衡| SearchCtrl
+    R2 -->|本地轻量转发| SysModules
+    MongoRepo -->|Spring Data Mongo| MongoDB
+    SysModules --> MySQL
+    SearchSvc -->|本地 HTTP 轻量跨进程调用| SidecarNode
+
+    style SearchMicroservice fill:#f0fdf4,stroke:#16a34a,stroke-width:2px
+    style GatewayRouting fill:#eff6ff,stroke:#2563eb,stroke-width:2px
+    style StorageAndSidecar fill:#f8fafc,stroke:#64748b,stroke-width:2px
+            </pre>
+        </div>
+        <div class="card-desc">
+            <strong>💡 PPT 解说要点</strong>：展示现代微服务治理、Nacos 动态注册、网关智能分流以及兼顾开发机资源受限与新功能独立演进的“单体兜底 + 微服务接入”混合架构。
+        </div>
+    </div>
+
+    <!-- 图表 5: 倒排索引与多级字段权重打分模型 -->
+    <div class="card" id="card-5">
+        <div class="card-header">
+            <div class="card-title">
+                <span>图表 5：MongoDB 复合倒排索引与多级字段权重打分模型</span>
+                <span class="badge">对应 Slide 4</span>
+            </div>
+            <div class="btn-group">
+                <button class="btn-svg" onclick="downloadSVG('card-5-diagram', '图表5_倒排索引与多级字段权重打分模型.svg')">📥 下载 SVG 矢量图</button>
+            </div>
+        </div>
+        <div class="diagram-container" id="card-5-diagram">
+            <pre class="mermaid">
+flowchart LR
+    DocInput["原始情报文档入库"] --> SegEngine["Jieba 细粒度分词预处理"]
+    
+    subgraph MultiFieldWeights["@TextIndexed 复合倒排索引权重分配"]
+        SegEngine -->|切词提取| T1["segmentedTitle (分词标题)\n★ 权重系数: 10 ★"]
+        SegEngine -->|数组提取| T2["tags (情报标签数组)\n★ 权重系数: 5 ★"]
+        SegEngine -->|长文本切词| T3["segmentedContent (分词正文)\n★ 权重系数: 1 ★"]
+    end
+
+    subgraph InvertedIndexModel["倒排索引倒排链表结构 (Posting List)"]
+        T1 --> TermA["词项: '微服务' ➡️ [Doc#1 (Score: 10x), Doc#3 (Score: 10x)]"]
+        T2 --> TermB["词项: '情报' ➡️ [Doc#1 (Score: 5x), Doc#2 (Score: 5x)]"]
+        T3 --> TermC["词项: '架构' ➡️ [Doc#1 (Score: 1x), Doc#2 (Score: 1x)]"]
+    end
+
+    subgraph ScoreAgg["相关度得分聚合与排序 ($textScore)"]
+        TermA --> Agg["Score = Sum(TF-IDF × 字段权重)"]
+        TermB --> Agg
+        TermC --> Agg
+        Agg --> OutRank["按综合相关度降序排列 (高价值情报排在首位)"]
+    end
+
+    style MultiFieldWeights fill:#fefce8,stroke:#ca8a04,stroke-width:2px
+    style InvertedIndexModel fill:#f0f9ff,stroke:#0284c7,stroke-width:2px
+    style ScoreAgg fill:#f0fdf4,stroke:#16a34a,stroke-width:2px
+            </pre>
+        </div>
+        <div class="card-desc">
+            <strong>💡 PPT 解说要点</strong>：直观展现倒排索引 Posting List 原理与标题（10）、标签（5）、正文（1）的多级权重加权计算，解释为何搜索结果能精准贴合业务研判价值。
+        </div>
+    </div>
+
+</div>
+
+<script>
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'default',
+        themeVariables: {
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif',
+            fontSize: '14px',
+            primaryColor: '#e0f2fe',
+            primaryTextColor: '#0f172a',
+            primaryBorderColor: '#0284c7',
+            lineColor: '#64748b',
+            secondaryColor: '#fefce8',
+            tertiaryColor: '#f1f5f9'
+        },
+        flowchart: {
+            htmlLabels: true,
+            curve: 'basis'
+        }
+    });
+
+    function downloadSVG(containerId, filename) {
+        const container = document.getElementById(containerId);
+        const svgElement = container.querySelector('svg');
+        if (!svgElement) {
+            alert('图表正在渲染中，请稍候...');
+            return;
+        }
+
+        const svgString = new XMLSerializer().serializeToString(svgElement);
+        const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+        const downloadLink = document.createElement('a');
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = filename;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    }
+</script>
+
+</body>
+</html>
