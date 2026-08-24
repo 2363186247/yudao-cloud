@@ -285,50 +285,57 @@ flowchart TD
         </div>
         <div class="diagram-container" id="card-4-diagram">
             <pre class="mermaid">
-flowchart TB
-    Client["前端客户端 (Vue3 + Vite + Element Plus)"] -->|统一访问 80 端口| Gateway["API 网关 (yudao-gateway:18081)"]
-
-    subgraph NacosCluster["服务治理中心 (Nacos:8848)"]
-        NacosReg["服务注册与健康检查 (Search-Server / Server / Gateway)"]
-        NacosConfig["动态配置中心 (application.yaml 集中下发)"]
+flowchart LR
+    subgraph ClientCol["【前端接入层】"]
+        Client["Vue3 研判管理前端\n(Vite + Element Plus)\n统一 80 端口请求"]
+        C1["情报全文检索界面"]
+        C2["情报阅读器详情页"]
+        C3["多语言即时翻译卡片"]
+        Client --> C1 & C2 & C3
     end
 
-    Gateway -. 动态服务发现 .-> NacosReg
-
-    subgraph GatewayRouting["Spring Cloud Gateway 智能流量分发"]
-        R1["精确前缀路由: Path=/admin-api/search/** (高优先级)"]
-        R2["广义通用路由: Path=/admin-api/** (兜底路由)"]
+    subgraph NacosTop["Nacos 2.3.2 服务治理与配置中心 (服务注册 / 心跳检测 / 配置下发)"]
     end
 
-    Gateway --> R1
-    Gateway --> R2
-
-    subgraph SearchMicroservice["独立检索微服务 (yudao-module-search-server:18082)"]
-        SearchCtrl[SearchController 控制层] --> SearchSvc[SearchServiceImpl 业务层]
-        SearchSvc --> JiebaCore[Jieba 中文细粒度分词引擎]
-        SearchSvc --> AlgCore[动态切片与高亮算法模块]
-        SearchSvc --> MongoRepo[SearchDocumentRepository 数据层]
+    subgraph GatewayCol["【网关与路由治理层】"]
+        Gateway["API 网关 (yudao-gateway:18081)\nSpring Cloud Gateway 全局鉴权"]
+        R1["【精确路由】Path=/admin-api/search/**\n(高优先级 ➡️ 负载均衡转发)"]
+        R2["【兜底路由】Path=/admin-api/**\n(低优先级 ➡️ 转发本地单体)"]
+        Gateway --> R1
+        Gateway --> R2
     end
 
-    subgraph MonolithServer["本地单体后端 (yudao-server:18080)"]
-        SysModules[系统管理 / 权限 / 字典 / 基础设施模块]
+    subgraph ServiceCol["【服务层与数据存储集群】"]
+        subgraph SearchSvr["独立检索微服务 (search-server:18082)"]
+            SCtrl["SearchController"] --> SSvc["SearchServiceImpl 业务层"]
+            SSvc --> SFunc["Jieba 分词 | 动态切片 | 长词高亮"]
+            SSvc --> SMongo[("MongoDB 6.0\n复合倒排索引 & B树存储")]
+        end
+
+        subgraph SidecarNode["Sidecar 伴生 Docker 容器 (yudao-translate:5000)"]
+            STrans["CTranslate2 NMT 离线神经机器翻译 (中英俄韩)"]
+        end
+
+        subgraph MonolithNode["本地基础服务 (yudao-server:18080)"]
+            SBase["系统管理 / 权限 / 字典 / 基础设施"] --> SMySQL[("MySQL 8.0")]
+        end
     end
 
-    subgraph StorageAndSidecar["底层存储与伴生容器集群 (Docker 容器化)"]
-        MongoDB[(MongoDB 6.0\n复合倒排索引\nB 树高效单点读)]
-        MySQL[(MySQL 8.0\n系统基础表)]
-        SidecarNode[yudao-translate:5000\nCTranslate2 NMT 离线翻译引擎]
-    end
+    Client -->|HTTP:80| Gateway
+    R1 -->|负载分发| SCtrl
+    R2 -.->|单体兜底| SBase
+    SSvc <-.->|本地 127.0.0.1 跨进程调用 (物理隔离)| STrans
 
-    R1 -->|grayLb://search-server 负载均衡| SearchCtrl
-    R2 -->|本地轻量转发| SysModules
-    MongoRepo -->|Spring Data Mongo| MongoDB
-    SysModules --> MySQL
-    SearchSvc -->|本地 HTTP 轻量跨进程调用| SidecarNode
+    GatewayCol -. 动态服务发现 .- NacosTop
+    ServiceCol -. 动态服务注册 .- NacosTop
 
-    style SearchMicroservice fill:#f0fdf4,stroke:#16a34a,stroke-width:2px
-    style GatewayRouting fill:#eff6ff,stroke:#2563eb,stroke-width:2px
-    style StorageAndSidecar fill:#f8fafc,stroke:#64748b,stroke-width:2px
+    style ClientCol fill:#f8fafc,stroke:#94a3b8,stroke-width:1.5px
+    style GatewayCol fill:#eff6ff,stroke:#2563eb,stroke-width:1.5px
+    style ServiceCol fill:#f8fafc,stroke:#64748b,stroke-width:1.5px
+    style SearchSvr fill:#f0fdf4,stroke:#16a34a,stroke-width:1.5px
+    style SidecarNode fill:#f0f9ff,stroke:#0284c7,stroke-width:1.5px,stroke-dasharray: 5 5
+    style MonolithNode fill:#fffbeb,stroke:#d97706,stroke-width:1.5px
+    style NacosTop fill:#eff6ff,stroke:#3b82f6,stroke-width:1.5px,stroke-dasharray: 4 4
             </pre>
         </div>
         <div class="card-desc">
