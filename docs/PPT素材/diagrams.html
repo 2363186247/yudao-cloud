@@ -357,30 +357,38 @@ flowchart LR
         <div class="diagram-container" id="card-5-diagram">
             <pre class="mermaid">
 flowchart LR
-    DocInput["原始情报文档入库"] --> SegEngine["Jieba 细粒度分词预处理"]
-    
-    subgraph MultiFieldWeights["@TextIndexed 复合倒排索引权重分配"]
-        SegEngine -->|切词提取| T1["segmentedTitle (分词标题)\n★ 权重系数: 10 ★"]
-        SegEngine -->|数组提取| T2["tags (情报标签数组)\n★ 权重系数: 5 ★"]
-        SegEngine -->|长文本切词| T3["segmentedContent (分词正文)\n★ 权重系数: 1 ★"]
+    subgraph S1["【1. 文档入库与切词】"]
+        Doc["原始情报文档\n(半结构化 JSON)"] --> Seg["Jieba 细粒度分词\n(提取各字段词项)"]
     end
 
-    subgraph InvertedIndexModel["倒排索引倒排链表结构 (Posting List)"]
-        T1 --> TermA["词项: '微服务' ➡️ [Doc#1 (Score: 10x), Doc#3 (Score: 10x)]"]
-        T2 --> TermB["词项: '情报' ➡️ [Doc#1 (Score: 5x), Doc#2 (Score: 5x)]"]
-        T3 --> TermC["词项: '架构' ➡️ [Doc#1 (Score: 1x), Doc#2 (Score: 1x)]"]
+    subgraph S2["【2. @TextIndexed 多级权重】"]
+        T1["分词标题 (segmentedTitle)\n★ 权重: 10 ★"]
+        T2["分类标签 (tags 数组)\n★ 权重: 5 ★"]
+        T3["分词正文 (segmentedContent)\n★ 权重: 1 ★"]
     end
 
-    subgraph ScoreAgg["相关度得分聚合与排序 ($textScore)"]
-        TermA --> Agg["Score = Sum(TF-IDF × 字段权重)"]
-        TermB --> Agg
-        TermC --> Agg
-        Agg --> OutRank["按综合相关度降序排列 (高价值情报排在首位)"]
+    subgraph S3["【3. 倒排链表映射 (Posting List)】"]
+        P1["'微服务' ➡️ [Doc#1(10×), Doc#3(10×)]"]
+        P2["'情报' ➡️ [Doc#1(5×), Doc#2(5×)]"]
+        P3["'架构' ➡️ [Doc#1(1×), Doc#2(1×)]"]
     end
 
-    style MultiFieldWeights fill:#fefce8,stroke:#ca8a04,stroke-width:2px
-    style InvertedIndexModel fill:#f0f9ff,stroke:#0284c7,stroke-width:2px
-    style ScoreAgg fill:#f0fdf4,stroke:#16a34a,stroke-width:2px
+    subgraph S4["【4. 相关度打分与输出】"]
+        Score["$textScore 评分计算\nScore = Σ(TF-IDF × 字段权重)"]
+        Rank["按相关度降序输出列表\n(高价值情报排在首位)"]
+        Score --> Rank
+    end
+
+    Seg --> T1 & T2 & T3
+    T1 --> P1
+    T2 --> P2
+    T3 --> P3
+    P1 & P2 & P3 --> Score
+
+    style S1 fill:#eff6ff,stroke:#2563eb,stroke-width:1.5px
+    style S2 fill:#fefce8,stroke:#ca8a04,stroke-width:1.5px
+    style S3 fill:#f0fdf4,stroke:#16a34a,stroke-width:1.5px
+    style S4 fill:#faf5ff,stroke:#9333ea,stroke-width:1.5px
             </pre>
         </div>
         <div class="card-desc">
