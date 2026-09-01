@@ -1,0 +1,71 @@
+package cn.sd.psdp.module.kyqb.controller.admin.nationalonline.vo;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
+import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import static cn.sd.psdp.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND;
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.annotation.ExcelIgnore;
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
+
+@Schema(description = "管理后台 - 全国联网查询 Response VO")
+@Data
+@ExcelIgnoreUnannotated
+public class NationalOnlineRespVO {
+
+    @Schema(description = "id")
+    private String id;
+
+    @Schema(description = "姓名", example = "张三")
+    @ExcelProperty("姓名")
+    private String name;
+
+    @Schema(description = "性别", example = "男")
+    @ExcelProperty("性别")
+    private String gender;
+
+    @Schema(description = "出生日期", example = "1990-01-01")
+    @ExcelProperty("出生日期")
+    @JsonFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND, timezone = "GMT+8")
+    private LocalDateTime birthDate;
+
+    @Schema(description = "身份证号", example = "110101199001011234")
+    @ExcelProperty("身份证号")
+    private String idCard;
+
+    @Schema(description = "手机号码", example = "13800138000")
+    @ExcelProperty("手机号码")
+    private String phone;
+
+    @Schema(description = "户籍地", example = "北京市朝阳区")
+    @ExcelProperty("户籍地")
+    private String householdRegister;
+
+    @Schema(description = "当地地区", example = "北京市海淀区")
+    @ExcelProperty("当地地区")
+    private String localArea;
+
+    @Schema(description = "数据来源", example = "××省业务系统")
+    @ExcelProperty("数据来源")
+    private String dataSource;
+
+    @Schema(description = "关联情报", example = "16598")
+    @ExcelProperty("关联情报")
+    private String relatedInfo;
+
+    @Schema(description = "创建时间")
+    @ExcelProperty("创建时间")
+    @JsonFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND, timezone = "GMT+8")
+    private LocalDateTime createTime;
+
+    @Schema(description = "更新时间")
+    @ExcelProperty("更新时间")
+    @JsonFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND, timezone = "GMT+8")
+    private LocalDateTime updateTime;
+
+    @Schema(description = "动态数据")
+    @ExcelIgnore
+    private NationalOnlineDynamicRespVO dynamicData;
+
+}

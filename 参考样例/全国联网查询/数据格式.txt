@@ -1,0 +1,165 @@
+约定格式：
+
+res: {
+    tableParams: [ 
+            { label:'姓名', field:'name' }, 
+            { label:'身份证号', field:'idCard' }, 
+            ... 
+    ],  // 该数组用来描述动态表单的列
+    list: [ 
+            { name:'张三', idCard:'110105199601211234' },
+            { name:'李四', idCard:'110105199601211234' },
+            ... 
+    ],  // 该数组用来描述动态表单的值
+    ...
+}
+
+
+
+
+mock返回数据：
+
+{
+    "code": 0,
+    "data": {
+        "list": [
+            {
+                "id": "1001",
+                "name": "张三",
+                "gender": "男",
+                "birthDate": 631123200000,
+                "idCard": "110101199001011234",
+                "phone": "13800138000",
+                "householdRegister": "北京市朝阳区",
+                "localArea": "北京市海淀区",
+                "dataSource": "01",
+                "relatedInfo": "16598",
+                "createTime": 1788248194629,
+                "updateTime": 1788248194629,
+                "dynamicData": {
+                    "tableParams": [
+                        {
+                            "label": "轨迹编号",
+                            "field": "trackId"
+                        },
+                        {
+                            "label": "出行方式",
+                            "field": "travelType"
+                        },
+                        {
+                            "label": "出发地",
+                            "field": "departure"
+                        },
+                        {
+                            "label": "目的地",
+                            "field": "destination"
+                        },
+                        {
+                            "label": "出发时间",
+                            "field": "departureTime"
+                        },
+                        {
+                            "label": "到达时间",
+                            "field": "arrivalTime"
+                        },
+                        {
+                            "label": "车次/航班号",
+                            "field": "tripNo"
+                        },
+                        {
+                            "label": "座位号",
+                            "field": "seatNo"
+                        },
+                        {
+                            "label": "同行人数",
+                            "field": "companionCount"
+                        },
+                        {
+                            "label": "活动名称",
+                            "field": "activityName"
+                        },
+                        {
+                            "label": "活动地点",
+                            "field": "activityLocation"
+                        },
+                        {
+                            "label": "活动时间",
+                            "field": "activityTime"
+                        },
+                        {
+                            "label": "活动类型",
+                            "field": "activityType"
+                        },
+                        {
+                            "label": "参与身份",
+                            "field": "participateRole"
+                        },
+                        {
+                            "label": "数据来源",
+                            "field": "dataSource"
+                        },
+                        {
+                            "label": "采集时间",
+                            "field": "collectTime"
+                        }
+                    ],
+                    "list": [
+                        {
+                            "trackId": "T20260717001",
+                            "travelType": "高铁",
+                            "departure": "北京南站",
+                            "destination": "上海虹桥站",
+                            "departureTime": "2026-07-17 08:00:00",
+                            "arrivalTime": "2026-07-17 13:28:00",
+                            "tripNo": "G101",
+                            "seatNo": "05车08A",
+                            "companionCount": "2",
+                            "activityName": "2026 中国人工智能大会",
+                            "activityLocation": "上海国际会议中心",
+                            "activityTime": "2026-07-17 14:00:00",
+                            "activityType": "学术会议",
+                            "participateRole": "参会人员",
+                            "dataSource": "铁路售票系统",
+                            "collectTime": "2026-07-17 06:30:00"
+                        },
+                        {
+                            "trackId": "T20260717002",
+                            "travelType": "航班",
+                            "departure": "广州白云机场",
+                            "destination": "成都双流机场",
+                            "departureTime": "2026-07-17 10:15:00",
+                            "arrivalTime": "2026-07-17 12:45:00",
+                            "tripNo": "CA4302",
+                            "seatNo": "32C",
+                            "companionCount": "1",
+                            "activityName": "西部数字经济论坛",
+                            "activityLocation": "成都世纪城新国际会展中心",
+                            "activityTime": "2026-07-17 15:00:00",
+                            "activityType": "行业论坛",
+                            "participateRole": "演讲嘉宾",
+                            "dataSource": "民航订票系统",
+                            "collectTime": "2026-07-17 08:00:00"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "1002",
+                "name": "李四",
+                "gender": "女",
+                "birthDate": 484934400000,
+                "idCard": "310101198505152345",
+                "phone": "13900139000",
+                "householdRegister": "上海市浦东新区",
+                "localArea": "上海市徐汇区",
+                "dataSource": "01",
+                "relatedInfo": "16599",
+                "createTime": 1788248194629,
+                "updateTime": 1788248194629,
+                "dynamicData": null
+            }
+        ],
+        "total": 2
+    },
+    "msg": ""
+}
