@@ -396,6 +396,58 @@ flowchart LR
         </div>
     </div>
 
+    <!-- 图表 6 -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <span>图表 6：全国联网查询多源异构数据动态解析与自适应展示流程</span>
+                <span class="badge">功能实现（三）</span>
+            </div>
+            <div class="btn-group">
+                <button class="btn-svg" onclick="downloadSVG('diag6', '图表6_全国联网多源异构数据动态解析与自适应展示.svg')">下载矢量 SVG</button>
+            </div>
+        </div>
+        <div class="mermaid" id="diag6">
+flowchart LR
+    subgraph Client["1. 客户端发起查询"]
+        A1["前端人员查询面板"] -->|"输入姓名/身份证号/时间范围"| A2["提交查询请求"]
+    end
+
+    subgraph Gateway["2. 跨域鉴权与地方调度"]
+        B1["Redis 令牌缓存治理<br/>(网关 Token + 接口 Token)"]
+        B2["多源地方 API 跨网调度<br/>(按需转发至不同地市接口)"]
+        B1 --> B2
+    end
+
+    subgraph Backend["3. 动态数据结构化处理 (后端)"]
+        C1["地方异构数据返回<br/>(字段/维度各不相同)"] --> C2["Java 反射机制分析<br/>(自动过滤空字段列)"]
+        C2 --> C3["提取中文表头元数据<br/>(@Schema 注解 -> tableParams)"]
+        C2 --> C4["组装键值行数据<br/>(Entity -> list)"]
+        C3 & C4 --> C5["生成通用动态契约 JSON<br/>{ tableParams: [...], list: [...] }"]
+    end
+
+    subgraph Frontend["4. 自适应表格动态渲染 (前端)"]
+        D1["基础信息卡片<br/>(姓名、身份证、手机号)"]
+        D2["动态数据驱动表格<br/>(根据 tableParams 自动生成列)"]
+        D3["弹窗穿透研判详情<br/>(自适应呈现各地多维轨迹/活动)"]
+        D1 --> D3
+        D2 --> D3
+    end
+
+    A2 --> B2
+    B2 --> C1
+    C5 --> D2
+
+    style Client fill:#fefce8,stroke:#ca8a04,stroke-width:1.5px
+    style Gateway fill:#faf5ff,stroke:#9333ea,stroke-width:1.5px
+    style Backend fill:#f0f9ff,stroke:#0284c7,stroke-width:1.5px
+    style Frontend fill:#f0fdf4,stroke:#16a34a,stroke-width:1.5px
+        </div>
+        <div class="card-desc">
+            <strong>💡 PPT 解说要点</strong>：清晰展示从客户端查询、跨域多级鉴权调用地方 API、后端反射解析动态表头、到前端自适应表格渲染的全链路闭环，突出“数据自带表头、零硬编码兼容各地异构数据”的业务优势。
+        </div>
+    </div>
+
 </div>
 
 <script>
